@@ -16,15 +16,14 @@
 
 package com.orangesignal.csv;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.nullValue;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertThrows;
 
 import java.util.regex.Pattern;
 
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 
 /**
  * {@link CsvConfig} クラスの単体テストです。
@@ -32,9 +31,6 @@ import org.junit.rules.ExpectedException;
  * @author Koji Sugisawa
  */
 public final class CsvConfigTest {
-
-	@Rule
-	public ExpectedException exception = ExpectedException.none();
 
 	@Test
 	public void testCsvConfig() {
@@ -58,58 +54,50 @@ public final class CsvConfigTest {
 
 	@Test
 	public void testValidate1() {
-		exception.expect(IllegalArgumentException.class);
-		exception.expectMessage("Invalid separator character");
-		new CsvConfig('\r').validate();
+		final Throwable e = assertThrows(IllegalArgumentException.class, () -> new CsvConfig('\r').validate());
+		assertThat(e.getMessage(), is("Invalid separator character"));
 	}
 
 	@Test
 	public void testValidate2() {
-		exception.expect(IllegalArgumentException.class);
-		exception.expectMessage("Invalid separator character");
-		new CsvConfig('\n').validate();
+		final Throwable e = assertThrows(IllegalArgumentException.class, () -> new CsvConfig('\n').validate());
+		assertThat(e.getMessage(), is("Invalid separator character"));
 	}
 
 	@Test
 	public void testValidate3() {
-		exception.expect(IllegalArgumentException.class);
-		exception.expectMessage("Invalid quote character");
-		new CsvConfig(',', ',', '"').validate();
+		final Throwable e = assertThrows(IllegalArgumentException.class, () -> new CsvConfig(',', ',', '"').validate());
+		assertThat(e.getMessage(), is("Invalid quote character"));
 	}
 
 	@Test
 	public void testValidate4() {
-		exception.expect(IllegalArgumentException.class);
-		exception.expectMessage("Invalid quote character");
-		new CsvConfig(',', '\r', '"').validate();
+		final Throwable e = assertThrows(IllegalArgumentException.class, () -> new CsvConfig(',', '\r', '"').validate());
+		assertThat(e.getMessage(), is("Invalid quote character"));
 	}
 
 	@Test
 	public void testValidate5() {
-		exception.expect(IllegalArgumentException.class);
-		exception.expectMessage("Invalid quote character");
-		new CsvConfig(',', '\n', '"').validate();
+		final Throwable e = assertThrows(IllegalArgumentException.class, () -> new CsvConfig(',', '\n', '"').validate());
+		assertThat(e.getMessage(), is("Invalid quote character"));
 	}
 
 	@Test
 	public void testValidate6() {
-		exception.expect(IllegalArgumentException.class);
-		exception.expectMessage("Invalid escape character");
-		new CsvConfig(',', '"', ',').validate();
+		final Throwable e = assertThrows(IllegalArgumentException.class, () -> new CsvConfig(',', '"', ',').validate());
+		assertThat(e.getMessage(), is("Invalid escape character"));
 	}
 
 	@Test
 	public void testValidate7() {
-		exception.expect(IllegalArgumentException.class);
-		exception.expectMessage("Invalid escape character");
-		new CsvConfig(',', '"', '\r').validate();
+		final Throwable e = assertThrows(IllegalArgumentException.class, () -> new CsvConfig(',', '"', '\r').validate());
+		assertThat(e.getMessage(), is("Invalid escape character"));
 	}
 
 	@Test
 	public void testValidate8() {
-		exception.expect(IllegalArgumentException.class);
-		exception.expectMessage("Invalid escape character");
-		new CsvConfig(',', '"', '\n').validate();
+		final Throwable e = assertThrows(IllegalArgumentException.class, () -> new CsvConfig(',', '"', '\n').validate());
+		assertThat(e.getMessage(), is("Invalid escape character"));
 	}
 
 	@Test
@@ -407,16 +395,14 @@ public final class CsvConfigTest {
 
 	@Test
 	public void testSetQuotePolicyIllegalArgumentException() {
-		exception.expect(IllegalArgumentException.class);
-		exception.expectMessage("QuotePolicy must not be null");
-		new CsvConfig().setQuotePolicy(null);
+		final Throwable e = assertThrows(IllegalArgumentException.class, () -> new CsvConfig().setQuotePolicy(null));
+		assertThat(e.getMessage(), is("QuotePolicy must not be null"));
 	}
 
 	@Test
 	public void testWithQuotePolicyIllegalArgumentException() {
-		exception.expect(IllegalArgumentException.class);
-		exception.expectMessage("QuotePolicy must not be null");
-		new CsvConfig().withQuotePolicy(null);
+		final Throwable e = assertThrows(IllegalArgumentException.class, () -> new CsvConfig().withQuotePolicy(null));
+		assertThat(e.getMessage(), is("QuotePolicy must not be null"));
 	}
 
 	@Test

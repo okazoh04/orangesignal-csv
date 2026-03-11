@@ -251,7 +251,7 @@ public class CsvEntityTemplate<T> extends AbstractCsvBeanTemplate<T, CsvEntityTe
 					}
 				}
 				if (pattern.length() > 0) {
-					final Locale locale = language != null ? (country != null ? new Locale(language, country) : new Locale(language)) : null;
+					final Locale locale = language != null ? (country != null ? Locale.of(language, country) : Locale.of(language)) : null;
 					final ValueFormatter combined = ValueFormatterFactory.createValueFormatter(pattern.toString(), f.getType(), locale, timezone, null, getValueConverter());
 					if (combined != null) {
 						parsers.add(combined);

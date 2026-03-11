@@ -18,7 +18,7 @@ package com.orangesignal.csv.io;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -27,9 +27,7 @@ import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 
 import org.junit.BeforeClass;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 
 import com.orangesignal.csv.Constants;
 import com.orangesignal.csv.CsvConfig;
@@ -38,6 +36,8 @@ import com.orangesignal.csv.bean.CsvBeanTemplate;
 import com.orangesignal.csv.filters.SimpleCsvNamedValueFilter;
 import com.orangesignal.csv.model.SampleBean;
 
+import static org.junit.Assert.assertThrows;
+
 /**
  * {@link CsvBeanReader} クラスの単体テストです。
  *
@@ -45,9 +45,6 @@ import com.orangesignal.csv.model.SampleBean;
  * @since 1.4.0
  */
 public class CsvBeanReaderTest {
-
-	@Rule
-	public ExpectedException exception = ExpectedException.none();
 
 	private static CsvConfig cfg;
 
@@ -97,25 +94,25 @@ public class CsvBeanReaderTest {
 
 	@Test
 	public void testConstructorCsvReaderClassIllegalArgumentException1() throws IOException {
-		exception.expect(IllegalArgumentException.class);
-		exception.expectMessage("CsvReader must not be null");
-		final CsvBeanReader<SampleBean> reader = new CsvBeanReader<SampleBean>(
-				null,
-				SampleBean.class
-			);
-		reader.close();
+		final IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> {
+			new CsvBeanReader<SampleBean>(
+					null,
+					SampleBean.class
+				);
+		});
+		assertThat(e.getMessage(), is("CsvReader must not be null"));
 	}
 
 	@Test
 	public void testConstructorCsvReaderClassIllegalArgumentException2() throws IOException {
-		exception.expect(IllegalArgumentException.class);
-		exception.expectMessage("Class must not be null");
-		final Class<SampleBean> type = null;
-		final CsvBeanReader<SampleBean> reader = new CsvBeanReader<SampleBean>(
-				new CsvReader(new StringReader("")),
-				type
-			);
-		reader.close();
+		final IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> {
+			final Class<SampleBean> type = null;
+			new CsvBeanReader<SampleBean>(
+					new CsvReader(new StringReader("")),
+					type
+				);
+		});
+		assertThat(e.getMessage(), is("Class must not be null"));
 	}
 
 	@Test
@@ -129,25 +126,25 @@ public class CsvBeanReaderTest {
 
 	@Test
 	public void testConstructorCsvReaderCsvBeanTemplateIllegalArgumentException1() throws IOException {
-		exception.expect(IllegalArgumentException.class);
-		exception.expectMessage("CsvReader must not be null");
-		final CsvBeanReader<SampleBean> reader = new CsvBeanReader<SampleBean>(
-				null,
-				CsvBeanTemplate.newInstance(SampleBean.class)
-			);
-		reader.close();
+		final IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> {
+			new CsvBeanReader<SampleBean>(
+					null,
+					CsvBeanTemplate.newInstance(SampleBean.class)
+				);
+		});
+		assertThat(e.getMessage(), is("CsvReader must not be null"));
 	}
 
 	@Test
 	public void testConstructorCsvReaderClassCsvBeanConfigIllegalArgumentException2() throws IOException {
-		exception.expect(IllegalArgumentException.class);
-		exception.expectMessage("CsvBeanTemplate must not be null");
-		final CsvBeanTemplate<SampleBean> template = null;
-		final CsvBeanReader<SampleBean> reader = new CsvBeanReader<SampleBean>(
-				new CsvReader(new StringReader("")),
-				template
-			);
-		reader.close();
+		final IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> {
+			final CsvBeanTemplate<SampleBean> template = null;
+			new CsvBeanReader<SampleBean>(
+					new CsvReader(new StringReader("")),
+					template
+				);
+		});
+		assertThat(e.getMessage(), is("CsvBeanTemplate must not be null"));
 	}
 
 	// ------------------------------------------------------------------------
@@ -155,12 +152,13 @@ public class CsvBeanReaderTest {
 
 	@Test
 	public void testClosed() throws IOException {
-		exception.expect(IOException.class);
-		exception.expectMessage("CsvReader closed");
 		final CsvBeanReader<SampleBean> reader = CsvBeanReader.newInstance(new CsvReader(new StringReader("")), SampleBean.class);
 		reader.close();
 		// Act
-		reader.close();
+		final IOException e = assertThrows(IOException.class, () -> {
+			reader.close();
+		});
+		assertThat(e.getMessage(), is("CsvReader closed"));
 	}
 
 	// ------------------------------------------------------------------------

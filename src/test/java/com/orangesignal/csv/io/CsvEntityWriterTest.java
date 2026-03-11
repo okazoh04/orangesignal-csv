@@ -18,7 +18,7 @@ package com.orangesignal.csv.io;
 
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 import java.io.IOException;
 import java.io.StringWriter;
@@ -29,7 +29,6 @@ import java.util.TimeZone;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 import org.junit.rules.TemporaryFolder;
 
 import com.orangesignal.csv.Constants;
@@ -38,10 +37,11 @@ import com.orangesignal.csv.CsvWriter;
 import com.orangesignal.csv.bean.CsvEntityTemplate;
 import com.orangesignal.csv.entity.DefaultValuePrice;
 import com.orangesignal.csv.entity.Price;
-import com.orangesignal.csv.entity.Travel;
 import com.orangesignal.csv.entity.WritableEntity;
 import com.orangesignal.csv.entity.WritableNoHeaderEntity;
 import com.orangesignal.csv.filters.SimpleCsvNamedValueFilter;
+
+import static org.junit.Assert.assertThrows;
 
 /**
  * {@link CsvEntityWriter} クラスの単体テストです。
@@ -50,9 +50,6 @@ import com.orangesignal.csv.filters.SimpleCsvNamedValueFilter;
  * @since 1.4.0
  */
 public class CsvEntityWriterTest {
-
-	@Rule
-	public ExpectedException exception = ExpectedException.none();
 
 	@Rule
 	public TemporaryFolder folder = new TemporaryFolder();
@@ -84,26 +81,26 @@ public class CsvEntityWriterTest {
 
 	@Test
 	public void testNewInstanceCsvWriterClassIllegalArgumentException1() throws IOException {
-		exception.expect(IllegalArgumentException.class);
-		exception.expectMessage("CsvWriter must not be null");
+		final IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> {
+			final CsvWriter w = null;
+			final Class<Price> c = Price.class;
 
-		final CsvWriter w = null;
-		final Class<Price> c = Price.class;
-
-		final CsvEntityWriter<Price> writer = CsvEntityWriter.newInstance(w, c);
-		writer.close();
+			final CsvEntityWriter<Price> writer = CsvEntityWriter.newInstance(w, c);
+			writer.close();
+		});
+		assertThat(e.getMessage(), is("CsvWriter must not be null"));
 	}
 
 	@Test
 	public void testNewInstanceCsvWriterClassIllegalArgumentException2() throws IOException {
-		exception.expect(IllegalArgumentException.class);
-		exception.expectMessage("Class must not be null");
+		final IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> {
+			final CsvWriter w = new CsvWriter(new StringWriter(), cfg);
+			final Class<Price> c = null;
 
-		final CsvWriter w = new CsvWriter(new StringWriter(), cfg);
-		final Class<Price> c = null;
-
-		final CsvEntityWriter<Price> writer = CsvEntityWriter.newInstance(w, c);
-		writer.close();
+			final CsvEntityWriter<Price> writer = CsvEntityWriter.newInstance(w, c);
+			writer.close();
+		});
+		assertThat(e.getMessage(), is("Class must not be null"));
 	}
 
 	@Test
@@ -117,26 +114,26 @@ public class CsvEntityWriterTest {
 
 	@Test
 	public void testNewInstanceCsvWriterCsvEntityTemplateIllegalArgumentException1() throws IOException {
-		exception.expect(IllegalArgumentException.class);
-		exception.expectMessage("CsvWriter must not be null");
+		final IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> {
+			final CsvWriter w = null;
+			final CsvEntityTemplate<Price> template = CsvEntityTemplate.newInstance(Price.class);
 
-		final CsvWriter w = null;
-		final CsvEntityTemplate<Price> template = CsvEntityTemplate.newInstance(Price.class);
-
-		final CsvEntityWriter<Price> writer = CsvEntityWriter.newInstance(w, template);
-		writer.close();
+			final CsvEntityWriter<Price> writer = CsvEntityWriter.newInstance(w, template);
+			writer.close();
+		});
+		assertThat(e.getMessage(), is("CsvWriter must not be null"));
 	}
 
 	@Test
 	public void testNewInstanceCsvWriterCsvEntityTemplateIllegalArgumentException2() throws IOException {
-		exception.expect(IllegalArgumentException.class);
-		exception.expectMessage("CsvEntityTemplate must not be null");
+		final IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> {
+			final CsvWriter w = new CsvWriter(new StringWriter(), cfg);
+			final CsvEntityTemplate<Price> template = null;
 
-		final CsvWriter w = new CsvWriter(new StringWriter(), cfg);
-		final CsvEntityTemplate<Price> template = null;
-
-		final CsvEntityWriter<Price> writer = CsvEntityWriter.newInstance(w, template);
-		writer.close();
+			final CsvEntityWriter<Price> writer = CsvEntityWriter.newInstance(w, template);
+			writer.close();
+		});
+		assertThat(e.getMessage(), is("CsvEntityTemplate must not be null"));
 	}
 
 	// ------------------------------------------------------------------------
@@ -153,26 +150,26 @@ public class CsvEntityWriterTest {
 
 	@Test
 	public void testConstructorCsvWriterClassIllegalArgumentException1() throws IOException {
-		exception.expect(IllegalArgumentException.class);
-		exception.expectMessage("CsvWriter must not be null");
+		final IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> {
+			final CsvWriter w = null;
+			final Class<Price> c = Price.class;
 
-		final CsvWriter w = null;
-		final Class<Price> c = Price.class;
-
-		final CsvEntityWriter<Price> writer = new CsvEntityWriter<Price>(w, c);
-		writer.close();
+			final CsvEntityWriter<Price> writer = new CsvEntityWriter<Price>(w, c);
+			writer.close();
+		});
+		assertThat(e.getMessage(), is("CsvWriter must not be null"));
 	}
 
 	@Test
 	public void testConstructorCsvWriterClassIllegalArgumentException2() throws IOException {
-		exception.expect(IllegalArgumentException.class);
-		exception.expectMessage("Class must not be null");
+		final IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> {
+			final CsvWriter w = new CsvWriter(new StringWriter(), cfg);
+			final Class<Price> c = null;
 
-		final CsvWriter w = new CsvWriter(new StringWriter(), cfg);
-		final Class<Price> c = null;
-
-		final CsvEntityWriter<Price> writer = new CsvEntityWriter<Price>(w, c);
-		writer.close();
+			final CsvEntityWriter<Price> writer = new CsvEntityWriter<Price>(w, c);
+			writer.close();
+		});
+		assertThat(e.getMessage(), is("Class must not be null"));
 	}
 
 	@Test
@@ -186,26 +183,26 @@ public class CsvEntityWriterTest {
 
 	@Test
 	public void testConstructorCsvWriterCsvEntityTemplateIllegalArgumentException1() throws IOException {
-		exception.expect(IllegalArgumentException.class);
-		exception.expectMessage("CsvWriter must not be null");
+		final IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> {
+			final CsvWriter w = null;
+			final CsvEntityTemplate<Price> template = CsvEntityTemplate.newInstance(Price.class);
 
-		final CsvWriter w = null;
-		final CsvEntityTemplate<Price> template = CsvEntityTemplate.newInstance(Price.class);
-
-		final CsvEntityWriter<Price> writer = new CsvEntityWriter<Price>(w, template);
-		writer.close();
+			final CsvEntityWriter<Price> writer = new CsvEntityWriter<Price>(w, template);
+			writer.close();
+		});
+		assertThat(e.getMessage(), is("CsvWriter must not be null"));
 	}
 
 	@Test
 	public void testConstructorCsvWriterCsvEntityTemplateIllegalArgumentException2() throws IOException {
-		exception.expect(IllegalArgumentException.class);
-		exception.expectMessage("CsvEntityTemplate must not be null");
+		final IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> {
+			final CsvWriter w = new CsvWriter(new StringWriter(), cfg);
+			final CsvEntityTemplate<Price> template = null;
 
-		final CsvWriter w = new CsvWriter(new StringWriter(), cfg);
-		final CsvEntityTemplate<Price> template = null;
-
-		final CsvEntityWriter<Price> writer = new CsvEntityWriter<Price>(w, template);
-		writer.close();
+			final CsvEntityWriter<Price> writer = new CsvEntityWriter<Price>(w, template);
+			writer.close();
+		});
+		assertThat(e.getMessage(), is("CsvEntityTemplate must not be null"));
 	}
 
 	// ------------------------------------------------------------------------
@@ -245,28 +242,30 @@ public class CsvEntityWriterTest {
 
 	@Test
 	public void testFlushIOException() throws IOException {
-		exception.expect(IOException.class);
-		exception.expectMessage("CsvWriter closed");
-		final CsvEntityWriter<Price> writer = CsvEntityWriter.newInstance(
-				new CsvWriter(new StringWriter(), cfg),
-				Price.class
-			);
-		writer.close();
-		// Act
-		writer.flush();
+		final IOException e = assertThrows(IOException.class, () -> {
+			final CsvEntityWriter<Price> writer = CsvEntityWriter.newInstance(
+					new CsvWriter(new StringWriter(), cfg),
+					Price.class
+				);
+			writer.close();
+			// Act
+			writer.flush();
+		});
+		assertThat(e.getMessage(), is("CsvWriter closed"));
 	}
 
 	@Test
 	public void testCloseIOException() throws IOException {
-		exception.expect(IOException.class);
-		exception.expectMessage("CsvWriter closed");
-		final CsvEntityWriter<Price> writer = CsvEntityWriter.newInstance(
-				new CsvWriter(new StringWriter(), cfg),
-				Price.class
-			);
-		writer.close();
-		// Act
-		writer.close();
+		final IOException e = assertThrows(IOException.class, () -> {
+			final CsvEntityWriter<Price> writer = CsvEntityWriter.newInstance(
+					new CsvWriter(new StringWriter(), cfg),
+					Price.class
+				);
+			writer.close();
+			// Act
+			writer.close();
+		});
+		assertThat(e.getMessage(), is("CsvWriter closed"));
 	}
 
 	// ------------------------------------------------------------------------

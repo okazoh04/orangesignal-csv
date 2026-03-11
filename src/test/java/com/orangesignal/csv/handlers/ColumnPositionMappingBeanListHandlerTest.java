@@ -18,7 +18,7 @@ package com.orangesignal.csv.handlers;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -95,10 +95,10 @@ public class ColumnPositionMappingBeanListHandlerTest {
 		final CsvReader reader = new CsvReader(new StringReader("symbol,name,price,volume\r\nAAAA,aaa,10000,10\r\nBBBB,bbb,NULL,0"), cfg);
 		try {
 			final List<SampleBean> list = new ColumnPositionMappingBeanListHandler<SampleBean>(SampleBean.class)
-				.addColumn("symbol")
-				.addColumn("name")
-				.addColumn("price")
-				.addColumn("volume")
+				.column("symbol")
+				.column("name")
+				.column("price")
+				.column("volume")
 				.load(reader);
 
 			assertThat(list.size(), is(2));
@@ -123,10 +123,10 @@ public class ColumnPositionMappingBeanListHandlerTest {
 		final CsvReader reader = new CsvReader(new StringReader("symbol,name,price,volume\r\nAAAA,aaa,10000,10\r\nBBBB,bbb,NULL,0"), cfg);
 		try {
 			final List<SampleBean> list = new ColumnPositionMappingBeanListHandler<SampleBean>(SampleBean.class)
-				.addColumn("symbol")
-				.addColumn(null)
-				.addColumn("price")
-				.addColumn("volume")
+				.column("symbol")
+				.column(null)
+				.column("price")
+				.column("volume")
 				.load(reader);
 
 			assertThat(list.size(), is(2));
@@ -151,10 +151,10 @@ public class ColumnPositionMappingBeanListHandlerTest {
 		final CsvReader reader = new CsvReader(new StringReader("symbol,name,price,volume\r\nAAAA,aaa,10000,10\r\nBBBB,bbb,NULL,0"), cfg);
 		try {
 			final List<SampleBean> list = new ColumnPositionMappingBeanListHandler<SampleBean>(SampleBean.class)
-				.addColumn(3, "volume")
-				.addColumn(2, "price")
-				.addColumn(0, "symbol")
-				.addColumn(1, "name")
+				.column(3, "volume")
+				.column(2, "price")
+				.column(0, "symbol")
+				.column(1, "name")
 				.load(reader);
 
 			assertThat(list.size(), is(2));
@@ -179,10 +179,10 @@ public class ColumnPositionMappingBeanListHandlerTest {
 		final CsvReader reader = new CsvReader(new StringReader("symbol,name,price,volume\r\nAAAA,aaa,10000,10\r\nBBBB,bbb,NULL,0"), cfg);
 		try {
 			final List<SampleBean> list = new ColumnPositionMappingBeanListHandler<SampleBean>(SampleBean.class)
-				.addColumn(3, "volume")
-				.addColumn(2, "price")
-				.addColumn(0, "symbol")
-				.addColumn(1, null)
+				.column(3, "volume")
+				.column(2, "price")
+				.column(0, "symbol")
+				.column(1, null)
 				.load(reader);
 
 			assertThat(list.size(), is(2));
@@ -265,12 +265,12 @@ public class ColumnPositionMappingBeanListHandlerTest {
 		final CsvReader reader = new CsvReader(new StringReader("AAAA,aaa,10\\,000,10,2008/10/28,10:24:00\r\nBBBB,bbb,NULL,0,NULL,NULL"), cfg);
 		try {
 			final List<SampleBean> list = new ColumnPositionMappingBeanListHandler<SampleBean>(SampleBean.class)
-				.addColumn(0, "symbol")
-				.addColumn(1, "name")
-				.addColumn(2, "price", new DecimalFormat("#,##0"))
-				.addColumn(3, "volume")
-				.addColumn(4, "date", new SimpleDateFormat("yyyy/MM/dd"))
-				.addColumn(5, "date", new SimpleDateFormat("HH:mm:ss"))
+				.column(0, "symbol")
+				.column(1, "name")
+				.column(2, "price", new DecimalFormat("#,##0"))
+				.column(3, "volume")
+				.column(4, "date", new SimpleDateFormat("yyyy/MM/dd"))
+				.column(5, "date", new SimpleDateFormat("HH:mm:ss"))
 				.load(reader);
 
 			assertThat(list.size(), is(2));
@@ -297,12 +297,12 @@ public class ColumnPositionMappingBeanListHandlerTest {
 		final CsvReader reader = new CsvReader(new StringReader("AAAA,aaa,10\\,000,10,2008/10/28,10:24:00\r\nBBBB,bbb,NULL,0,NULL,NULL"), cfg);
 		try {
 			final List<SampleBean> list = new ColumnPositionMappingBeanListHandler<SampleBean>(SampleBean.class)
-				.addColumn(0, "symbol")
-				.addColumn(1, "name")
-				.addColumn(2, "price", new DecimalFormat("#,##0"))
-				.addColumn(3, "volume")
-				.addColumn(4, "date", new SimpleDateFormat("yyyy/MM/dd"))
-				.addColumn(5, "date", new SimpleDateFormat("HH:mm:ss"))
+				.column(0, "symbol")
+				.column(1, "name")
+				.column(2, "price", new DecimalFormat("#,##0"))
+				.column(3, "volume")
+				.column(4, "date", new SimpleDateFormat("yyyy/MM/dd"))
+				.column(5, "date", new SimpleDateFormat("HH:mm:ss"))
 				.offset(1)
 				.limit(1)
 				.load(reader);
@@ -332,11 +332,11 @@ public class ColumnPositionMappingBeanListHandlerTest {
 			), cfg);
 		try {
 			final List<SampleBean> list = new ColumnPositionMappingBeanListHandler<SampleBean>(SampleBean.class)
-				.addColumn(0, "symbol")
-				.addColumn(1, "name")
-				.addColumn(2, "price")
-				.addColumn(3, "volume")
-				.addColumn(4, "date", new SimpleDateFormat("yyyy/MM/dd"))
+				.column(0, "symbol")
+				.column(1, "name")
+				.column(2, "price")
+				.column(3, "volume")
+				.column(4, "date", new SimpleDateFormat("yyyy/MM/dd"))
 				.filter(new SimpleCsvValueFilter().ne(0, "gcu09", true))
 				.filter(new SimpleBeanFilter().ne("date", df.parse("2008/11/06")))
 				.offset(1).limit(1)
@@ -396,10 +396,10 @@ public class ColumnPositionMappingBeanListHandlerTest {
 		final CsvWriter writer = new CsvWriter(sw, cfg);
 		try {
 			new ColumnPositionMappingBeanListHandler<SampleBean>(SampleBean.class)
-				.addColumn("name")
-				.addColumn("symbol")
-				.addColumn("price")
-				.addColumn("volume")
+				.column("name")
+				.column("symbol")
+				.column("price")
+				.column("volume")
 				.save(list, writer);
 		} finally {
 			writer.close();
@@ -417,9 +417,9 @@ public class ColumnPositionMappingBeanListHandlerTest {
 		final CsvWriter writer = new CsvWriter(sw, cfg);
 		try {
 			new ColumnPositionMappingBeanListHandler<SampleBean>(SampleBean.class)
-				.addColumn("symbol")
-				.addColumn("price")
-				.addColumn("volume")
+				.column("symbol")
+				.column("price")
+				.column("volume")
 				.save(list, writer);
 		} finally {
 			writer.close();
@@ -440,11 +440,11 @@ public class ColumnPositionMappingBeanListHandlerTest {
 		final CsvWriter writer = new CsvWriter(sw, cfg);
 		try {
 			new ColumnPositionMappingBeanListHandler<SampleBean>(SampleBean.class)
-				.addColumn("symbol")
-				.addColumn("price", new DecimalFormat("#,##0"))
-				.addColumn("volume")
-				.addColumn("date", new SimpleDateFormat("yyyy/MM/dd"))
-				.addColumn("date", new SimpleDateFormat("HH:mm:ss"))
+				.column("symbol")
+				.column("price", new DecimalFormat("#,##0"))
+				.column("volume")
+				.column("date", new SimpleDateFormat("yyyy/MM/dd"))
+				.column("date", new SimpleDateFormat("HH:mm:ss"))
 				.save(list, writer);
 		} finally {
 			writer.close();
@@ -465,10 +465,10 @@ public class ColumnPositionMappingBeanListHandlerTest {
 		final CsvWriter writer = new CsvWriter(sw, cfg);
 		try {
 			new ColumnPositionMappingBeanListHandler<SampleBean>(SampleBean.class)
-				.addColumn("symbol")
-				.addColumn("price", new DecimalFormat("0.00"))
-				.addColumn("volume")
-				.addColumn("date", new SimpleDateFormat("yyyy/MM/dd"))
+				.column("symbol")
+				.column("price", new DecimalFormat("0.00"))
+				.column("volume")
+				.column("date", new SimpleDateFormat("yyyy/MM/dd"))
 				.filter(new SimpleCsvValueFilter().ne(0, "gcu09", true))
 				.filter(new SimpleBeanFilter().ne("date", df.parse("2008/11/06")))
 				.save(list, writer);

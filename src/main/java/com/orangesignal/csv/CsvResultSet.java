@@ -22,6 +22,8 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.math.BigDecimal;
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.sql.Array;
 import java.sql.Blob;
@@ -1264,8 +1266,8 @@ public class CsvResultSet implements ResultSet {
 			return null;
 		}
 		try {
-			return new URL(s);
-		} catch (final MalformedURLException e) {
+			return new URI(s).toURL();
+		} catch (final MalformedURLException | URISyntaxException e) {
 			throw new SQLException(String.format("Bad format for URL '%s' in column %d.", s, columnIndex), e);
 		}
 	}

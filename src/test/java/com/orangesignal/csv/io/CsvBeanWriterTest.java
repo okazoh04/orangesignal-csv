@@ -17,7 +17,7 @@
 package com.orangesignal.csv.io;
 
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 import java.io.IOException;
 import java.io.StringWriter;
@@ -28,9 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.BeforeClass;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 
 import com.orangesignal.csv.Constants;
 import com.orangesignal.csv.CsvConfig;
@@ -39,6 +37,8 @@ import com.orangesignal.csv.bean.CsvBeanTemplate;
 import com.orangesignal.csv.filters.SimpleCsvNamedValueFilter;
 import com.orangesignal.csv.model.SampleBean;
 
+import static org.junit.Assert.assertThrows;
+
 /**
  * {@link CsvBeanWriter} クラスの単体テストです。
  *
@@ -46,9 +46,6 @@ import com.orangesignal.csv.model.SampleBean;
  * @since 1.4.0
  */
 public class CsvBeanWriterTest {
-
-	@Rule
-	public ExpectedException exception = ExpectedException.none();
 
 	private static CsvConfig cfg;
 
@@ -77,26 +74,26 @@ public class CsvBeanWriterTest {
 
 	@Test
 	public void testNewInstanceCsvWriterClassIllegalArgumentException1() throws IOException {
-		exception.expect(IllegalArgumentException.class);
-		exception.expectMessage("CsvWriter must not be null");
+		final IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> {
+			final CsvWriter w = null;
+			final Class<SampleBean> c = SampleBean.class;
 
-		final CsvWriter w = null;
-		final Class<SampleBean> c = SampleBean.class;
-
-		final CsvBeanWriter<SampleBean> writer = CsvBeanWriter.newInstance(w, c);
-		writer.close();
+			final CsvBeanWriter<SampleBean> writer = CsvBeanWriter.newInstance(w, c);
+			writer.close();
+		});
+		assertThat(e.getMessage(), is("CsvWriter must not be null"));
 	}
 
 	@Test
 	public void testNewInstanceCsvWriterClassIllegalArgumentException2() throws IOException {
-		exception.expect(IllegalArgumentException.class);
-		exception.expectMessage("Class must not be null");
+		final IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> {
+			final CsvWriter w = new CsvWriter(new StringWriter(), cfg);
+			final Class<SampleBean> c = null;
 
-		final CsvWriter w = new CsvWriter(new StringWriter(), cfg);
-		final Class<SampleBean> c = null;
-
-		final CsvBeanWriter<SampleBean> writer = CsvBeanWriter.newInstance(w, c);
-		writer.close();
+			final CsvBeanWriter<SampleBean> writer = CsvBeanWriter.newInstance(w, c);
+			writer.close();
+		});
+		assertThat(e.getMessage(), is("Class must not be null"));
 	}
 
 	@Test
@@ -110,26 +107,26 @@ public class CsvBeanWriterTest {
 
 	@Test
 	public void testNewInstanceCsvWriterCsvBeanTemplateIllegalArgumentException1() throws IOException {
-		exception.expect(IllegalArgumentException.class);
-		exception.expectMessage("CsvWriter must not be null");
+		final IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> {
+			final CsvWriter w = null;
+			final CsvBeanTemplate<SampleBean> template = CsvBeanTemplate.newInstance(SampleBean.class);
 
-		final CsvWriter w = null;
-		final CsvBeanTemplate<SampleBean> template = CsvBeanTemplate.newInstance(SampleBean.class);
-
-		final CsvBeanWriter<SampleBean> writer = CsvBeanWriter.newInstance(w, template);
-		writer.close();
+			final CsvBeanWriter<SampleBean> writer = CsvBeanWriter.newInstance(w, template);
+			writer.close();
+		});
+		assertThat(e.getMessage(), is("CsvWriter must not be null"));
 	}
 
 	@Test
 	public void testNewInstanceCsvWriterCsvBeanTemplateIllegalArgumentException2() throws IOException {
-		exception.expect(IllegalArgumentException.class);
-		exception.expectMessage("CsvBeanTemplate must not be null");
+		final IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> {
+			final CsvWriter w = new CsvWriter(new StringWriter(), cfg);
+			final CsvBeanTemplate<SampleBean> template = null;
 
-		final CsvWriter w = new CsvWriter(new StringWriter(), cfg);
-		final CsvBeanTemplate<SampleBean> template = null;
-
-		final CsvBeanWriter<SampleBean> writer = CsvBeanWriter.newInstance(w, template);
-		writer.close();
+			final CsvBeanWriter<SampleBean> writer = CsvBeanWriter.newInstance(w, template);
+			writer.close();
+		});
+		assertThat(e.getMessage(), is("CsvBeanTemplate must not be null"));
 	}
 
 	// ------------------------------------------------------------------------
@@ -146,26 +143,26 @@ public class CsvBeanWriterTest {
 
 	@Test
 	public void testConstructorCsvWriterClassIllegalArgumentException1() throws IOException {
-		exception.expect(IllegalArgumentException.class);
-		exception.expectMessage("CsvWriter must not be null");
+		final IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> {
+			final CsvWriter w = null;
+			final Class<SampleBean> c = SampleBean.class;
 
-		final CsvWriter w = null;
-		final Class<SampleBean> c = SampleBean.class;
-
-		final CsvBeanWriter<SampleBean> writer = new CsvBeanWriter<SampleBean>(w, c);
-		writer.close();
+			final CsvBeanWriter<SampleBean> writer = new CsvBeanWriter<SampleBean>(w, c);
+			writer.close();
+		});
+		assertThat(e.getMessage(), is("CsvWriter must not be null"));
 	}
 
 	@Test
 	public void testConstructorCsvWriterClassIllegalArgumentException2() throws IOException {
-		exception.expect(IllegalArgumentException.class);
-		exception.expectMessage("Class must not be null");
+		final IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> {
+			final CsvWriter w = new CsvWriter(new StringWriter(), cfg);
+			final Class<SampleBean> c = null;
 
-		final CsvWriter w = new CsvWriter(new StringWriter(), cfg);
-		final Class<SampleBean> c = null;
-
-		final CsvBeanWriter<SampleBean> writer = new CsvBeanWriter<SampleBean>(w, c);
-		writer.close();
+			final CsvBeanWriter<SampleBean> writer = new CsvBeanWriter<SampleBean>(w, c);
+			writer.close();
+		});
+		assertThat(e.getMessage(), is("Class must not be null"));
 	}
 
 	@Test
@@ -179,26 +176,26 @@ public class CsvBeanWriterTest {
 
 	@Test
 	public void testConstructorCsvWriterCsvBeanTemplateIllegalArgumentException1() throws IOException {
-		exception.expect(IllegalArgumentException.class);
-		exception.expectMessage("CsvWriter must not be null");
+		final IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> {
+			final CsvWriter w = null;
+			final CsvBeanTemplate<SampleBean> template = CsvBeanTemplate.newInstance(SampleBean.class);
 
-		final CsvWriter w = null;
-		final CsvBeanTemplate<SampleBean> template = CsvBeanTemplate.newInstance(SampleBean.class);
-
-		final CsvBeanWriter<SampleBean> writer = new CsvBeanWriter<SampleBean>(w, template);
-		writer.close();
+			final CsvBeanWriter<SampleBean> writer = new CsvBeanWriter<SampleBean>(w, template);
+			writer.close();
+		});
+		assertThat(e.getMessage(), is("CsvWriter must not be null"));
 	}
 
 	@Test
 	public void testConstructorCsvWriterCsvBeanTemplateIllegalArgumentException2() throws IOException {
-		exception.expect(IllegalArgumentException.class);
-		exception.expectMessage("CsvBeanTemplate must not be null");
+		final IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> {
+			final CsvWriter w = new CsvWriter(new StringWriter(), cfg);
+			final CsvBeanTemplate<SampleBean> template = null;
 
-		final CsvWriter w = new CsvWriter(new StringWriter(), cfg);
-		final CsvBeanTemplate<SampleBean> template = null;
-
-		final CsvBeanWriter<SampleBean> writer = new CsvBeanWriter<SampleBean>(w, template);
-		writer.close();
+			final CsvBeanWriter<SampleBean> writer = new CsvBeanWriter<SampleBean>(w, template);
+			writer.close();
+		});
+		assertThat(e.getMessage(), is("CsvBeanTemplate must not be null"));
 	}
 
 	// ------------------------------------------------------------------------
@@ -228,28 +225,30 @@ public class CsvBeanWriterTest {
 
 	@Test
 	public void testFlushIOException() throws IOException {
-		exception.expect(IOException.class);
-		exception.expectMessage("CsvWriter closed");
-		final CsvBeanWriter<SampleBean> writer = CsvBeanWriter.newInstance(
-				new CsvWriter(new StringWriter(), cfg),
-				SampleBean.class
-			);
-		writer.close();
-		// Act
-		writer.flush();
+		final IOException e = assertThrows(IOException.class, () -> {
+			final CsvBeanWriter<SampleBean> writer = CsvBeanWriter.newInstance(
+					new CsvWriter(new StringWriter(), cfg),
+					SampleBean.class
+				);
+			writer.close();
+			// Act
+			writer.flush();
+		});
+		assertThat(e.getMessage(), is("CsvWriter closed"));
 	}
 
 	@Test
 	public void testCloseIOException() throws IOException {
-		exception.expect(IOException.class);
-		exception.expectMessage("CsvWriter closed");
-		final CsvBeanWriter<SampleBean> writer = CsvBeanWriter.newInstance(
-				new CsvWriter(new StringWriter(), cfg),
-				SampleBean.class
-			);
-		writer.close();
-		// Act
-		writer.close();
+		final IOException e = assertThrows(IOException.class, () -> {
+			final CsvBeanWriter<SampleBean> writer = CsvBeanWriter.newInstance(
+					new CsvWriter(new StringWriter(), cfg),
+					SampleBean.class
+				);
+			writer.close();
+			// Act
+			writer.close();
+		});
+		assertThat(e.getMessage(), is("CsvWriter closed"));
 	}
 
 	// ------------------------------------------------------------------------

@@ -132,7 +132,7 @@ public class BeanOrder implements Comparator<Object>, Serializable {
 	private Object getValue(final Object bean) {
 		try {
 			final Field field = bean.getClass().getDeclaredField(name);
-			if (!field.isAccessible()) {
+			if (!field.canAccess(bean)) {
 				field.setAccessible(true);
 			}
 			try {

@@ -236,9 +236,9 @@ final class Type {
 			} else {
 				try {
 					if (Type.isLongString(str)) {
-						num = new Long(Long.parseLong(str));
+						num = Long.valueOf(Long.parseLong(str));
 					} else {
-						num = new Double(str);
+						num = Double.valueOf(str);
 					}
 				} catch (final NumberFormatException exception) {
 					num = Type.parseHexadecimal(str.substring(2));
@@ -246,30 +246,30 @@ final class Type {
 			}
 
 			if (type.equals(Byte.class) || type.equals(Byte.TYPE)) {
-				return new Byte(num.byteValue());
+				return Byte.valueOf(num.byteValue());
 			} else if (type.equals(Short.class) || type.equals(Short.TYPE)) {
-				return new Short(num.shortValue());
+				return Short.valueOf(num.shortValue());
 			} else if (type.equals(Integer.class) || type.equals(Integer.TYPE)) {
-				return new Integer(num.intValue());
+				return Integer.valueOf(num.intValue());
 			} else if (type.equals(Long.class) || type.equals(Long.TYPE)) {
-				return new Long(num.longValue());
+				return Long.valueOf(num.longValue());
 			} else if (type.equals(Float.class) || type.equals(Float.TYPE)) {
-				return new Float(num.floatValue());
+				return Float.valueOf(num.floatValue());
 			} else {
-				return new Double(num.doubleValue());
+				return Double.valueOf(num.doubleValue());
 			}
 		} else if (type.equals(Boolean.class) || type.equals(Boolean.TYPE)) {
 			if ("TRUE".equalsIgnoreCase(str)) {
-				return new Boolean(true);
+				return Boolean.TRUE;
 			} else if ("FALSE".equalsIgnoreCase(str)) {
-				return new Boolean(false);
+				return Boolean.FALSE;
 			}
 		} else if ((type.equals(Character.class) || type.equals(Character.TYPE))
 				&& obj != null) {
 			if (str.length() == 1) {
-				return new Character(str.charAt(0));
+				return Character.valueOf(str.charAt(0));
 			} else if (Type.isUnicodeEscape(str)) {
-				return new Character((char) Type.parseHexadecimal(
+				return Character.valueOf((char) Type.parseHexadecimal(
 						str.substring(2)).intValue());
 			}
 		}

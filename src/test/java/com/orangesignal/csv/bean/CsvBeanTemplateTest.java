@@ -16,11 +16,12 @@
 
 package com.orangesignal.csv.bean;
 
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 
 import com.orangesignal.csv.model.SampleBean;
+
+import static org.junit.Assert.assertThrows;
+import static org.junit.Assert.assertEquals;
 
 /**
  * {@link CsvBeanTemplate} クラスの単体テストです。
@@ -30,21 +31,20 @@ import com.orangesignal.csv.model.SampleBean;
  */
 public class CsvBeanTemplateTest {
 
-	@Rule
-	public ExpectedException exception = ExpectedException.none();
-
 	@Test
 	public void testIncludesIllegalArgumentException() {
-		exception.expect(IllegalArgumentException.class);
-		exception.expectMessage("Only includes or excludes may be specified.");
-		new CsvBeanTemplate<SampleBean>(SampleBean.class).excludes("aaa").includes("bbb");
+		final IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> {
+			new CsvBeanTemplate<SampleBean>(SampleBean.class).excludes("aaa").includes("bbb");
+		});
+		assertEquals("Only includes or excludes may be specified.", e.getMessage());
 	}
 
 	@Test
 	public void testExcludesIllegalArgumentException() {
-		exception.expect(IllegalArgumentException.class);
-		exception.expectMessage("Only includes or excludes may be specified.");
-		new CsvBeanTemplate<SampleBean>(SampleBean.class).includes("aaa").excludes("bbb");
+		final IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> {
+			new CsvBeanTemplate<SampleBean>(SampleBean.class).includes("aaa").excludes("bbb");
+		});
+		assertEquals("Only includes or excludes may be specified.", e.getMessage());
 	}
 
 }

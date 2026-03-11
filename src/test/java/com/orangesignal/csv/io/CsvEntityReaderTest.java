@@ -18,7 +18,7 @@ package com.orangesignal.csv.io;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -27,9 +27,7 @@ import java.text.SimpleDateFormat;
 import java.util.TimeZone;
 
 import org.junit.BeforeClass;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 
 import com.orangesignal.csv.Constants;
 import com.orangesignal.csv.CsvConfig;
@@ -43,6 +41,8 @@ import com.orangesignal.csv.entity.Price2;
 import com.orangesignal.csv.entity.RequiredPrice;
 import com.orangesignal.csv.filters.SimpleCsvNamedValueFilter;
 
+import static org.junit.Assert.assertThrows;
+
 /**
  * {@link CsvEntityReader} クラスの単体テストです。
  *
@@ -50,9 +50,6 @@ import com.orangesignal.csv.filters.SimpleCsvNamedValueFilter;
  * @since 1.4.0
  */
 public class CsvEntityReaderTest {
-
-	@Rule
-	public ExpectedException exception = ExpectedException.none();
 
 	private static CsvConfig cfg;
 
@@ -102,25 +99,25 @@ public class CsvEntityReaderTest {
 
 	@Test
 	public void testConstructorCsvReaderClassIllegalArgumentException1() throws IOException {
-		exception.expect(IllegalArgumentException.class);
-		exception.expectMessage("CsvReader must not be null");
-		final CsvEntityReader<Price> reader = new CsvEntityReader<Price>(
-				null,
-				Price.class
-			);
-		reader.close();
+		final IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> {
+			new CsvEntityReader<Price>(
+					null,
+					Price.class
+				);
+		});
+		assertThat(e.getMessage(), is("CsvReader must not be null"));
 	}
 
 	@Test
 	public void testConstructorCsvReaderClassIllegalArgumentException2() throws IOException {
-		exception.expect(IllegalArgumentException.class);
-		exception.expectMessage("Class must not be null");
-		final Class<Price> type = null;
-		final CsvEntityReader<Price> reader = new CsvEntityReader<Price>(
-				new CsvReader(new StringReader("")),
-				type
-			);
-		reader.close();
+		final IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> {
+			final Class<Price> type = null;
+			new CsvEntityReader<Price>(
+					new CsvReader(new StringReader("")),
+					type
+				);
+		});
+		assertThat(e.getMessage(), is("Class must not be null"));
 	}
 
 	@Test
@@ -134,25 +131,25 @@ public class CsvEntityReaderTest {
 
 	@Test
 	public void testConstructorCsvReaderCsvBeanTemplateIllegalArgumentException1() throws IOException {
-		exception.expect(IllegalArgumentException.class);
-		exception.expectMessage("CsvReader must not be null");
-		final CsvEntityReader<Price> reader = new CsvEntityReader<Price>(
-				null,
-				CsvEntityTemplate.newInstance(Price.class)
-			);
-		reader.close();
+		final IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> {
+			new CsvEntityReader<Price>(
+					null,
+					CsvEntityTemplate.newInstance(Price.class)
+				);
+		});
+		assertThat(e.getMessage(), is("CsvReader must not be null"));
 	}
 
 	@Test
 	public void testConstructorCsvReaderClassCsvBeanConfigIllegalArgumentException2() throws IOException {
-		exception.expect(IllegalArgumentException.class);
-		exception.expectMessage("CsvEntityTemplate must not be null");
-		final CsvEntityTemplate<Price> template = null;
-		final CsvEntityReader<Price> reader = new CsvEntityReader<Price>(
-				new CsvReader(new StringReader("")),
-				template
-			);
-		reader.close();
+		final IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> {
+			final CsvEntityTemplate<Price> template = null;
+			new CsvEntityReader<Price>(
+					new CsvReader(new StringReader("")),
+					template
+				);
+		});
+		assertThat(e.getMessage(), is("CsvEntityTemplate must not be null"));
 	}
 
 	// ------------------------------------------------------------------------
@@ -160,12 +157,13 @@ public class CsvEntityReaderTest {
 
 	@Test
 	public void testClosed() throws IOException {
-		exception.expect(IOException.class);
-		exception.expectMessage("CsvReader closed");
 		final CsvEntityReader<Price> reader = CsvEntityReader.newInstance(new CsvReader(new StringReader("")), Price.class);
 		reader.close();
 		// Act
-		reader.close();
+		final IOException e = assertThrows(IOException.class, () -> {
+			reader.close();
+		});
+		assertThat(e.getMessage(), is("CsvReader closed"));
 	}
 
 	// ------------------------------------------------------------------------
@@ -173,9 +171,6 @@ public class CsvEntityReaderTest {
 
 	@Test
 	public void testRequiredCsvColumnException() throws IOException {
-		exception.expect(CsvColumnException.class);
-		exception.expectMessage(String.format("[line: %d] %s must not be null", 3, "シンボル"));
-
 		final CsvEntityReader<RequiredPrice> reader = CsvEntityReader.newInstance(
 				new CsvReader(new StringReader("シンボル,名称,価格,出来高,日付,時刻\r\nAAAA,aaa,10\\,000,10,2009/10/28,10:24:00\r\nNULL,NULL,NULL,0,NULL,NULL"), cfg),
 				RequiredPrice.class
@@ -192,7 +187,10 @@ public class CsvEntityReaderTest {
 			assertThat(df.format(o1.date), is("2009/10/28 10:24:00"));
 
 			// Act
-			reader.read();
+			final CsvColumnException e = assertThrows(CsvColumnException.class, () -> {
+				reader.read();
+			});
+			assertThat(e.getMessage(), is(String.format("[line: %d] %s must not be null", 3, "シンボル")));
 		} finally {
 			reader.close();
 		}

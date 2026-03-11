@@ -66,7 +66,7 @@ public abstract class FieldUtils {
 	 * @throws SecurityException 
 	 */
 	public static final void setFieldValue(final Object bean, final Field field, final Object value) throws IOException {
-		if (!field.isAccessible()) {
+		if (!field.canAccess(bean)) {
 			field.setAccessible(true);
 		}
 		try {
@@ -90,7 +90,7 @@ public abstract class FieldUtils {
 	 * @throws SecurityException 
 	 */
 	public static final Object getFieldValue(final Object bean, final Field field) throws IOException {
-		if (!field.isAccessible()) {
+		if (!field.canAccess(bean)) {
 			field.setAccessible(true);
 		}
 		try {

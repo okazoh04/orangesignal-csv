@@ -227,7 +227,7 @@ public class LhaFile {
 		while (null != HeaderData) {
 			final LhaHeader header = LhaHeader.createInstance(HeaderData, property);
 			headers.addElement(header);
-			entryPoint.addElement(new Long(archive.position()));
+			entryPoint.addElement(Long.valueOf(archive.position()));
 
 			if (!rescueMode) {
 				archive.skip(header.getCompressedSize());
@@ -243,9 +243,9 @@ public class LhaFile {
 		for (int i = 0; i < headers.size(); i++) {
 			final LhaHeader header = headers.elementAt(i);
 			if (!hash.containsKey(header.getPath())) {
-				hash.put(header.getPath(), new Integer(i));
+				hash.put(header.getPath(), Integer.valueOf(i));
 			} else {
-				duplicate.addElement(new Integer(i));
+				duplicate.addElement(Integer.valueOf(i));
 			}
 		}
 

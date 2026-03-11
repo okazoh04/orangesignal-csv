@@ -16,10 +16,11 @@
 
 package com.orangesignal.csv;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.nullValue;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertThrows;
 
 import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
@@ -30,9 +31,7 @@ import java.io.StringReader;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 
 /**
  * {@link CsvReader} クラスの単体テストです。
@@ -40,9 +39,6 @@ import org.junit.rules.ExpectedException;
  * @author Koji Sugisawa
  */
 public final class CsvReaderTest {
-
-	@Rule
-	public ExpectedException exception = ExpectedException.none();
 
 	@Test
 	public void testCsvReaderReaderIntCsvConfig() throws IOException {
@@ -52,10 +48,9 @@ public final class CsvReaderTest {
 
 	@Test
 	public void testCsvReaderReaderIntCsvConfigIllegalArgumentException1() {
-		exception.expect(IllegalArgumentException.class);
 		final Reader reader = new StringReader("");
 		try {
-			new CsvReader(reader, 0, new CsvConfig());
+			assertThrows(IllegalArgumentException.class, () -> new CsvReader(reader, 0, new CsvConfig()));
 		} finally {
 			Csv.closeQuietly(reader);
 		}
@@ -63,10 +58,9 @@ public final class CsvReaderTest {
 
 	@Test
 	public void testCsvReaderReaderIntCsvConfigIllegalArgumentException2() {
-		exception.expect(IllegalArgumentException.class);
 		final Reader reader = new StringReader("");
 		try {
-			new CsvReader(reader, -8192, new CsvConfig());
+			assertThrows(IllegalArgumentException.class, () -> new CsvReader(reader, -8192, new CsvConfig()));
 		} finally {
 			Csv.closeQuietly(reader);
 		}
@@ -74,11 +68,10 @@ public final class CsvReaderTest {
 
 	@Test
 	public void testCsvReaderReaderIntCsvConfigIllegalArgumentException3() {
-		exception.expect(IllegalArgumentException.class);
-		exception.expectMessage("CsvConfig must not be null");
 		final Reader reader = new StringReader("");
 		try {
-			new CsvReader(reader, 8192, null);
+			final Throwable e = assertThrows(IllegalArgumentException.class, () -> new CsvReader(reader, 8192, null));
+			assertThat(e.getMessage(), is("CsvConfig must not be null"));
 		} finally {
 			Csv.closeQuietly(reader);
 		}
@@ -92,11 +85,10 @@ public final class CsvReaderTest {
 
 	@Test
 	public void testCsvReaderReaderCsvConfigIllegalArgumentException() {
-		exception.expect(IllegalArgumentException.class);
-		exception.expectMessage("CsvConfig must not be null");
 		final Reader reader = new StringReader("");
 		try {
-			new CsvReader(reader, null);
+			final Throwable e = assertThrows(IllegalArgumentException.class, () -> new CsvReader(reader, null));
+			assertThat(e.getMessage(), is("CsvConfig must not be null"));
 		} finally {
 			Csv.closeQuietly(reader);
 		}
@@ -110,10 +102,9 @@ public final class CsvReaderTest {
 
 	@Test
 	public void testCsvReaderReaderIntIllegalArgumentException1() {
-		exception.expect(IllegalArgumentException.class);
 		final Reader reader = new StringReader("");
 		try {
-			new CsvReader(reader, 0);
+			assertThrows(IllegalArgumentException.class, () -> new CsvReader(reader, 0));
 		} finally {
 			Csv.closeQuietly(reader);
 		}
@@ -121,10 +112,9 @@ public final class CsvReaderTest {
 
 	@Test
 	public void testCsvReaderReaderIntIllegalArgumentException2() {
-		exception.expect(IllegalArgumentException.class);
 		final Reader reader = new StringReader("");
 		try {
-			new CsvReader(reader, -8192);
+			assertThrows(IllegalArgumentException.class, () -> new CsvReader(reader, -8192));
 		} finally {
 			Csv.closeQuietly(reader);
 		}
@@ -731,12 +721,11 @@ public final class CsvReaderTest {
 	@Test
 	public void testClosed() throws IOException {
 		// Arrange
-		exception.expect(IOException.class);
-		exception.expectMessage("Reader closed");
 		final CsvReader reader = new CsvReader(new StringReader(""), new CsvConfig());
 		reader.close();
 		// Act
-		reader.readValues();
+		final Throwable e = assertThrows(IOException.class, () -> reader.readValues());
+		assertThat(e.getMessage(), is("Reader closed"));
 	}
 
 }

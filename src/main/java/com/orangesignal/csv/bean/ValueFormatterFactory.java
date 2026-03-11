@@ -53,7 +53,7 @@ public final class ValueFormatterFactory {
 			return new DefaultValueFormatter(converter);
 		}
 
-		final Locale locale = column.language().isEmpty() ? Locale.getDefault() : new Locale(column.language(), column.country());
+		final Locale locale = column.language().isEmpty() ? Locale.getDefault() : Locale.of(column.language(), column.country());
 		final String timezone = column.timezone();
 		final String currency = column.currency();
 

@@ -17,16 +17,16 @@
 package com.orangesignal.csv;
 
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.Arrays;
 import java.util.List;
 
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
+
+import static org.junit.Assert.assertThrows;
 
 /**
  * {@link CsvWriter} クラスの単体テストです。
@@ -34,9 +34,6 @@ import org.junit.rules.ExpectedException;
  * @author Koji Sugisawa
  */
 public class CsvWriterTest {
-
-	@Rule
-	public ExpectedException exception = ExpectedException.none();
 
 	@Test
 	public void testCsvWriterWriterIntCsvConfig() throws IOException {
@@ -47,30 +44,30 @@ public class CsvWriterTest {
 
 	@Test
 	public void testCsvWriterWriterIntCsvConfigIllegalArgumentException1() throws IOException {
-		// Arrange
-		exception.expect(IllegalArgumentException.class);
 		// Act
-		final CsvWriter writer = new CsvWriter(new StringWriter(), 0, new CsvConfig());
-		writer.close();
+		assertThrows(IllegalArgumentException.class, () -> {
+			final CsvWriter writer = new CsvWriter(new StringWriter(), 0, new CsvConfig());
+			writer.close();
+		});
 	}
 
 	@Test
 	public void testCsvWriterWriterIntCsvConfigIllegalArgumentException2() throws IOException {
-		// Arrange
-		exception.expect(IllegalArgumentException.class);
 		// Act
-		final CsvWriter writer = new CsvWriter(new StringWriter(), -8192, new CsvConfig());
-		writer.close();
+		assertThrows(IllegalArgumentException.class, () -> {
+			final CsvWriter writer = new CsvWriter(new StringWriter(), -8192, new CsvConfig());
+			writer.close();
+		});
 	}
 
 	@Test
 	public void testCsvWriterWriterIntCsvConfigIllegalArgumentException3() throws IOException {
-		// Arrange
-		exception.expect(IllegalArgumentException.class);
-		exception.expectMessage("CsvConfig must not be null");
 		// Act
-		final CsvWriter writer = new CsvWriter(new StringWriter(), 8192, null);
-		writer.close();
+		final IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> {
+			final CsvWriter writer = new CsvWriter(new StringWriter(), 8192, null);
+			writer.close();
+		});
+		assertThat(e.getMessage(), is("CsvConfig must not be null"));
 	}
 
 	@Test
@@ -82,12 +79,12 @@ public class CsvWriterTest {
 
 	@Test
 	public void testCsvWriterWriterCsvConfigIllegalArgumentException() throws IOException {
-		// Arrange
-		exception.expect(IllegalArgumentException.class);
-		exception.expectMessage("CsvConfig must not be null");
 		// Act
-		final CsvWriter writer = new CsvWriter(new StringWriter(), null);
-		writer.close();
+		final IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> {
+			final CsvWriter writer = new CsvWriter(new StringWriter(), null);
+			writer.close();
+		});
+		assertThat(e.getMessage(), is("CsvConfig must not be null"));
 	}
 
 	@Test
@@ -99,20 +96,20 @@ public class CsvWriterTest {
 
 	@Test
 	public void testCsvWriterWriterIntIllegalArgumentException1() throws IOException {
-		// Arrange
-		exception.expect(IllegalArgumentException.class);
 		// Act
-		final CsvWriter writer = new CsvWriter(new StringWriter(), 0);
-		writer.close();
+		assertThrows(IllegalArgumentException.class, () -> {
+			final CsvWriter writer = new CsvWriter(new StringWriter(), 0);
+			writer.close();
+		});
 	}
 
 	@Test
 	public void testCsvWriterWriterIntIllegalArgumentException2() throws IOException {
-		// Arrange
-		exception.expect(IllegalArgumentException.class);
 		// Act
-		final CsvWriter writer = new CsvWriter(new StringWriter(), -8192);
-		writer.close();
+		assertThrows(IllegalArgumentException.class, () -> {
+			final CsvWriter writer = new CsvWriter(new StringWriter(), -8192);
+			writer.close();
+		});
 	}
 
 	@Test
@@ -231,13 +228,14 @@ public class CsvWriterTest {
 	@Test
 	public void testClosed() throws IOException {
 		// Arrange
-		exception.expect(IOException.class);
-		exception.expectMessage("Stream closed");
 		final StringWriter sw = new StringWriter();
 		final CsvWriter writer = new CsvWriter(sw, new CsvConfig());
 		writer.close();
 		// Act
-		writer.flush();
+		final IOException e = assertThrows(IOException.class, () -> {
+			writer.flush();
+		});
+		assertThat(e.getMessage(), is("Stream closed"));
 	}
 
 }

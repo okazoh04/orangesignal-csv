@@ -17,7 +17,7 @@
 package com.orangesignal.csv.filters;
 
 import static org.hamcrest.core.IsInstanceOf.instanceOf;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 import java.util.regex.Pattern;
 

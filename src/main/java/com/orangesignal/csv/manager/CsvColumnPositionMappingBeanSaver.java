@@ -57,7 +57,7 @@ public class CsvColumnPositionMappingBeanSaver<T> extends AbstractCsvSaver<T, Co
 	 * @return このオブジェクトへの参照
 	 */
 	public CsvColumnPositionMappingBeanSaver<T> column(final String field) {
-		handler.addColumn(field);
+		handler.column(field);
 		return this;
 	}
 
@@ -69,7 +69,7 @@ public class CsvColumnPositionMappingBeanSaver<T> extends AbstractCsvSaver<T, Co
 	 * @return このオブジェクトへの参照
 	 */
 	public CsvColumnPositionMappingBeanSaver<T> column(final String field, final Format format) {
-		handler.addColumn(field, format);
+		handler.column(field, format);
 		return this;
 	}
 
@@ -81,7 +81,7 @@ public class CsvColumnPositionMappingBeanSaver<T> extends AbstractCsvSaver<T, Co
 	 * @return このオブジェクトへの参照
 	 */
 	public CsvColumnPositionMappingBeanSaver<T> column(final int position, final String field) {
-		handler.addColumn(position, field);
+		handler.column(position, field);
 		return this;
 	}
 
@@ -94,7 +94,7 @@ public class CsvColumnPositionMappingBeanSaver<T> extends AbstractCsvSaver<T, Co
 	 * @return このオブジェクトへの参照
 	 */
 	public CsvColumnPositionMappingBeanSaver<T> column(final int position, final String field, final Format format) {
-		handler.addColumn(position, field, format);
+		handler.column(position, field, format);
 		return this;
 	}
 

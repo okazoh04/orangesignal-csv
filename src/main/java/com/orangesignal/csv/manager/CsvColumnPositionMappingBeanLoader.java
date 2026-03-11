@@ -49,7 +49,7 @@ public class CsvColumnPositionMappingBeanLoader<T> extends AbstractCsvLoader<T, 
 	 * @return このオブジェクトへの参照
 	 */
 	public CsvColumnPositionMappingBeanLoader<T> column(final String field) {
-		getCsvListHandler().addColumn(field);
+		getCsvListHandler().column(field);
 		return this;
 	}
 
@@ -61,7 +61,7 @@ public class CsvColumnPositionMappingBeanLoader<T> extends AbstractCsvLoader<T, 
 	 * @return このオブジェクトへの参照
 	 */
 	public CsvColumnPositionMappingBeanLoader<T> column(final String field, final Format format) {
-		getCsvListHandler().addColumn(field, format);
+		getCsvListHandler().column(field, format);
 		return this;
 	}
 
@@ -73,7 +73,7 @@ public class CsvColumnPositionMappingBeanLoader<T> extends AbstractCsvLoader<T, 
 	 * @return このオブジェクトへの参照
 	 */
 	public CsvColumnPositionMappingBeanLoader<T> column(final int position, final String field) {
-		getCsvListHandler().addColumn(position, field);
+		getCsvListHandler().column(position, field);
 		return this;
 	}
 
@@ -86,7 +86,7 @@ public class CsvColumnPositionMappingBeanLoader<T> extends AbstractCsvLoader<T, 
 	 * @return このオブジェクトへの参照
 	 */
 	public CsvColumnPositionMappingBeanLoader<T> column(final int position, final String field, final Format format) {
-		getCsvListHandler().addColumn(position, field, format);
+		getCsvListHandler().column(position, field, format);
 		return this;
 	}
 

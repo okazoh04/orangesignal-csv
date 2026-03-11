@@ -409,7 +409,7 @@ final class LhaProperty {
 				} else if (token.equals(",")) {
 					if (stack.empty() || !stack.peek().equals("(")
 							&& !stack.peek().equals("[")) {
-						stack.push(new Integer(pos));
+						stack.push(Integer.valueOf(pos));
 					}
 				}
 				pos += token.length();
@@ -482,7 +482,7 @@ final class LhaProperty {
 					}
 				} else if (token.equals(",")) {
 					if (stack.empty() || !stack.peek().equals("(") && !stack.peek().equals("[")) {
-						stack.push(new Integer(pos));
+						stack.push(Integer.valueOf(pos));
 					}
 				}
 				pos += token.length();

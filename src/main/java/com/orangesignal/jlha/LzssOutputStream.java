@@ -150,9 +150,9 @@ public class LzssOutputStream extends OutputStream {
 		lastsearchret = NEEDSEARCH;
 
 		final Object[] arguments = new Object[LzssSearchMethodExtraArguments.length + 4];
-		arguments[0] = new Integer(dictionarySize);
-		arguments[1] = new Integer(maxMatch);
-		arguments[2] = new Integer(threshold);
+		arguments[0] = Integer.valueOf(dictionarySize);
+		arguments[1] = Integer.valueOf(maxMatch);
+		arguments[2] = Integer.valueOf(threshold);
 		arguments[3] = textBuffer;
 		for (int i = 0; i < LzssSearchMethodExtraArguments.length; i++) {
 			arguments[4 + i] = LzssSearchMethodExtraArguments[i];

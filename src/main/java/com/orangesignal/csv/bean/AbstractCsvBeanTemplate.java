@@ -18,6 +18,7 @@ package com.orangesignal.csv.bean;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.text.Format;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -286,10 +287,8 @@ public abstract class AbstractCsvBeanTemplate<T, O extends AbstractCsvBeanTempla
 	 */
 	public T createBean() throws IOException {
 		try {
-			return type.newInstance();
-		} catch (final IllegalAccessException e) {
-			throw new IOException("Cannot create " + type.getName() + ": " + e.getMessage(), e);
-		} catch (final InstantiationException e) {
+			return type.getDeclaredConstructor().newInstance();
+		} catch (final NoSuchMethodException | InvocationTargetException | IllegalAccessException | InstantiationException e) {
 			throw new IOException("Cannot create " + type.getName() + ": " + e.getMessage(), e);
 		}
 	}
