@@ -34,6 +34,7 @@ import com.orangesignal.csv.annotation.CsvColumns;
 import com.orangesignal.csv.annotation.CsvEntity;
 import com.orangesignal.csv.annotation.CsvColumnException;
 import com.orangesignal.csv.bean.CsvEntityTemplate;
+import com.orangesignal.csv.bean.ValueFormatter;
 
 /**
  * 区切り文字形式データ注釈要素 {@link CsvEntity} で注釈付けされた Java プログラム要素で区切り文字形式データアクセスを行う区切り文字形式出力ストリームを提供します。
@@ -286,9 +287,14 @@ public class CsvEntityWriter<T> implements Closeable, Flushable {
 			final CsvColumns columns = field.getAnnotation(CsvColumns.class);
 			if (columns != null) {
 				int arrayIndex = 0;
+				final List<ValueFormatter> parsers = template.getFieldColumnParsers(field.getName());
+				int columnIndex = 0;
 				for (final CsvColumn column : columns.value()) {
 					if (!column.access().isWriteable()) {
-						arrayIndex++;
+						columnIndex++;
+						if (field.getType().isArray()) {
+							arrayIndex++;
+						}
 						continue;
 					}
 					int pos = column.position();
@@ -305,7 +311,14 @@ public class CsvEntityWriter<T> implements Closeable, Flushable {
 						}
 						arrayIndex++;
 					}
-					values[pos] = template.objectToString(pos, o);
+
+					if (parsers != null && columnIndex < parsers.size()) {
+						values[pos] = parsers.get(columnIndex).format(o);
+					} else {
+						values[pos] = template.objectToString(pos, o);
+					}
+					columnIndex++;
+
 					if (values[pos] == null && !column.defaultValue().isEmpty()) {
 						// デフォルト値が指定されていて、値がない場合はデフォルト値を代入します。
 						values[pos] = column.defaultValue();
@@ -313,8 +326,7 @@ public class CsvEntityWriter<T> implements Closeable, Flushable {
 					if (values[pos] == null && column.required()) {
 						throw new CsvColumnException(String.format("%s must not be null", columnNames.get(pos)), entity);
 					}
-				}
-			}
+				}			}
 			final CsvColumn column = field.getAnnotation(CsvColumn.class);
 			if (column != null && column.access().isWriteable()) {
 				int pos = column.position();

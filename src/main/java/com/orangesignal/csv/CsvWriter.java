@@ -159,10 +159,9 @@ public class CsvWriter implements Closeable, Flushable {
 					boolean enclose = false;	// 項目を囲み文字で囲むかどうか
 					if (value == null) {
 						// 項目値が null の場合に NULL 文字列が有効であれば NULL 文字列へ置換えます。
-						if (cfg.getNullString() == null) { 
-							continue;
+						if (cfg.getNullString() != null) {
+							value = cfg.getNullString();
 						}
-						value = cfg.getNullString();
 					} else if (!cfg.isQuoteDisabled()) {
 						// 囲み文字が有効な場合は、囲み文字で囲むべきかどうか判断します。
 						switch (cfg.getQuotePolicy()) {
@@ -178,15 +177,8 @@ public class CsvWriter implements Closeable, Flushable {
 										|| value.indexOf('\r') != -1 || value.indexOf('\n') != -1;
 								break;
 						}
-					} else {
-						// 囲み文字が無効な場合に、項目値に区切り文字がある場合、エスケープします。
-						final String s = escapeSeparator(value);
-						if (!value.equals(s) && cfg.isEscapeDisabled()) {
-							throw new IOException();
-						}
-						value = s;
 					}
-	
+
 					if (enclose) {
 						buf.append(cfg.getQuote());
 						final String s = escapeQuote(value);
@@ -195,8 +187,22 @@ public class CsvWriter implements Closeable, Flushable {
 						}
 						buf.append(s);
 						buf.append(cfg.getQuote());
+					} else if (value != null) {
+						if (!cfg.isEscapeDisabled()) {
+							final char escape = cfg.getEscape();
+							final char separator = cfg.getSeparator();
+							for (int j = 0; j < value.length(); j++) {
+								final char c = value.charAt(j);
+								if (c == separator || c == escape) {
+									buf.append(escape);
+								}
+								buf.append(c);
+							}
+						} else {
+							buf.append(value);
+						}
 					} else {
-						buf.append(value);
+						// value が null の場合（nullString も null の場合）は何もしません。
 					}
 				}
 			}
@@ -243,6 +249,9 @@ public class CsvWriter implements Closeable, Flushable {
 	 * @return エスケープされた文字列
 	 */
 	private String escapeSeparator(final String value) {
+		if (value == null) {
+			return null;
+		}
 		return value.replace(
 				new StringBuilder(1).append(cfg.getSeparator()),
 				new StringBuilder(2).append(cfg.getEscape()).append(cfg.getSeparator())
@@ -256,6 +265,9 @@ public class CsvWriter implements Closeable, Flushable {
 	 * @return エスケープされた文字列
 	 */
 	private String escapeQuote(final String value) {
+		if (value == null) {
+			return null;
+		}
 		return value.replace(
 				new StringBuilder(1).append(cfg.getQuote()),
 				new StringBuilder(2).append(cfg.getEscape()).append(cfg.getQuote())

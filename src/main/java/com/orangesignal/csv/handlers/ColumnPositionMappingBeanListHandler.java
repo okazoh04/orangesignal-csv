@@ -24,7 +24,9 @@ import java.util.Map;
 
 import com.orangesignal.csv.CsvReader;
 import com.orangesignal.csv.CsvWriter;
+import com.orangesignal.csv.bean.CsvColumnPositionMappingBeanOperation;
 import com.orangesignal.csv.bean.CsvColumnPositionMappingBeanTemplate;
+import com.orangesignal.csv.bean.ValueFormatter;
 import com.orangesignal.csv.filters.CsvValueFilter;
 import com.orangesignal.csv.io.CsvColumnPositionMappingBeanReader;
 import com.orangesignal.csv.io.CsvColumnPositionMappingBeanWriter;
@@ -35,7 +37,7 @@ import com.orangesignal.csv.io.CsvColumnPositionMappingBeanWriter;
  * @author Koji Sugisawa
  * @see com.orangesignal.csv.manager.CsvColumnPositionMappingBeanManager
  */
-public class ColumnPositionMappingBeanListHandler<T> extends AbstractBeanListHandler<T, CsvColumnPositionMappingBeanTemplate<T>, ColumnPositionMappingBeanListHandler<T>> {
+public class ColumnPositionMappingBeanListHandler<T> extends AbstractBeanListHandler<T, CsvColumnPositionMappingBeanTemplate<T>, ColumnPositionMappingBeanListHandler<T>> implements CsvColumnPositionMappingBeanOperation<ColumnPositionMappingBeanListHandler<T>> {
 
 	/**
 	 * 区切り文字形式データの列見出し (ヘッダ) 行を出力するかどうかを保持します。
@@ -58,14 +60,50 @@ public class ColumnPositionMappingBeanListHandler<T> extends AbstractBeanListHan
 
 	// ------------------------------------------------------------------------
 
+	@Override
+	public ColumnPositionMappingBeanListHandler<T> column(final String field) {
+		return column(field, (Format) null);
+	}
+
+	@Override
+	public ColumnPositionMappingBeanListHandler<T> column(final String field, final Format format) {
+		template.column(field, format);
+		return this;
+	}
+
+	@Override
+	public ColumnPositionMappingBeanListHandler<T> column(final String field, final ValueFormatter format) {
+		template.column(field, format);
+		return this;
+	}
+
+	@Override
+	public ColumnPositionMappingBeanListHandler<T> column(final int position, final String field) {
+		return column(position, field, (Format) null);
+	}
+
+	@Override
+	public ColumnPositionMappingBeanListHandler<T> column(final int position, final String field, final Format format) {
+		template.column(position, field, format);
+		return this;
+	}
+
+	@Override
+	public ColumnPositionMappingBeanListHandler<T> column(final int position, final String field, final ValueFormatter format) {
+		template.column(position, field, format);
+		return this;
+	}
+
 	/**
 	 * 指定された Java プログラム要素のフィールド名を現在の最後の項目位置としてマップへ追加します。
 	 * 
 	 * @param field Java プログラム要素のフィールド名
 	 * @return このオブジェクトへの参照
+	 * @deprecated {@link #column(String)} を使用してください。
 	 */
+	@Deprecated
 	public ColumnPositionMappingBeanListHandler<T> addColumn(final String field) {
-		return addColumn(field, null);
+		return column(field);
 	}
 
 	/**
@@ -75,10 +113,11 @@ public class ColumnPositionMappingBeanListHandler<T> extends AbstractBeanListHan
 	 * @param format フィールドを処理するフォーマットオブジェクト (オプション)
 	 * @return このオブジェクトへの参照
 	 * @since 1.2
+	 * @deprecated {@link #column(String, Format)} を使用してください。
 	 */
+	@Deprecated
 	public ColumnPositionMappingBeanListHandler<T> addColumn(final String field, final Format format) {
-		template.column(field, format);
-		return this;
+		return column(field, format);
 	}
 
 	/**
@@ -87,9 +126,11 @@ public class ColumnPositionMappingBeanListHandler<T> extends AbstractBeanListHan
 	 * @param position 項目位置
 	 * @param field Java プログラム要素のフィールド名
 	 * @return このオブジェクトへの参照
+	 * @deprecated {@link #column(int, String)} を使用してください。
 	 */
+	@Deprecated
 	public ColumnPositionMappingBeanListHandler<T> addColumn(final int position, final String field) {
-		return addColumn(position, field, null);
+		return column(position, field);
 	}
 
 	/**
@@ -100,10 +141,11 @@ public class ColumnPositionMappingBeanListHandler<T> extends AbstractBeanListHan
 	 * @param format フィールドを処理するフォーマットオブジェクト (オプション)
 	 * @return このオブジェクトへの参照
 	 * @since 1.2
+	 * @deprecated {@link #column(int, String, Format)} を使用してください。
 	 */
+	@Deprecated
 	public ColumnPositionMappingBeanListHandler<T> addColumn(final int position, final String field, final Format format) {
-		template.column(position, field, format);
-		return this;
+		return column(position, field, format);
 	}
 
 	/**

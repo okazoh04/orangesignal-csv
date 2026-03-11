@@ -29,6 +29,7 @@ import java.sql.NClob;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.SQLFeatureNotSupportedException;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 import org.junit.BeforeClass;
@@ -793,7 +794,7 @@ public class CsvResultSetTest {
 	public void testGetObjectIntMapOfStringClassOfQ() throws Exception {
 		final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
 		try {
-			rs.getObject(1, null);
+			rs.getObject(1, (Map<String, Class<?>>) null);
 		} finally {
 			rs.close();
 		}
@@ -823,7 +824,7 @@ public class CsvResultSetTest {
 	public void testGetObjectStringMapOfStringClassOfQ() throws Exception {
 		final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
 		try {
-			rs.getObject("id", null);
+			rs.getObject("id", (Map<String, Class<?>>) null);
 		} finally {
 			rs.close();
 		}

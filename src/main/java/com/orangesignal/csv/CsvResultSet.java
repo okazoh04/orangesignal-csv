@@ -1780,4 +1780,24 @@ public class CsvResultSet implements ResultSet {
 		throw new SQLFeatureNotSupportedException("isWrapperFor(Class) not supported");
 	}
 
+	/**
+	 * {@inheritDoc}
+	 * この実装は常に {@link SQLFeatureNotSupportedException} をスローします。
+	 * @since 2.2.2
+	 */
+	@Override
+	public <T> T getObject(final int columnIndex, final Class<T> type) throws SQLException {
+		throw new SQLFeatureNotSupportedException("getObject(int, Class) not supported");
+	}
+
+	/**
+	 * {@inheritDoc}
+	 * この実装は常に {@link SQLFeatureNotSupportedException} をスローします。
+	 * @since 2.2.2
+	 */
+	@Override
+	public <T> T getObject(final String columnLabel, final Class<T> type) throws SQLException {
+		throw new SQLFeatureNotSupportedException("getObject(String, Class) not supported");
+	}
+
 }

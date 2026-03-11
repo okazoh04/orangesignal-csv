@@ -48,6 +48,16 @@ public interface CsvColumnPositionMappingBeanOperation<H> {
 	H column(String field, Format format);
 
 	/**
+	 * 指定された Java プログラム要素のフィールド名を現在の最後の項目位置としてマップへ追加します。
+	 * 
+	 * @param field Java プログラム要素のフィールド名
+	 * @param format フィールドを処理するストラテジー (オプション)
+	 * @return このオブジェクトへの参照
+	 * @since 3.0.0
+	 */
+	H column(String field, ValueFormatter format);
+
+	/**
 	 * 指定された項目位置と Java プログラム要素のフィールド名をマップへ追加します。
 	 * 
 	 * @param position 項目位置
@@ -59,12 +69,23 @@ public interface CsvColumnPositionMappingBeanOperation<H> {
 	/**
 	 * 指定された項目位置と Java プログラム要素のフィールド名をマップへ追加します。
 	 * 
-	 * @param position 項目名
+	 * @param position 項目位置
 	 * @param field Java プログラム要素のフィールド名
 	 * @param format フィールドを処理するフォーマットオブジェクト (オプション)
 	 * @return このオブジェクトへの参照
 	 */
 	H column(int position, String field, Format format);
+
+	/**
+	 * 指定された項目位置と Java プログラム要素のフィールド名をマップへ追加します。
+	 * 
+	 * @param position 項目位置
+	 * @param field Java プログラム要素のフィールド名
+	 * @param format フィールドを処理するストラテジー (オプション)
+	 * @return このオブジェクトへの参照
+	 * @since 3.0.0
+	 */
+	H column(int position, String field, ValueFormatter format);
 
 	/**
 	 * 項目位置と Java プログラム要素のフィールド名のマップを設定します。

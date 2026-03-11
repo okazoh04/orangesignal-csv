@@ -255,7 +255,7 @@ public class CsvEntityReader<T> implements Closeable {
 						}
 						String value;
 						final int pos = getPosition(column, field, columnNames);
-						if (pos != -1) {
+						if (pos != -1 && pos < values.size()) {
 							value = values.get(pos);
 						} else {
 							value = null;
@@ -268,7 +268,11 @@ public class CsvEntityReader<T> implements Closeable {
 							// 必須項目の場合に、値がない場合は例外をスローします。
 							throw new CsvColumnException(String.format("[line: %d] %s must not be null", reader.getStartLineNumber(), columnNames.get(pos)), values);
 						}
-						Array.set(object, arrayIndex++, template.stringToObject(field, value));
+						try {
+							Array.set(object, arrayIndex++, template.stringToObject(field, value));
+						} catch (final IllegalArgumentException e) {
+							throw new CsvColumnException(String.format("[line: %d] %s", reader.getStartLineNumber(), e.getMessage()), e, values);
+						}
 					}
 				} else {
 					final StringBuilder sb = new StringBuilder();
@@ -277,12 +281,18 @@ public class CsvEntityReader<T> implements Closeable {
 							continue;
 						}
 						final int pos = getPosition(column, field, columnNames);
-						if (pos != -1) {
+						if (pos != -1 && pos < values.size()) {
 							final String s = values.get(pos);
 							if (s != null) {
+								if (sb.length() > 0) {
+									sb.append(' ');
+								}
 								sb.append(s);
 							} else if (!column.defaultValue().isEmpty()) {
 								// デフォルト値が指定されていて、値がない場合はデフォルト値を代入します。
+								if (sb.length() > 0) {
+									sb.append(' ');
+								}
 								sb.append(column.defaultValue());
 							} else if (column.required()) {
 								// 必須項目の場合に、値がない場合は例外をスローします。
@@ -290,14 +300,18 @@ public class CsvEntityReader<T> implements Closeable {
 							}
 						}
 					}
-					object = template.stringToObject(field, sb.toString());
+					try {
+						object = template.stringToObject(field, sb.toString());
+					} catch (final IllegalArgumentException e) {
+						throw new CsvColumnException(String.format("[line: %d] %s", reader.getStartLineNumber(), e.getMessage()), e, values);
+					}
 				}
 			}
 			final CsvColumn column = field.getAnnotation(CsvColumn.class);
 			if (column != null && column.access().isReadable()) {
 				final int pos = getPosition(column, field, columnNames);
 				if (pos != -1) {
-					String value = values.get(pos);
+					String value = pos < values.size() ? values.get(pos) : null;
 					if (value == null && !column.defaultValue().isEmpty()) {
 						// デフォルト値が指定されていて、値がない場合はデフォルト値を代入します。
 						value = column.defaultValue();
@@ -306,7 +320,11 @@ public class CsvEntityReader<T> implements Closeable {
 						// 必須項目の場合に、値がない場合は例外をスローします。
 						throw new CsvColumnException(String.format("[line: %d] %s must not be null", reader.getStartLineNumber(), columnNames.get(pos)), values);
 					}
-					object = template.stringToObject(field, value);
+					try {
+						object = template.stringToObject(field, value);
+					} catch (final IllegalArgumentException e) {
+						throw new CsvColumnException(String.format("[line: %d] %s", reader.getStartLineNumber(), e.getMessage()), e, values);
+					}
 				}
 			}
 			if (object != null) {

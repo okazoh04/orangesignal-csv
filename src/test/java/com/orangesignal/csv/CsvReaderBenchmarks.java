@@ -26,6 +26,7 @@ import org.supercsv.io.CsvListReader;
 import org.supercsv.prefs.CsvPreference;
 
 import com.carrotsearch.junitbenchmarks.AbstractBenchmark;
+import com.opencsv.exceptions.CsvValidationException;
 import com.orangesignal.jlha.LhaFile;
 import com.orangesignal.jlha.LhaHeader;
 
@@ -64,13 +65,13 @@ public class CsvReaderBenchmarks extends AbstractBenchmark {
 	}
 
 	@Test
-	public void testOpenCSV() throws IOException {
+	public void testOpenCSV() throws IOException, CsvValidationException {
 		final LhaFile lhaFile = new LhaFile(new File("src/test/resources/", "ken_all.lzh"));
 		try {
 			final LhaHeader[] entries = lhaFile.getEntries();
 			for (final LhaHeader entry : entries) {
-				final au.com.bytecode.opencsv.CSVReader reader =
-						new au.com.bytecode.opencsv.CSVReader(new InputStreamReader(lhaFile.getInputStream(entry), "Windows-31J"), ',', '"');
+				final com.opencsv.CSVReader reader =
+						new com.opencsv.CSVReader(new InputStreamReader(lhaFile.getInputStream(entry), "Windows-31J"));
 				try {
 					String[] values;
 					while ((values = reader.readNext()) != null) {

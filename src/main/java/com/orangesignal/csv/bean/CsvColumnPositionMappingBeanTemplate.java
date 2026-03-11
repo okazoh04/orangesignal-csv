@@ -76,7 +76,7 @@ public class CsvColumnPositionMappingBeanTemplate<T> extends AbstractCsvBeanTemp
 
 	@Override
 	public CsvColumnPositionMappingBeanTemplate<T> column(final String field) {
-		return column(field, null);
+		return column(field, (Format) null);
 	}
 
 	@Override
@@ -85,12 +85,27 @@ public class CsvColumnPositionMappingBeanTemplate<T> extends AbstractCsvBeanTemp
 	}
 
 	@Override
+	public CsvColumnPositionMappingBeanTemplate<T> column(final String field, final ValueFormatter format) {
+		return column(getMaxColumnPosition() + 1, field, format);
+	}
+
+	@Override
 	public CsvColumnPositionMappingBeanTemplate<T> column(final int position, final String field) {
-		return column(position, field, null);
+		return column(position, field, (Format) null);
 	}
 
 	@Override
 	public CsvColumnPositionMappingBeanTemplate<T> column(final int position, final String field, final Format format) {
+		columnMapping.put(position, field);
+		if (format != null) {
+			setValueParser(field, format);
+			setValueFormatter(Integer.valueOf(position), format);
+		}
+		return this;
+	}
+
+	@Override
+	public CsvColumnPositionMappingBeanTemplate<T> column(final int position, final String field, final ValueFormatter format) {
 		columnMapping.put(position, field);
 		if (format != null) {
 			setValueParser(field, format);

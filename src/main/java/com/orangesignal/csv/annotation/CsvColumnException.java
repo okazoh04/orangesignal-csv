@@ -45,6 +45,18 @@ public class CsvColumnException extends IOException {
 	}
 
 	/**
+	 * 指定された詳細メッセージ、原因となった例外および原因となったオブジェクトを持つ {@link CsvColumnException} を構築します。
+	 * 
+	 * @param message 詳細メッセージ
+	 * @param cause 原因となった例外
+	 * @param object 原因となったオブジェクト
+	 */
+	public CsvColumnException(final String message, final Throwable cause, final Object object) {
+		super(message, cause);
+		this.object = object;
+	}
+
+	/**
 	 * 原因となったオブジェクトを返します。
 	 * 
 	 * @return 原因となったオブジェクトまたは {@code null}

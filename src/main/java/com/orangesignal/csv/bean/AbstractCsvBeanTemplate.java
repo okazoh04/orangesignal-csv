@@ -46,9 +46,27 @@ public abstract class AbstractCsvBeanTemplate<T, O extends AbstractCsvBeanTempla
 	private Map<String, Format> valueParserMapping = new HashMap<String, Format>();
 
 	/**
+	 * Java プログラム要素のフィールド名と項目値を解析するストラテジーのマップを保持します。
+	 * @since 3.0.0
+	 */
+	private Map<String, ValueFormatter> valueParserMapping2 = new HashMap<String, ValueFormatter>();
+
+	/**
+	 * 複数の項目を持つフィールドのカラムごとのパース用ストラテジーのマップを保持します。
+	 * @since 3.0.0
+	 */
+	private Map<String, List<ValueFormatter>> fieldColumnParsers = new HashMap<String, List<ValueFormatter>>();
+
+	/**
 	 * 項目名 (または項目位置) と項目値へ書式化するオブジェクトのマップを保持します。
 	 */
 	private Map<Object, Format> valueFormatterMapping = new HashMap<Object, Format>();
+
+	/**
+	 * 項目名 (または項目位置) と項目値へ書式化するストラテジーのマップを保持します。
+	 * @since 3.0.0
+	 */
+	private Map<Object, ValueFormatter> valueFormatterMapping2 = new HashMap<Object, ValueFormatter>();
 
 	/**
 	 * 区切り文字形式データの項目値コンバータを保持します。
@@ -136,6 +154,16 @@ public abstract class AbstractCsvBeanTemplate<T, O extends AbstractCsvBeanTempla
 	}
 
 	/**
+	 * 区切り文字形式データの項目値コンバータを返します。
+	 * 
+	 * @return 区切り文字形式データの項目値コンバータ
+	 * @since 3.0.0
+	 */
+	public CsvValueConverter getValueConverter() {
+		return valueConverter;
+	}
+
+	/**
 	 * 区切り文字形式データの項目値コンバータを設定します。
 	 * 
 	 * @param valueConverter 区切り文字形式データの項目値コンバータ
@@ -197,6 +225,39 @@ public abstract class AbstractCsvBeanTemplate<T, O extends AbstractCsvBeanTempla
 	}
 
 	/**
+	 * 指定された Java プログラム要素のフィールド名と項目値を解析するストラテジーをマップへ追加します。
+	 * 
+	 * @param field Java プログラム要素のフィールド名
+	 * @param parser 項目値を解析するストラテジー
+	 * @since 3.0.0
+	 */
+	public void setValueParser(final String field, final ValueFormatter parser) {
+		valueParserMapping2.put(field, parser);
+	}
+
+	/**
+	 * 指定された Java プログラム要素のフィールド名に対して、複数のカラム用パースストラテジーを追加します。
+	 * 
+	 * @param field Java プログラム要素のフィールド名
+	 * @param parsers カラムごとのパース用ストラテジーのリスト
+	 * @since 3.0.0
+	 */
+	public void setFieldColumnParsers(final String field, final List<ValueFormatter> parsers) {
+		fieldColumnParsers.put(field, parsers);
+	}
+
+	/**
+	 * 指定された Java プログラム要素のフィールド名に対するカラムごとのパース用ストラテジーのリストを返します。
+	 * 
+	 * @param field Java プログラム要素のフィールド名
+	 * @return カラムごとのパース用ストラテジーのリスト。存在しない場合は {@code null}
+	 * @since 3.0.0
+	 */
+	public List<ValueFormatter> getFieldColumnParsers(final String field) {
+		return fieldColumnParsers.get(field);
+	}
+
+	/**
 	 * 指定された項目名 (または項目位置) と項目値へ書式化するオブジェクトをマップへ追加します。
 	 * 
 	 * @param column 項目名 (または項目位置)
@@ -204,6 +265,17 @@ public abstract class AbstractCsvBeanTemplate<T, O extends AbstractCsvBeanTempla
 	 */
 	public void setValueFormatter(final Object column, final Format formatter) {
 		valueFormatterMapping.put(column, formatter);
+	}
+
+	/**
+	 * 指定された項目名 (または項目位置) と項目値へ書式化するストラテジーをマップへ追加します。
+	 * 
+	 * @param column 項目名 (または項目位置)
+	 * @param formatter 項目値へ書式化するストラテジー
+	 * @since 3.0.0
+	 */
+	public void setValueFormatter(final Object column, final ValueFormatter formatter) {
+		valueFormatterMapping2.put(column, formatter);
 	}
 
 	/**
@@ -256,6 +328,17 @@ public abstract class AbstractCsvBeanTemplate<T, O extends AbstractCsvBeanTempla
 	 * @return 変換された項目値
 	 */
 	public Object stringToObject(final Field field, final String value) {
+		final List<ValueFormatter> parsers = getFieldColumnParsers(field.getName());
+		final Class<?> type = field.getType();
+		if (parsers != null && !parsers.isEmpty()) {
+			return new MultiColumnValueFormatter(parsers).parse(value, type.isArray() ? type.getComponentType() : type);
+		}
+
+		final ValueFormatter formatter = valueParserMapping2.get(field.getName());
+		if (formatter != null) {
+			return formatter.parse(value, field.getType());
+		}
+
 		final Format format = valueParserMapping.get(field.getName());
 		if (format != null) {
 			if (value == null || value.isEmpty()) {
@@ -267,7 +350,6 @@ public abstract class AbstractCsvBeanTemplate<T, O extends AbstractCsvBeanTempla
 				throw new IllegalArgumentException(String.format("Unable to parse the %s: %s", field.getName(), value), e);
 			}
 		}
-		final Class<?> type = field.getType();
 		return valueConverter.convert(value, type.isArray() ? type.getComponentType() : type);
 	}
 
@@ -281,6 +363,11 @@ public abstract class AbstractCsvBeanTemplate<T, O extends AbstractCsvBeanTempla
 	 * @return 文字列の項目値
 	 */
 	public String objectToString(final Object column, final Object obj) {
+		final ValueFormatter formatter = valueFormatterMapping2.get(column);
+		if (formatter != null) {
+			return formatter.format(obj);
+		}
+
 		final Format format = valueFormatterMapping.get(column);
 		if (format != null) {
 			if (obj == null) {

@@ -26,6 +26,7 @@ import com.orangesignal.csv.CsvReader;
 import com.orangesignal.csv.CsvWriter;
 import com.orangesignal.csv.bean.CsvColumnNameMappingBeanOperation;
 import com.orangesignal.csv.bean.CsvColumnNameMappingBeanTemplate;
+import com.orangesignal.csv.bean.ValueFormatter;
 import com.orangesignal.csv.filters.CsvNamedValueFilter;
 import com.orangesignal.csv.io.CsvColumnNameMappingBeanReader;
 import com.orangesignal.csv.io.CsvColumnNameMappingBeanWriter;
@@ -61,11 +62,17 @@ public class ColumnNameMappingBeanListHandler<T> extends AbstractBeanListHandler
 
 	@Override
 	public ColumnNameMappingBeanListHandler<T> column(final String column, final String field) {
-		return column(column, field, null);
+		return column(column, field, (Format) null);
 	}
 
 	@Override
 	public ColumnNameMappingBeanListHandler<T> column(final String column, final String field, final Format format) {
+		template.column(column, field, format);
+		return this;
+	}
+
+	@Override
+	public ColumnNameMappingBeanListHandler<T> column(final String column, final String field, final ValueFormatter format) {
 		template.column(column, field, format);
 		return this;
 	}

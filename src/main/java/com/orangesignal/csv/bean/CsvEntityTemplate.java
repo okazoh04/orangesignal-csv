@@ -17,20 +17,14 @@
 package com.orangesignal.csv.bean;
 
 import java.lang.reflect.Field;
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
 import java.text.Format;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Currency;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.SortedMap;
-import java.util.TimeZone;
 import java.util.TreeMap;
 
 import com.orangesignal.csv.annotation.CsvColumn;
@@ -225,20 +219,55 @@ public class CsvEntityTemplate<T> extends AbstractCsvBeanTemplate<T, CsvEntityTe
 		for (final Field f : fields) {
 			final CsvColumns columns = f.getAnnotation(CsvColumns.class);
 			if (columns != null) {
+				final List<ValueFormatter> parsers = new ArrayList<ValueFormatter>();
+				final StringBuilder pattern = new StringBuilder();
+				String language = null;
+				String country = null;
+				String timezone = null;
 				for (final CsvColumn column : columns.value()) {
-					final Format format = createFormat(column, f);
-					if (format != null) {
-						setValueParser(f.getName(), format);
-						setValueFormatter(getPosition(column, f, names), format);
+					if (!column.format().isEmpty()) {
+						if (pattern.length() > 0) {
+							pattern.append(' ');
+						}
+						pattern.append(column.format());
+						if (language == null && !column.language().isEmpty()) {
+							language = column.language();
+						}
+						if (country == null && !column.country().isEmpty()) {
+							country = column.country();
+						}
+						if (timezone == null && !column.timezone().isEmpty()) {
+							timezone = column.timezone();
+						}
+					}
+					final ValueFormatter vf = ValueFormatterFactory.createValueFormatter(column, f.getType(), getValueConverter());
+					if (vf != null) {
+						setValueParser(f.getName(), vf);
+						final int pos = getPosition(column, f, names);
+						if (pos != -1) {
+							setValueFormatter(pos, vf);
+						}
+						parsers.add(vf);
 					}
 				}
+				if (pattern.length() > 0) {
+					final Locale locale = language != null ? (country != null ? new Locale(language, country) : new Locale(language)) : null;
+					final ValueFormatter combined = ValueFormatterFactory.createValueFormatter(pattern.toString(), f.getType(), locale, timezone, null, getValueConverter());
+					if (combined != null) {
+						parsers.add(combined);
+					}
+				}
+				setFieldColumnParsers(f.getName(), parsers);
 			}
 			final CsvColumn column = f.getAnnotation(CsvColumn.class);
 			if (column != null) {
-				final Format format = createFormat(column, f);
-				if (format != null) {
-					setValueParser(f.getName(), format);
-					setValueFormatter(getPosition(column, f, names), format);
+				final ValueFormatter vf = ValueFormatterFactory.createValueFormatter(column, f.getType(), getValueConverter());
+				if (vf != null) {
+					setValueParser(f.getName(), vf);
+					final int pos = getPosition(column, f, names);
+					if (pos != -1) {
+						setValueFormatter(pos, vf);
+					}
 				}
 			}
 		}
@@ -253,38 +282,11 @@ public class CsvEntityTemplate<T> extends AbstractCsvBeanTemplate<T, CsvEntityTe
 		if (pos < 0 && names != null) {
 			pos = names.indexOf(defaultIfEmpty(column.name(), f.getName()));
 		}
-		// 項目名と項目位置のどちらも使用できない場合は例外をスローします。
-		if (pos == -1) {
-			throw new IllegalStateException(String.format("Invalid CsvColumn field %s", f.getName()));
-		}
 		return pos;
 	}
 
 	public static String defaultIfEmpty(final String str, final String defaultStr) {
 		return str == null || str.isEmpty() ? defaultStr : str;
-	}
-
-	// ------------------------------------------------------------------------
-
-	private static Format createFormat(final CsvColumn column, final Field f) {
-		final String pattern = column.format();
-		if (pattern.isEmpty()) {
-			return null;
-		}
-
-		final Locale locale = column.language().isEmpty() ? Locale.getDefault() : new Locale(column.language(), column.country());
-		if (Date.class.isAssignableFrom(f.getType())) {
-			final SimpleDateFormat format = new SimpleDateFormat(pattern, locale);
-			if (!column.timezone().isEmpty()) {
-				format.setTimeZone(TimeZone.getTimeZone(column.timezone()));
-			}
-			return format;
-		}
-		final DecimalFormat format = new DecimalFormat(pattern, DecimalFormatSymbols.getInstance(locale));
-		if (!column.currency().isEmpty()) {
-			format.setCurrency(Currency.getInstance(column.currency()));
-		}
-		return format;
 	}
 
 }

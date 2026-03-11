@@ -19,11 +19,32 @@ package com.orangesignal.csv.bean;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.net.InetAddress;
+import java.net.URI;
+import java.net.UnknownHostException;
 import java.text.DateFormat;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.MonthDay;
+import java.time.OffsetDateTime;
+import java.time.OffsetTime;
+import java.time.Year;
+import java.time.YearMonth;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.TemporalAccessor;
 import java.util.Collections;
+import java.util.Currency;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HexFormat;
+import java.util.Locale;
 import java.util.Map;
+import java.util.UUID;
 
 /**
  * {@link CsvValueConverter} を実装したデフォルトのシンプルな実装クラスを提供します。
@@ -73,6 +94,11 @@ public class SimpleCsvValueConverter implements CsvValueConverter {
 	private DateFormat dateFormat;
 
 	/**
+	 * 日時書式 (Java 8) を保持します。
+	 */
+	private DateTimeFormatter dateTimeFormatter;
+
+	/**
 	 * デフォルトコンストラクタです。
 	 */
 	public SimpleCsvValueConverter() {
@@ -91,6 +117,22 @@ public class SimpleCsvValueConverter implements CsvValueConverter {
 	 * @param dateFormat 日時書式
 	 */
 	public void setDateFormat(final DateFormat dateFormat) { this.dateFormat = dateFormat; }
+
+	/**
+	 * 日時書式 (Java 8) を返します。
+	 * 
+	 * @return 日時書式 (Java 8)
+	 * @since 2.2.2
+	 */
+	public DateTimeFormatter getDateTimeFormatter() { return dateTimeFormatter; }
+
+	/**
+	 * 日時書式 (Java 8) を設定します。
+	 * 
+	 * @param dateTimeFormatter 日時書式 (Java 8)
+	 * @since 2.2.2
+	 */
+	public void setDateTimeFormatter(final DateTimeFormatter dateTimeFormatter) { this.dateTimeFormatter = dateTimeFormatter; }
 
 	@Override
 	public Object convert(final String str, final Class<?> type) {
@@ -118,8 +160,6 @@ public class SimpleCsvValueConverter implements CsvValueConverter {
 			}
 		} else if (type.equals(Byte.TYPE) || type.equals(Byte.class)) {
 			return Byte.valueOf(str);
-//		} else if (type.equals(Character.TYPE) || type.equals(Character.class)) {
-//			return Character.valueOf(str);
 		} else if (type.equals(Short.TYPE) || type.equals(Short.class)) {
 			return Short.valueOf(str);
 		} else if (type.equals(Integer.TYPE) || type.equals(Integer.class)) {
@@ -140,14 +180,50 @@ public class SimpleCsvValueConverter implements CsvValueConverter {
 			} catch (Exception e) {
 				throw new IllegalArgumentException(e.getMessage(), e);
 			}
+		} else if (type.equals(LocalDate.class)) {
+			return dateTimeFormatter != null ? LocalDate.parse(str, dateTimeFormatter) : LocalDate.parse(str);
+		} else if (type.equals(LocalTime.class)) {
+			return dateTimeFormatter != null ? LocalTime.parse(str, dateTimeFormatter) : LocalTime.parse(str);
+		} else if (type.equals(LocalDateTime.class)) {
+			return dateTimeFormatter != null ? LocalDateTime.parse(str, dateTimeFormatter) : LocalDateTime.parse(str);
+		} else if (type.equals(ZonedDateTime.class)) {
+			return dateTimeFormatter != null ? ZonedDateTime.parse(str, dateTimeFormatter) : ZonedDateTime.parse(str);
+		} else if (type.equals(OffsetDateTime.class)) {
+			return dateTimeFormatter != null ? OffsetDateTime.parse(str, dateTimeFormatter) : OffsetDateTime.parse(str);
+		} else if (type.equals(OffsetTime.class)) {
+			return dateTimeFormatter != null ? OffsetTime.parse(str, dateTimeFormatter) : OffsetTime.parse(str);
+		} else if (type.equals(Year.class)) {
+			return dateTimeFormatter != null ? Year.parse(str, dateTimeFormatter) : Year.parse(str);
+		} else if (type.equals(YearMonth.class)) {
+			return dateTimeFormatter != null ? YearMonth.parse(str, dateTimeFormatter) : YearMonth.parse(str);
+		} else if (type.equals(MonthDay.class)) {
+			return dateTimeFormatter != null ? MonthDay.parse(str, dateTimeFormatter) : MonthDay.parse(str);
+		} else if (type.equals(Instant.class)) {
+			return Instant.parse(str);
+		} else if (type.equals(ZoneId.class)) {
+			return ZoneId.of(str);
+		} else if (type.equals(ZoneOffset.class)) {
+			return ZoneOffset.of(str);
+		} else if (type.equals(UUID.class)) {
+			return UUID.fromString(str);
+		} else if (type.equals(Currency.class)) {
+			return Currency.getInstance(str);
+		} else if (type.equals(Locale.class)) {
+			return Locale.forLanguageTag(str);
+		} else if (type.equals(URI.class)) {
+			return URI.create(str);
+		} else if (type.equals(InetAddress.class)) {
+			try {
+				return InetAddress.getByName(str);
+			} catch (UnknownHostException e) {
+				throw new IllegalArgumentException(e.getMessage(), e);
+			}
+		} else if (type.equals(byte[].class)) {
+			return HexFormat.of().parseHex(str);
 		} else if (Enum.class.isAssignableFrom(type)) {
 			try {
 				return type.getMethod("valueOf", String.class).invoke(null, str);
-			} catch (final NoSuchMethodException e) {
-				throw new IllegalArgumentException(String.format("Unknown convert type %s", type.getName()), e);
-			} catch (final IllegalAccessException e) {
-				throw new IllegalArgumentException(String.format("Unknown convert type %s", type.getName()), e);
-			} catch (final InvocationTargetException e) {
+			} catch (final NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
 				throw new IllegalArgumentException(String.format("Unknown convert type %s", type.getName()), e);
 			}
 		}
@@ -162,6 +238,18 @@ public class SimpleCsvValueConverter implements CsvValueConverter {
 		}
 		if (value instanceof Date && dateFormat != null) {
 			return dateFormat.format(value);
+		}
+		if (value instanceof TemporalAccessor && dateTimeFormatter != null) {
+			return dateTimeFormatter.format((TemporalAccessor) value);
+		}
+		if (value instanceof InetAddress) {
+			return ((InetAddress) value).getHostAddress();
+		}
+		if (value instanceof Locale) {
+			return ((Locale) value).toLanguageTag();
+		}
+		if (value instanceof byte[]) {
+			return HexFormat.of().formatHex((byte[]) value);
 		}
 		return value.toString();
 	}

@@ -50,6 +50,17 @@ public interface CsvColumnNameMappingBeanOperation<H> {
 	H column(String column, String field, Format format);
 
 	/**
+	 * 指定された項目名と Java プログラム要素のフィールド名をマップへ追加します。
+	 * 
+	 * @param column 項目名
+	 * @param field Java プログラム要素のフィールド名
+	 * @param format フィールドを処理するストラテジー (オプション)
+	 * @return このオブジェクトへの参照
+	 * @since 3.0.0
+	 */
+	H column(String column, String field, ValueFormatter format);
+
+	/**
 	 * 項目名と Java プログラム要素のフィールド名のマップを設定します。
 	 * 
 	 * @param columnMapping 項目名と Java プログラム要素のフィールド名のマップ

@@ -75,11 +75,21 @@ public class CsvColumnNameMappingBeanTemplate<T> extends AbstractCsvBeanTemplate
 
 	@Override
 	public CsvColumnNameMappingBeanTemplate<T> column(final String column, final String field) {
-		return column(column, field, null);
+		return column(column, field, (Format) null);
 	}
 
 	@Override
 	public CsvColumnNameMappingBeanTemplate<T> column(final String column, final String field, final Format format) {
+		columnMapping.put(column, field);
+		if (format != null) {
+			setValueParser(field, format);
+			setValueFormatter(column, format);
+		}
+		return this;
+	}
+
+	@Override
+	public CsvColumnNameMappingBeanTemplate<T> column(final String column, final String field, final ValueFormatter format) {
 		columnMapping.put(column, field);
 		if (format != null) {
 			setValueParser(field, format);
