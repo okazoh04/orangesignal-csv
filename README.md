@@ -1,48 +1,63 @@
-# [OrangeSignal CSV](http://orangesignal.github.io/orangesignal-csv/) [![Build Status](https://travis-ci.org/orangesignal/orangesignal-csv.png?branch=master)](https://travis-ci.org/orangesignal/orangesignal-csv)
+# [OrangeSignal CSV](http://orangesignal.github.io/orangesignal-csv/)
 
-OrangeSignal CSV is a very flexible csv (comma-separated values) read and write library for Java.  
+OrangeSignal CSV は、非常に柔軟な Java 用の CSV（区切り文字形式）読込み・書込みライブラリです。
 
-The binary distributions includes the following third party software:  
-[jLHA (LHA Library for Java)](http://homepage1.nifty.com/dangan/en/Content/Program/Java/jLHA/jLHA.html).
+Java Bean と CSV の相互変換、フィルタリング、ソート、ページング機能、そして LHA および ZIP 形式で圧縮された CSV ファイルの直接読込み・書込みをサポートしています。
 
-## Prerequisites
+本バージョン（3.0.0）では、Java 21 への対応、および `java.time` パッケージなどのモダンな Java API のサポートが追加されています。
 
-* Java 1.6+  
-OrangeSignal CSV is compiled for Java 1.6
+## 特徴
 
-## Installation
+* **柔軟なマッピング**: `@CsvEntity` アノテーションによる Java Bean との相互変換。
+* **拡張された型サポート**: `java.time.*`, `java.util.UUID`, `java.util.Currency`, `java.util.Locale`, `java.net.URI`, `byte[]`（16進数文字列）などを直接サポート。
+* **強力なフィルタリング**: `CsvManager` を介した柔軟な検索・抽出。
+* **圧縮ファイル対応**: LHA (jLHA内蔵) および ZIP 圧縮された CSV の読込み・書込み。
+* **日本語対応**: Javadoc やエラーメッセージが日本語に対応。
 
-### Maven users
+## 動作環境
 
-If you are using Maven, simply copy the following dependency into your pom.xml file. The artifact is hosted at [Maven Central](http://search.maven.org/#search%7Cga%7C1%7Corangesignal-csv), and is standalone (no dependencies).
+* Java 21 以上
+* Maven 3.x
+
+## インストール
+
+### Maven をご利用の場合
+
+`pom.xml` に以下の依存関係を追加してください。
 
 ```xml
 <dependency>
     <groupId>com.orangesignal</groupId>
     <artifactId>orangesignal-csv</artifactId>
-    <version>2.2.1</version>
+    <version>3.0.0-SNAPSHOT</version>
 </dependency>
 ```
 
-## Examples
+## 使用例
 
-CSV entity class
+### CSV エンティティクラス
 
 ```java
+import java.time.LocalDate;
+import com.orangesignal.csv.annotation.CsvColumn;
+import com.orangesignal.csv.annotation.CsvEntity;
+
 @CsvEntity(header = true)
 public class Customer {
 
-    @CsvColumn(name = "name")
+    @CsvColumn(name = "氏名")
     public String name;
 
-    @CsvColumn(name = "age")
+    @CsvColumn(name = "生年月日", format = "yyyy/MM/dd")
+    public LocalDate birthday;
+
+    @CsvColumn(name = "年齢")
     public Integer age;
 
 }
 ```
 
-example code
-
+### 読込みの例
 
 ```java
 CsvConfig cfg = new CsvConfig(',', '"', '"');
@@ -50,26 +65,17 @@ cfg.setNullString("NULL");
 cfg.setIgnoreLeadingWhitespaces(true);
 cfg.setIgnoreTrailingWhitespaces(true);
 cfg.setIgnoreEmptyLines(true);
-cfg.setIgnoreLinePatterns(Pattern.compile("^#.*$"));
-cfg.setVariableColumns(false);
 
-List<Customer> list = new CsvEntityManager()
+List<Customer> list = Csv.load(Customer.class)
     .config(cfg)
-    .load(Customer.class)
-    .filter(new SimpleBeanFilter().in("name", "Smith", "Johnson").gt("age", 21))
-    .offset(10)
-    .limit(1000)
-    .order(BeanOrder.desc("age"))
+    .filter(new SimpleBeanFilter().gt("age", 20))
+    .offset(0)
+    .limit(100)
+    .order(BeanOrder.asc("氏名"))
     .from(reader);
 ```
 
-## How to use
+## ライセンス
 
-* [User guide](http://orangesignal.github.io/orangesignal-csv/userguide.html)
-* [Migration](http://orangesignal.github.io/orangesignal-csv/migration.html)
-
-Sorry, it is japanese only for now.
-
-## License
-
-* Licensed under the [Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0).
+* [Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0)
+* 内蔵されている jLHA は、独自のライセンス（[JLHA-LICENSE.txt](JLHA-LICENSE.txt)）の下で配布されています。
