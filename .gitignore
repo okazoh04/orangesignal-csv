@@ -25,3 +25,5 @@ org.eclipse.*.prefs
 *.iws
 .idea
 atlassian-ide-plugin.xml
+GEMINI.md
+CLAUDE.md
