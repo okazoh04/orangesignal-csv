@@ -719,6 +719,73 @@ final class CsvReaderTest {
 	}
 
 	@Test
+	void testReadRfc4180_UnclosedQuote() throws IOException {
+		final CsvConfig cfg = new CsvConfig(',', '"', '"');
+		// クォートが閉じられていないデータ
+		final StringReader sr = new StringReader("\"aaa\",\"bbb,\"ccc\"");
+		final CsvReader reader = new CsvReader(sr, cfg);
+		try {
+			// Act & Assert: クォートが閉じられていないので CsvTokenException が発生すべき
+			final CsvTokenException e = assertThrows(CsvTokenException.class, () -> reader.readValues());
+			// 1つ目のフィールド "aaa" は正常に解析されているはず
+			assertThat(e.getTokens().size(), is(1));
+			assertThat(e.getTokens().get(0).getValue(), is("aaa"));
+		} finally {
+			reader.close();
+		}
+	}
+
+	@Test
+	void testReadDataWithMixedLineBreaks() throws IOException {
+		final CsvConfig cfg = new CsvConfig(',', '"', '"');
+		// \r, \n が混在するクォート内データ
+		final StringReader sr = new StringReader("\"r:\r\",\"n:\n\",\"rn:\r\n\"\r\n");
+		final CsvReader reader = new CsvReader(sr, cfg);
+		try {
+			final List<String> line1 = reader.readValues();
+			assertThat(line1.size(), is(3));
+			assertThat(line1.get(0), is("r:\r"));
+			assertThat(line1.get(1), is("n:\n"));
+			assertThat(line1.get(2), is("rn:\r\n"));
+		} finally {
+			reader.close();
+		}
+	}
+
+	@Test
+	void testReadRfc4180_EmptyFields() throws IOException {
+		// 空の項目（,,）や空のクォート（""）のテスト
+		final StringReader sr = new StringReader("a,,b,\"\",c\r\n");
+		final CsvReader reader = new CsvReader(sr, CsvConfig.rfc4180());
+		try {
+			final List<String> line1 = reader.readValues();
+			assertThat(line1.size(), is(5));
+			assertThat(line1.get(0), is("a"));
+			assertThat(line1.get(1), is(""));
+			assertThat(line1.get(2), is("b"));
+			assertThat(line1.get(3), is(""));
+			assertThat(line1.get(4), is("c"));
+		} finally {
+			reader.close();
+		}
+	}
+
+	@Test
+	void testReadRfc4180_CommaInQuotes() throws IOException {
+		// クォート内のカンマ
+		final StringReader sr = new StringReader("\"a,b\",c\r\n");
+		final CsvReader reader = new CsvReader(sr, CsvConfig.rfc4180());
+		try {
+			final List<String> line1 = reader.readValues();
+			assertThat(line1.size(), is(2));
+			assertThat(line1.get(0), is("a,b"));
+			assertThat(line1.get(1), is("c"));
+		} finally {
+			reader.close();
+		}
+	}
+
+	@Test
 	void testClosed() throws IOException {
 		// Arrange
 		final CsvReader reader = new CsvReader(new StringReader(""), new CsvConfig());

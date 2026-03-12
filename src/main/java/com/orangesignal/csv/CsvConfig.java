@@ -145,6 +145,30 @@ public class CsvConfig implements Serializable, Cloneable {
 	 */
 	private String lineSeparator = System.getProperty("line.separator");
 
+	/**
+	 * RFC-4180 準拠のデフォルト設定（カンマ区切り、二重引用符、引用符によるエスケープ、CRLF改行）を持つインスタンスを返します。
+	 * 
+	 * @return RFC-4180 準拠の設定インスタンス
+	 * @since 3.1
+	 */
+	public static CsvConfig rfc4180() {
+		return new CsvConfig(',', '"', '"')
+				.withLineSeparator("\r\n")
+				.withQuotePolicy(QuotePolicy.MINIMAL);
+	}
+
+	/**
+	 * Excel 互換のデフォルト設定（カンマ区切り、二重引用符、引用符によるエスケープ、システム標準の改行コード、UTF-8 BOM出力有効）を持つインスタンスを返します。
+	 * 
+	 * @return Excel 互換の設定インスタンス
+	 * @since 3.1
+	 */
+	public static CsvConfig excel() {
+		return new CsvConfig(',', '"', '"')
+				.withQuotePolicy(QuotePolicy.MINIMAL)
+				.withUtf8bomPolicy(true);
+	}
+
 	// ------------------------------------------------------------------------
 	// コンストラクタ
 
