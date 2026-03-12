@@ -17,18 +17,18 @@
 package com.orangesignal.csv.entryfilters;
 
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.zip.ZipEntry;
 
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import com.orangesignal.jlha.LhaHeader;
 
@@ -37,33 +37,36 @@ import com.orangesignal.jlha.LhaHeader;
  * 
  * @author Koji Sugisawa
  */
-public class EntryNameFilterTest {
+class EntryNameFilterTest {
 
-	@Rule
-	public ExpectedException exception = ExpectedException.none();
+	
 
 	@Test
-	public void testEntryNameFilterStringArrayBooleanIllegalArgumentException() {
+	void testEntryNameFilterStringArrayBooleanIllegalArgumentException() {
+		Throwable e = assertThrows(IllegalArgumentException.class, () -> {
+
 		// Arrange
-		exception.expect(IllegalArgumentException.class);
-		exception.expectMessage("Names must not be null");
 		final String[] names = null;
 		// Act
 		new EntryNameFilter(names, false);
+		});
+		assertThat(e.getMessage(), is("Names must not be null"));
 	}
 
 	@Test
-	public void testEntryNameFilterCollectionOfStringBooleanIllegalArgumentException() {
+	void testEntryNameFilterCollectionOfStringBooleanIllegalArgumentException() {
+		Throwable e = assertThrows(IllegalArgumentException.class, () -> {
+
 		// Arrange
-		exception.expect(IllegalArgumentException.class);
-		exception.expectMessage("Names must not be null");
 		final Collection<String> names = null;
 		// Act
 		new EntryNameFilter(names, false);
+		});
+		assertThat(e.getMessage(), is("Names must not be null"));
 	}
 
 	@Test
-	public void testAcceptZipEntry() {
+	void testAcceptZipEntry() {
 		final String s = "foo/bar/test.csv";
 
 		final EntryNameFilter filter1 = new EntryNameFilter(s);
@@ -183,7 +186,7 @@ public class EntryNameFilterTest {
 	}
 
 	@Test
-	public void testAcceptLhaHeader() {
+	void testAcceptLhaHeader() {
 		final String s = "foo/bar/test.csv";
 
 		final EntryNameFilter filter1 = new EntryNameFilter(s);
@@ -303,7 +306,7 @@ public class EntryNameFilterTest {
 	}
 
 	@Test
-	public void testToString() {
+	void testToString() {
 		// Act + Assert
 		assertThat(new EntryNameFilter(new String[]{ "foo.csv", "bar.csv" }).toString(), is("EntryNameFilter(foo.csv,bar.csv)"));
 	}

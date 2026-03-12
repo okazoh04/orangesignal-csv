@@ -17,13 +17,13 @@
 package com.orangesignal.csv.entryfilters;
 
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.zip.ZipEntry;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.orangesignal.jlha.LhaHeader;
 
@@ -32,10 +32,10 @@ import com.orangesignal.jlha.LhaHeader;
  * 
  * @author Koji Sugisawa
  */
-public class DirectoryEntryFilterTest {
+class DirectoryEntryFilterTest {
 
 	@Test
-	public void testAcceptZipEntry() {
+	void testAcceptZipEntry() {
 		// Arrange
 		final DirectoryEntryFilter filter = new DirectoryEntryFilter();
 		// Act + Assert
@@ -44,7 +44,7 @@ public class DirectoryEntryFilterTest {
 	}
 
 	@Test
-	public void testAcceptLhaHeader() {
+	void testAcceptLhaHeader() {
 		// Arrange
 		final DirectoryEntryFilter filter = new DirectoryEntryFilter();
 		// Act + Assert
@@ -53,7 +53,7 @@ public class DirectoryEntryFilterTest {
 	}
 
 	@Test
-	public void testToString() {
+	void testToString() {
 		// Act + Assert
 		assertThat(new DirectoryEntryFilter().toString(), is("DirectoryEntryFilter"));
 	}

@@ -17,14 +17,15 @@
 package com.orangesignal.csv.filters;
 
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import com.orangesignal.csv.entity.Price;
 
@@ -33,16 +34,19 @@ import com.orangesignal.csv.entity.Price;
  * 
  * @author Koji Sugisawa
  */
-public class BeanNotInExpressionTest {
+class BeanNotInExpressionTest {
 
-	@Test(expected = IllegalArgumentException.class)
-	public void testBeanNotInExpressionIllegalArgumentException2() {
+	@Test
+	void testBeanNotInExpressionIllegalArgumentException2() {
+		assertThrows(IllegalArgumentException.class, () -> {
+
 		final Object[] criterias = null;
 		new BeanNotInExpression("col", criterias);
+		});
 	}
 
 	@Test
-	public void testAccept() throws Exception {
+	void testAccept() throws Exception {
 		final DateFormat df = new SimpleDateFormat("yyyy/MM/dd");
 		final Price price = new Price("GCX09", "COMEX 金 2009年11月限", 1088.70, 100, df.parse("2009/11/06"));
 		assertTrue(new BeanNotInExpression("symbol", new String[]{ "SIU09", "SIV09", "SIX09" }).accept(price));
@@ -60,7 +64,7 @@ public class BeanNotInExpressionTest {
 	}
 
 	@Test
-	public void testToString() {
+	void testToString() {
 		assertThat(new BeanNotInExpression("symbol", new String[]{ "SIU09", "SIV09", "SIX09" }).toString(), is("BeanNotInExpression"));
 		
 	}

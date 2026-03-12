@@ -17,14 +17,15 @@
 package com.orangesignal.csv.filters;
 
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import com.orangesignal.csv.entity.Price;
 
@@ -33,20 +34,26 @@ import com.orangesignal.csv.entity.Price;
  * 
  * @author Koji Sugisawa
  */
-public class BeanEqualExpressionTest {
+class BeanEqualExpressionTest {
 
-	@Test(expected = IllegalArgumentException.class)
-	public void testBeanEqualExpressionIllegalArgumentException1() {
+	@Test
+	void testBeanEqualExpressionIllegalArgumentException1() {
+		assertThrows(IllegalArgumentException.class, () -> {
+
 		new BeanEqualExpression(null, "aaa");
-	}
-
-	@Test(expected = IllegalArgumentException.class)
-	public void testBeanEqualExpressionIllegalArgumentException2() {
-		new BeanEqualExpression("col", null);
+		});
 	}
 
 	@Test
-	public void testAccep() throws Exception {
+	void testBeanEqualExpressionIllegalArgumentException2() {
+		assertThrows(IllegalArgumentException.class, () -> {
+
+		new BeanEqualExpression("col", null);
+		});
+	}
+
+	@Test
+	void testAccep() throws Exception {
 		final Price price = new Price("GCX09", "COMEX 金 2009年11月限", 1088.70, 100, new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").parse("2009/11/06 19:14:46"));
 		assertFalse(new BeanEqualExpression("symbol", "SIX09").accept(price));
 		assertTrue(new BeanEqualExpression("symbol", "GCX09").accept(price));
@@ -63,7 +70,7 @@ public class BeanEqualExpressionTest {
 	}
 
 	@Test
-	public void testToString() {
+	void testToString() {
 		assertThat(new BeanEqualExpression("symbol", "GCX09").toString(), is("BeanEqualExpression"));
 		
 	}

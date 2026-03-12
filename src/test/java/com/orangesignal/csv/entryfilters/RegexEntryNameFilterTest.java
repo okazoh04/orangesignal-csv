@@ -17,16 +17,16 @@
 package com.orangesignal.csv.entryfilters;
 
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import com.orangesignal.jlha.LhaHeader;
 
@@ -35,33 +35,36 @@ import com.orangesignal.jlha.LhaHeader;
  * 
  * @author Koji Sugisawa
  */
-public class RegexEntryNameFilterTest {
+class RegexEntryNameFilterTest {
 
-	@Rule
-	public ExpectedException exception = ExpectedException.none();
+	
 
 	@Test
-	public void testRegexEntryNameFilterStringIntIllegalArgumentException() {
+	void testRegexEntryNameFilterStringIntIllegalArgumentException() {
+		Throwable e = assertThrows(IllegalArgumentException.class, () -> {
+
 		// Arrange
-		exception.expect(IllegalArgumentException.class);
-		exception.expectMessage("Pattern must not be null");
 		final String pattern = null;
 		// Act
 		new RegexEntryNameFilter(pattern, Pattern.CASE_INSENSITIVE);
+		});
+		assertThat(e.getMessage(), is("Pattern must not be null"));
 	}
 
 	@Test
-	public void testRegexEntryNameFilterPatternIllegalArgumentException() {
+	void testRegexEntryNameFilterPatternIllegalArgumentException() {
+		Throwable e = assertThrows(IllegalArgumentException.class, () -> {
+
 		// Arrange
-		exception.expect(IllegalArgumentException.class);
-		exception.expectMessage("Pattern must not be null");
 		final Pattern  pattern = null;
 		// Act
 		new RegexEntryNameFilter(pattern);
+		});
+		assertThat(e.getMessage(), is("Pattern must not be null"));
 	}
 
 	@Test
-	public void testAcceptZipEntry() {
+	void testAcceptZipEntry() {
 		final String regex = "^foo/.+/test\\.(csv|tsv){1}$";
 
 		final RegexEntryNameFilter filter1 = new RegexEntryNameFilter(regex);
@@ -138,7 +141,7 @@ public class RegexEntryNameFilterTest {
 	}
 
 	@Test
-	public void testAcceptLhaHeader() {
+	void testAcceptLhaHeader() {
 		final String regex = "^foo/.+/test\\.(csv|tsv){1}$";
 
 		final RegexEntryNameFilter filter1 = new RegexEntryNameFilter(regex);
@@ -215,7 +218,7 @@ public class RegexEntryNameFilterTest {
 	}
 
 	@Test
-	public void testToString() {
+	void testToString() {
 		// Act + Assert
 		assertThat(new RegexEntryNameFilter(Pattern.compile("^.*$")).toString(), is("RegexEntryNameFilter"));
 	}

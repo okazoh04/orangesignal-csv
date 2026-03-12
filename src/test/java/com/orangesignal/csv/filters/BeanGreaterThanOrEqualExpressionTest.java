@@ -17,15 +17,16 @@
 package com.orangesignal.csv.filters;
 
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import com.orangesignal.csv.entity.Price;
 
@@ -34,20 +35,26 @@ import com.orangesignal.csv.entity.Price;
  * 
  * @author Koji Sugisawa
  */
-public class BeanGreaterThanOrEqualExpressionTest {
+class BeanGreaterThanOrEqualExpressionTest {
 
-	@Test(expected = IllegalArgumentException.class)
-	public void testBeanGreaterThanOrEqualExpressionIllegalArgumentException1() {
+	@Test
+	void testBeanGreaterThanOrEqualExpressionIllegalArgumentException1() {
+		assertThrows(IllegalArgumentException.class, () -> {
+
 		new BeanGreaterThanOrEqualExpression(null, 1098.00);
-	}
-
-	@Test(expected = IllegalArgumentException.class)
-	public void testBeanGreaterThanOrEqualExpressionIllegalArgumentException2() {
-		new BeanGreaterThanOrEqualExpression("price", null);
+		});
 	}
 
 	@Test
-	public void testBeanGreaterThanOrEqualExpression() {
+	void testBeanGreaterThanOrEqualExpressionIllegalArgumentException2() {
+		assertThrows(IllegalArgumentException.class, () -> {
+
+		new BeanGreaterThanOrEqualExpression("price", null);
+		});
+	}
+
+	@Test
+	void testBeanGreaterThanOrEqualExpression() {
 		new BeanGreaterThanOrEqualExpression("price", 1098.00);
 		new BeanGreaterThanOrEqualExpression("price", 1098.00, null);
 		new BeanGreaterThanOrEqualExpression("date", new Date());
@@ -55,7 +62,7 @@ public class BeanGreaterThanOrEqualExpressionTest {
 	}
 
 	@Test
-	public void testAccept() throws Exception {
+	void testAccept() throws Exception {
 		final DateFormat df = new SimpleDateFormat("yyyy/MM/dd");
 		final Price price = new Price("GCX09", "COMEX 金 2009年11月限", 1088.70, 100, df.parse("2009/11/06"));
 		assertFalse(new BeanGreaterThanOrEqualExpression("price", 1098.00).accept(price));
@@ -73,7 +80,7 @@ public class BeanGreaterThanOrEqualExpressionTest {
 	}
 
 	@Test
-	public void testToString() {
+	void testToString() {
 		assertThat(new BeanGreaterThanOrEqualExpression("price", 1098.00).toString(), is("BeanGreaterThanOrEqualExpression"));
 		
 	}

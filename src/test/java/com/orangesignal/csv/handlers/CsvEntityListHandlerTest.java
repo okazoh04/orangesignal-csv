@@ -17,7 +17,7 @@
 package com.orangesignal.csv.handlers;
 
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 import java.io.IOException;
@@ -29,8 +29,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.TimeZone;
 
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import com.orangesignal.csv.Constants;
 import com.orangesignal.csv.CsvConfig;
@@ -47,12 +48,12 @@ import com.orangesignal.csv.model.SampleBean;
  *
  * @author Koji Sugisawa
  */
-public class CsvEntityListHandlerTest {
+class CsvEntityListHandlerTest {
 
 	private static CsvConfig cfg;
 
-	@BeforeClass
-	public static void setUpBeforeClass() throws Exception {
+	@BeforeAll
+	static void setUpBeforeClass() throws Exception {
 		cfg = new CsvConfig(',');
 		cfg.setEscapeDisabled(false);
 		cfg.setNullString("NULL");
@@ -62,18 +63,24 @@ public class CsvEntityListHandlerTest {
 		cfg.setLineSeparator(Constants.CRLF);
 	}
 
-	@Test(expected = IllegalArgumentException.class)
-	public void testCsvEntityListHandlerIllegalArgumentException1() {
-		new CsvEntityListHandler<Price>(null);
-	}
+	@Test
+	void testCsvEntityListHandlerIllegalArgumentException1() {
+		assertThrows(IllegalArgumentException.class, () -> {
 
-	@Test(expected = IllegalArgumentException.class)
-	public void testCsvEntityListHandlerIllegalArgumentException2() {
-		new CsvEntityListHandler<SampleBean>(SampleBean.class);
+		new CsvEntityListHandler<Price>(null);
+		});
 	}
 
 	@Test
-	public void testLoadPrice() throws IOException {
+	void testCsvEntityListHandlerIllegalArgumentException2() {
+		assertThrows(IllegalArgumentException.class, () -> {
+
+		new CsvEntityListHandler<SampleBean>(SampleBean.class);
+		});
+	}
+
+	@Test
+	void testLoadPrice() throws IOException {
 		final CsvReader reader = new CsvReader(new StringReader("シンボル,名称,価格,出来高,日付,時刻\r\nAAAA,aaa,10\\,000,10,2009/10/28,10:24:00\r\nBBBB,bbb,NULL,0,NULL,NULL"), cfg);
 		try {
 			final List<Price> list = new CsvEntityListHandler<Price>(Price.class)
@@ -102,7 +109,7 @@ public class CsvEntityListHandlerTest {
 	}
 
 	@Test
-	public void testLoadPrice2() throws IOException {
+	void testLoadPrice2() throws IOException {
 		final CsvReader reader = new CsvReader(new StringReader("シンボル,名称,価格,出来高,日付,時刻\r\nAAAA,aaa,10\\,000,10,2009/10/28,10:24:00\r\nBBBB,bbb,NULL,0,NULL,NULL"), cfg);
 		try {
 			final List<Price2> list = new CsvEntityListHandler<Price2>(Price2.class)
@@ -127,7 +134,7 @@ public class CsvEntityListHandlerTest {
 	}
 
 	@Test
-	public void testLoadOffsetLimit() throws IOException {
+	void testLoadOffsetLimit() throws IOException {
 		final CsvReader reader = new CsvReader(new StringReader("シンボル,名称,価格,出来高,日付,時刻\r\nAAAA,aaa,10\\,000,10,2009/10/28,10:24:00\r\nBBBB,bbb,NULL,0,NULL,NULL"), cfg);
 		try {
 			final List<Price> list = new CsvEntityListHandler<Price>(Price.class).offset(1).limit(1).load(reader);
@@ -144,7 +151,7 @@ public class CsvEntityListHandlerTest {
 	}
 
 	@Test
-	public void testLoadFilter() throws Exception {
+	void testLoadFilter() throws Exception {
 		final DateFormat df = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 		df.setTimeZone(TimeZone.getTimeZone("Asia/Tokyo"));
 		final CsvReader reader = new CsvReader(new StringReader(
@@ -175,7 +182,7 @@ public class CsvEntityListHandlerTest {
 	}
 
 	@Test
-	public void testSave() throws Exception {
+	void testSave() throws Exception {
 		final DateFormat df = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 		df.setTimeZone(TimeZone.getTimeZone("Asia/Tokyo"));
 
@@ -195,7 +202,7 @@ public class CsvEntityListHandlerTest {
 	}
 
 	@Test
-	public void testSaveFilter() throws Exception {
+	void testSaveFilter() throws Exception {
 		final DateFormat df = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 		df.setTimeZone(TimeZone.getTimeZone("Asia/Tokyo"));
 

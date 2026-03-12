@@ -16,9 +16,10 @@
 
 package com.orangesignal.csv.manager;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.nullValue;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.Reader;
 import java.io.StringReader;
@@ -29,10 +30,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.TimeZone;
 
-import org.junit.BeforeClass;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import com.orangesignal.csv.Constants;
 import com.orangesignal.csv.CsvConfig;
@@ -48,15 +47,12 @@ import com.orangesignal.csv.filters.SimpleCsvNamedValueFilter;
  *
  * @author Koji Sugisawa
  */
-public class CsvEntityManagerTest {
+class CsvEntityManagerTest {
 
 	private static CsvConfig cfg;
 
-	@Rule
-	public ExpectedException exception = ExpectedException.none();
-
-	@BeforeClass
-	public static void setUpBeforeClass() throws Exception {
+	@BeforeAll
+	static void setUpBeforeClass() throws Exception {
 		cfg = new CsvConfig(',');
 		cfg.setEscapeDisabled(false);
 		cfg.setNullString("NULL");
@@ -67,32 +63,32 @@ public class CsvEntityManagerTest {
 	}
 
 	@Test
-	public void testCsvEntityManager() {
+	void testCsvEntityManager() {
 		new CsvEntityManager();
 		new CsvEntityManager(cfg);
 	}
 
 	@Test
-	public void testCsvEntityManagerIllegalArgumentException() {
-		exception.expect(IllegalArgumentException.class);
-		exception.expectMessage("CsvConfig must not be null");
-		new CsvEntityManager(null);
+	void testCsvEntityManagerIllegalArgumentException() {
+		assertThrows(IllegalArgumentException.class, () -> {
+			new CsvEntityManager(null);
+		});
 	}
 
 	@Test
-	public void testConfig() {
+	void testConfig() {
 		new CsvEntityManager().config(cfg);
 	}
 
 	@Test
-	public void testConfigIllegalArgumentException() {
-		exception.expect(IllegalArgumentException.class);
-		exception.expectMessage("CsvConfig must not be null");
-		new CsvEntityManager().config(null);
+	void testConfigIllegalArgumentException() {
+		assertThrows(IllegalArgumentException.class, () -> {
+			new CsvEntityManager().config(null);
+		});
 	}
 
 	@Test
-	public void testLoad() throws Exception {
+	void testLoad() throws Exception {
 		final Reader reader = new StringReader(
 				"シンボル,名称,価格,出来高,日付,時刻\r\n" +
 				"GCQ09,COMEX 金 2009年08月限,1\\,058.70,10,2008/08/06,12:00:00\r\n" +
@@ -126,7 +122,7 @@ public class CsvEntityManagerTest {
 	}
 
 	@Test
-	public void testSave() throws Exception {
+	void testSave() throws Exception {
 		final DateFormat df = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 		df.setTimeZone(TimeZone.getTimeZone("Asia/Tokyo"));
 
@@ -150,7 +146,7 @@ public class CsvEntityManagerTest {
 	}
 
 	@Test
-	public void testStringArraySave() throws Exception {
+	void testStringArraySave() throws Exception {
 		final List<StringArrayEntity> list = new ArrayList<StringArrayEntity>();
 
 		final StringArrayEntity o1 = new StringArrayEntity();
@@ -183,7 +179,7 @@ public class CsvEntityManagerTest {
 	}
 
 	@Test
-	public void testStringArrayLoad() throws Exception {
+	void testStringArrayLoad() throws Exception {
 		final Reader reader = new StringReader("あ,NULL,う,えお\r\nア,イ,ウ,エオ\r\nNULL,NULL,NULL,NULL\r\nNULL,NULL,NULL,null\r\n");
 		try {
 			final List<StringArrayEntity> list = new CsvEntityManager(cfg).load(StringArrayEntity.class).from(reader);
@@ -223,7 +219,7 @@ public class CsvEntityManagerTest {
 	}
 
 	@Test
-	public void testIntegerArraySave() throws Exception {
+	void testIntegerArraySave() throws Exception {
 		final List<IntegerArrayEntity> list = new ArrayList<IntegerArrayEntity>();
 
 		final IntegerArrayEntity o1 = new IntegerArrayEntity();
@@ -246,7 +242,7 @@ public class CsvEntityManagerTest {
 	}
 
 	@Test
-	public void testIntegerArrayLoad() throws Exception {
+	void testIntegerArrayLoad() throws Exception {
 		final Reader reader = new StringReader("1,NULL,3,えお\r\n4,5,6,エオ\r\n");
 		try {
 			final List<IntegerArrayEntity> list = new CsvEntityManager(cfg).load(IntegerArrayEntity.class).from(reader);
@@ -272,7 +268,7 @@ public class CsvEntityManagerTest {
 	}
 
 	@Test
-	public void testIntArraySave() throws Exception {
+	void testIntArraySave() throws Exception {
 		final List<IntArrayEntity> list = new ArrayList<IntArrayEntity>();
 
 		final IntArrayEntity o1 = new IntArrayEntity();
@@ -295,7 +291,7 @@ public class CsvEntityManagerTest {
 	}
 
 	@Test
-	public void testIntArrayLoad() throws Exception {
+	void testIntArrayLoad() throws Exception {
 		final Reader reader = new StringReader("1,2,3,えお\r\n4,5,6,エオ\r\n");
 		try {
 			final List<IntArrayEntity> list = new CsvEntityManager(cfg).load(IntArrayEntity.class).from(reader);
@@ -321,7 +317,7 @@ public class CsvEntityManagerTest {
 	}
 
 	@Test
-	public void testWriteDisableHeader1() throws Exception {
+	void testWriteDisableHeader1() throws Exception {
 		final StringWriter sw = new StringWriter();
 		try {
 			// Arrange
@@ -356,7 +352,7 @@ public class CsvEntityManagerTest {
 	}
 
 	@Test
-	public void testWriteDisableHeader2() throws Exception {
+	void testWriteDisableHeader2() throws Exception {
 		final StringWriter sw = new StringWriter();
 		try {
 			// Arrange

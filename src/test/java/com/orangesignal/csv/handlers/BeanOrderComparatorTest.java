@@ -23,7 +23,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import com.orangesignal.csv.model.SamplePrice;
 
@@ -32,20 +33,23 @@ import com.orangesignal.csv.model.SamplePrice;
  *
  * @author Koji Sugisawa
  */
-public class BeanOrderComparatorTest {
+class BeanOrderComparatorTest {
 
 	@Test
-	public void testBeanOrderComparator() {
+	void testBeanOrderComparator() {
 		new BeanOrderComparator(new ArrayList<BeanOrder>(0));
 	}
 
-	@Test(expected = IllegalArgumentException.class)
-	public void testBeanOrderComparatorIllegalArgumentException() {
+	@Test
+	void testBeanOrderComparatorIllegalArgumentException() {
+		assertThrows(IllegalArgumentException.class, () -> {
+
 		new BeanOrderComparator(null);
+		});
 	}
 
 	@Test
-	public void testCompare() {
+	void testCompare() {
 		final Date now = new Date();
 		final SamplePrice p1 = new SamplePrice();
 		p1.setName("Y");
@@ -64,23 +68,32 @@ public class BeanOrderComparatorTest {
 		assertThat(new BeanOrderComparator(orders).compare(p1, p2), is(-1));
 	}
 
-	@Test(expected = IllegalArgumentException.class)
-	public void testCompareIllegalArgumentException1() {
+	@Test
+	void testCompareIllegalArgumentException1() {
+		assertThrows(IllegalArgumentException.class, () -> {
+
 		new BeanOrderComparator(new ArrayList<BeanOrder>(0)).compare(null, new Object());
-	}
-
-	@Test(expected = IllegalArgumentException.class)
-	public void testCompareIllegalArgumentException2() {
-		new BeanOrderComparator(new ArrayList<BeanOrder>(0)).compare(new Object(), null);
-	}
-
-	@Test(expected = IllegalArgumentException.class)
-	public void testCompareIllegalArgumentException3() {
-		new BeanOrderComparator(new ArrayList<BeanOrder>(0)).compare(null, null);
+		});
 	}
 
 	@Test
-	public void testSort() {
+	void testCompareIllegalArgumentException2() {
+		assertThrows(IllegalArgumentException.class, () -> {
+
+		new BeanOrderComparator(new ArrayList<BeanOrder>(0)).compare(new Object(), null);
+		});
+	}
+
+	@Test
+	void testCompareIllegalArgumentException3() {
+		assertThrows(IllegalArgumentException.class, () -> {
+
+		new BeanOrderComparator(new ArrayList<BeanOrder>(0)).compare(null, null);
+		});
+	}
+
+	@Test
+	void testSort() {
 		final Date now = new Date();
 		final SamplePrice p1 = new SamplePrice();
 		p1.setName("Y");

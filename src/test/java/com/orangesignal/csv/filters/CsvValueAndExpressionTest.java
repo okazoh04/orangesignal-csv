@@ -17,36 +17,40 @@
 package com.orangesignal.csv.filters;
 
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
 import java.util.List;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * {@link CsvValueAndExpression} クラスの単体テストです。
  * 
  * @author Koji Sugisawa
  */
-public class CsvValueAndExpressionTest {
+class CsvValueAndExpressionTest {
 
 	@Test
-	public void testCsvValueAndExpression() {
+	void testCsvValueAndExpression() {
 		new CsvValueAndExpression();
 		new CsvValueAndExpression(new CsvValueFilter() { @Override public boolean accept(final List<String> values) { return true; } });
 	}
 
-	@Test(expected = IllegalArgumentException.class)
-	public void testCsvAndExpressionIllegalArgumentException() {
+	@Test
+	void testCsvAndExpressionIllegalArgumentException() {
+		assertThrows(IllegalArgumentException.class, () -> {
+
 		final CsvValueFilter[] filters = null;
 		new CsvValueAndExpression(filters);
+		});
 	}
 
 	@Test
-	public void testAccept() {
+	void testAccept() {
 		assertFalse(new CsvValueAndExpression(
 				new CsvValueFilter() { @Override public boolean accept(final List<String> values) { return false; } },
 				new CsvValueFilter() { @Override public boolean accept(final List<String> values) { return false; } }
@@ -88,13 +92,16 @@ public class CsvValueAndExpressionTest {
 		assertTrue(expr4.accept(null));
 	}
 
-	@Test(expected = IllegalArgumentException.class)
-	public void testAcceptIllegalArgumentException() {
+	@Test
+	void testAcceptIllegalArgumentException() {
+		assertThrows(IllegalArgumentException.class, () -> {
+
 		new CsvValueAndExpression().accept(Arrays.asList(new String[]{ null, "aaa", "bbb" }));
+		});
 	}
 
 	@Test
-	public void testToString() {
+	void testToString() {
 		assertThat(new CsvValueAndExpression().toString(), is("CsvValueAndExpression"));
 		
 	}

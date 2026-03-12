@@ -22,37 +22,37 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import java.util.Date;
 import java.util.regex.Pattern;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * {@link BeanExpressions} クラスの単体テストです。
  * 
  * @author Koji Sugisawa
  */
-public class BeanExpressionsTest {
+class BeanExpressionsTest {
 
 	@Test
-	public void testIsNull() {
+	void testIsNull() {
 		assertThat(BeanExpressions.isNull("field"), instanceOf(BeanNullExpression.class));
 	}
 
 	@Test
-	public void testNotNull() {
+	void testNotNull() {
 		assertThat(BeanExpressions.isNotNull("field"), instanceOf(BeanNotNullExpression.class));
 	}
 
 	@Test
-	public void testIsEmpty() {
+	void testIsEmpty() {
 		assertThat(BeanExpressions.isEmpty("col"), instanceOf(BeanEmptyExpression.class));
 	}
 
 	@Test
-	public void testIsNotEmpty() {
+	void testIsNotEmpty() {
 		assertThat(BeanExpressions.isNotEmpty("col"), instanceOf(BeanNotEmptyExpression.class));
 	}
 
 	@Test
-	public void testEq() {
+	void testEq() {
 		assertThat(BeanExpressions.eq("field", "val", false), instanceOf(BeanEqualExpression.class));
 		assertThat(BeanExpressions.eq("field", "val", true), instanceOf(BeanEqualExpression.class));
 		assertThat(BeanExpressions.eq("field", "val"), instanceOf(BeanEqualExpression.class));
@@ -61,7 +61,7 @@ public class BeanExpressionsTest {
 	}
 
 	@Test
-	public void testNe() {
+	void testNe() {
 		assertThat(BeanExpressions.ne("field", "val", false), instanceOf(BeanNotEqualExpression.class));
 		assertThat(BeanExpressions.ne("field", "val", true), instanceOf(BeanNotEqualExpression.class));
 		assertThat(BeanExpressions.ne("field", "val"), instanceOf(BeanNotEqualExpression.class));
@@ -70,7 +70,7 @@ public class BeanExpressionsTest {
 	}
 
 	@Test
-	public void testIn() {
+	void testIn() {
 		assertThat(BeanExpressions.in("field", new String[]{ "val1", "val2", "val3" }, false), instanceOf(BeanInExpression.class));
 		assertThat(BeanExpressions.in("field", new String[]{ "val1", "val2", "val3" }, true), instanceOf(BeanInExpression.class));
 		assertThat(BeanExpressions.in("field", "val1", "val2", "val3"), instanceOf(BeanInExpression.class));
@@ -79,7 +79,7 @@ public class BeanExpressionsTest {
 	}
 
 	@Test
-	public void testNotIn() {
+	void testNotIn() {
 		assertThat(BeanExpressions.notIn("field", new String[]{ "val1", "val2", "val3" }, false), instanceOf(BeanNotInExpression.class));
 		assertThat(BeanExpressions.notIn("field", new String[]{ "val1", "val2", "val3" }, true), instanceOf(BeanNotInExpression.class));
 		assertThat(BeanExpressions.notIn("field", "val1", "val2", "val3"), instanceOf(BeanNotInExpression.class));
@@ -88,7 +88,7 @@ public class BeanExpressionsTest {
 	}
 
 	@Test
-	public void testRegex() {
+	void testRegex() {
 		assertThat(BeanExpressions.regex("col", "^.*$"), instanceOf(BeanRegexExpression.class));
 		assertThat(BeanExpressions.regex("col", "^.*$", false), instanceOf(BeanRegexExpression.class));
 		assertThat(BeanExpressions.regex("col", "^.*$", Pattern.CASE_INSENSITIVE), instanceOf(BeanRegexExpression.class));
@@ -96,7 +96,7 @@ public class BeanExpressionsTest {
 	}
 
 	@Test
-	public void testGt() {
+	void testGt() {
 		assertThat(BeanExpressions.gt("field", "val", null), instanceOf(BeanGreaterThanExpression.class));
 		assertThat(BeanExpressions.gt("field", "val"), instanceOf(BeanGreaterThanExpression.class));
 		assertThat(BeanExpressions.gt("field", 100.02, null), instanceOf(BeanGreaterThanExpression.class));
@@ -106,7 +106,7 @@ public class BeanExpressionsTest {
 	}
 
 	@Test
-	public void testLt() {
+	void testLt() {
 		assertThat(BeanExpressions.lt("field", "val", null), instanceOf(BeanLessThanExpression.class));
 		assertThat(BeanExpressions.lt("field", "val"), instanceOf(BeanLessThanExpression.class));
 		assertThat(BeanExpressions.lt("field", 100.02, null), instanceOf(BeanLessThanExpression.class));
@@ -116,7 +116,7 @@ public class BeanExpressionsTest {
 	}
 
 	@Test
-	public void testGe() {
+	void testGe() {
 		assertThat(BeanExpressions.ge("field", "val", null), instanceOf(BeanGreaterThanOrEqualExpression.class));
 		assertThat(BeanExpressions.ge("field", "val"), instanceOf(BeanGreaterThanOrEqualExpression.class));
 		assertThat(BeanExpressions.ge("field", 100.02, null), instanceOf(BeanGreaterThanOrEqualExpression.class));
@@ -126,7 +126,7 @@ public class BeanExpressionsTest {
 	}
 
 	@Test
-	public void testLe() {
+	void testLe() {
 		assertThat(BeanExpressions.le("field", "val", null), instanceOf(BeanLessThanOrEqualExpression.class));
 		assertThat(BeanExpressions.le("field", "val"), instanceOf(BeanLessThanOrEqualExpression.class));
 		assertThat(BeanExpressions.le("field", 100.02, null), instanceOf(BeanLessThanOrEqualExpression.class));
@@ -136,7 +136,7 @@ public class BeanExpressionsTest {
 	}
 
 	@Test
-	public void testBetween() {
+	void testBetween() {
 		assertThat(BeanExpressions.between("field", "val1", "val2", null), instanceOf(BeanBetweenExpression.class));
 		assertThat(BeanExpressions.between("field", "val1", "val2"), instanceOf(BeanBetweenExpression.class));
 		assertThat(BeanExpressions.between("field", 100.02, 1000.15, null), instanceOf(BeanBetweenExpression.class));
@@ -146,17 +146,17 @@ public class BeanExpressionsTest {
 	}
 
 	@Test
-	public void testAnd() {
+	void testAnd() {
 		assertThat(BeanExpressions.and(BeanExpressions.isNull("field1"), BeanExpressions.isNull("field2")), instanceOf(BeanAndExpression.class));
 	}
 
 	@Test
-	public void testOr() {
+	void testOr() {
 		assertThat(BeanExpressions.or(BeanExpressions.isNull("field1"), BeanExpressions.isNull("field2")), instanceOf(BeanOrExpression.class));
 	}
 
 	@Test
-	public void testNot() {
+	void testNot() {
 		assertThat(BeanExpressions.not(BeanExpressions.isNull("field")), instanceOf(BeanNotExpression.class));
 	}
 

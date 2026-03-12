@@ -17,30 +17,34 @@
 package com.orangesignal.csv.filters;
 
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
 import java.util.List;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * {@link ColumnNameNotInExpression} クラスの単体テストです。
  * 
  * @author Koji Sugisawa
  */
-public class ColumnNameNotInExpressionTest {
+class ColumnNameNotInExpressionTest {
 
-	@Test(expected = IllegalArgumentException.class)
-	public void testColumnNameNotInExpressionIllegalArgumentException2() {
+	@Test
+	void testColumnNameNotInExpressionIllegalArgumentException2() {
+		assertThrows(IllegalArgumentException.class, () -> {
+
 		final String[] criterias = null;
 		new ColumnNameNotInExpression("col", criterias);
+		});
 	}
 
 	@Test
-	public void testAccept() {
+	void testAccept() {
 		final List<String> header = Arrays.asList(new String[]{ "col0", "col1", "col2", "col3", "col4" });
 		final List<String> values = Arrays.asList(new String[]{ null, "aaa", "bbb", "ccc", "ddd" });
 		assertTrue(new ColumnNameNotInExpression("col0", "a", "aa", "aaa").accept(header, values));
@@ -54,13 +58,16 @@ public class ColumnNameNotInExpressionTest {
 		assertTrue(new ColumnNameNotInExpression("col2", new String[]{ "A", "AA", "AAA" }, true).accept(header, values));
 	}
 
-	@Test(expected = IllegalArgumentException.class)
-	public void testAcceptIllegalArgumentException() {
+	@Test
+	void testAcceptIllegalArgumentException() {
+		assertThrows(IllegalArgumentException.class, () -> {
+
 		new ColumnNameNotInExpression("col", "a", "aa", "aaa").accept(Arrays.asList(new String[]{ "col0", "col1", "col2" }), null);
+		});
 	}
 
 	@Test
-	public void testToString() {
+	void testToString() {
 		assertThat(new ColumnNameNotInExpression("col", "a", "aa", "aaa").toString(), is("ColumnNameNotInExpression"));
 		
 	}

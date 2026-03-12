@@ -17,33 +17,37 @@
 package com.orangesignal.csv.filters;
 
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * {@link ColumnPositionNotEqualExpression} クラスの単体テストです。
  * 
  * @author Koji Sugisawa
  */
-public class ColumnPositionNotEqualExpressionTest {
+class ColumnPositionNotEqualExpressionTest {
 
 	@Test
-	public void testColumnPositionNotEqualExpression() {
+	void testColumnPositionNotEqualExpression() {
 		new ColumnPositionNotEqualExpression(0, "test");
 	}
 
-	@Test(expected = IllegalArgumentException.class)
-	public void testColumnPositionNotEqualExpressionIllegalArgumentException() {
+	@Test
+	void testColumnPositionNotEqualExpressionIllegalArgumentException() {
+		assertThrows(IllegalArgumentException.class, () -> {
+
 		new ColumnPositionNotEqualExpression(0, null);
+		});
 	}
 
 	@Test
-	public void testAcceptListOfString() {
+	void testAcceptListOfString() {
 		assertTrue(new ColumnPositionNotEqualExpression(0, "aaa").accept(Arrays.asList(new String[]{ null, "aaa", "bbb" })));
 		assertFalse(new ColumnPositionNotEqualExpression(1, "aaa").accept(Arrays.asList(new String[]{ null, "aaa", "bbb" })));
 		assertTrue(new ColumnPositionNotEqualExpression(2, "aaa").accept(Arrays.asList(new String[]{ null, "aaa", "bbb" })));
@@ -56,7 +60,7 @@ public class ColumnPositionNotEqualExpressionTest {
 	}
 
 	@Test
-	public void testAcceptListOfStringListOfString() {
+	void testAcceptListOfStringListOfString() {
 		assertTrue(new ColumnPositionNotEqualExpression(0, "aaa").accept(null, Arrays.asList(new String[]{ null, "aaa", "bbb" })));
 		assertFalse(new ColumnPositionNotEqualExpression(1, "aaa").accept(null, Arrays.asList(new String[]{ null, "aaa", "bbb" })));
 		assertTrue(new ColumnPositionNotEqualExpression(2, "aaa").accept(null, Arrays.asList(new String[]{ null, "aaa", "bbb" })));
@@ -69,7 +73,7 @@ public class ColumnPositionNotEqualExpressionTest {
 	}
 
 	@Test
-	public void testToString() {
+	void testToString() {
 		assertThat(new ColumnPositionNotEqualExpression(0, "aaa").toString(), is("ColumnPositionNotEqualExpression"));
 		
 	}

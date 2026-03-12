@@ -17,49 +17,62 @@
 package com.orangesignal.csv.filters;
 
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * {@link ColumnPositionRegexExpression} クラスの単体テストです。
  * 
  * @author Koji Sugisawa
  */
-public class ColumnPositionRegexExpressionTest {
+class ColumnPositionRegexExpressionTest {
 
-	@Test(expected = IllegalArgumentException.class)
-	public void testColumnPositionRegexExpressionIllegalArgumentException1() {
+	@Test
+	void testColumnPositionRegexExpressionIllegalArgumentException1() {
+		assertThrows(IllegalArgumentException.class, () -> {
+
 		final String pattern = null;
 		new ColumnPositionRegexExpression(0, pattern);
-	}
-
-	@Test(expected = IllegalArgumentException.class)
-	public void testColumnPositionRegexExpressionIllegalArgumentException2() {
-		final String pattern = null;
-		new ColumnPositionRegexExpression(0, pattern, false);
-	}
-
-	@Test(expected = IllegalArgumentException.class)
-	public void testColumnPositionRegexExpressionIllegalArgumentException3() {
-		final String pattern = null;
-		new ColumnPositionRegexExpression(0, pattern, Pattern.CASE_INSENSITIVE);
-	}
-
-	@Test(expected = IllegalArgumentException.class)
-	public void testColumnPositionRegexExpressionIllegalArgumentException4() {
-		final Pattern pattern = null;
-		new ColumnPositionRegexExpression(0, pattern);
+		});
 	}
 
 	@Test
-	public void testColumnPositionRegexExpression() {
+	void testColumnPositionRegexExpressionIllegalArgumentException2() {
+		assertThrows(IllegalArgumentException.class, () -> {
+
+		final String pattern = null;
+		new ColumnPositionRegexExpression(0, pattern, false);
+		});
+	}
+
+	@Test
+	void testColumnPositionRegexExpressionIllegalArgumentException3() {
+		assertThrows(IllegalArgumentException.class, () -> {
+
+		final String pattern = null;
+		new ColumnPositionRegexExpression(0, pattern, Pattern.CASE_INSENSITIVE);
+		});
+	}
+
+	@Test
+	void testColumnPositionRegexExpressionIllegalArgumentException4() {
+		assertThrows(IllegalArgumentException.class, () -> {
+
+		final Pattern pattern = null;
+		new ColumnPositionRegexExpression(0, pattern);
+		});
+	}
+
+	@Test
+	void testColumnPositionRegexExpression() {
 		new ColumnPositionRegexExpression(0, "^.*$");
 		new ColumnPositionRegexExpression(0, "^.*$", false);
 		new ColumnPositionRegexExpression(0, "^.*$", true);
@@ -68,7 +81,7 @@ public class ColumnPositionRegexExpressionTest {
 	}
 
 	@Test
-	public void testAcceptListOfString() {
+	void testAcceptListOfString() {
 		final List<String> values = Arrays.asList(new String[]{ null, "aaa", "bbb" });
 		assertFalse(new ColumnPositionRegexExpression(0, "^[a]+$").accept(values));
 		assertTrue(new ColumnPositionRegexExpression(1, "^[a]+$").accept(values));
@@ -88,7 +101,7 @@ public class ColumnPositionRegexExpressionTest {
 	}
 
 	@Test
-	public void testAcceptListOfStringListOfString() {
+	void testAcceptListOfStringListOfString() {
 		final List<String> values = Arrays.asList(new String[]{ null, "aaa", "bbb" });
 		assertFalse(new ColumnPositionRegexExpression(0, "^[a]+$").accept(null, values));
 		assertTrue(new ColumnPositionRegexExpression(1, "^[a]+$").accept(null, values));
@@ -108,7 +121,7 @@ public class ColumnPositionRegexExpressionTest {
 	}
 
 	@Test
-	public void testToString() {
+	void testToString() {
 		assertThat(new ColumnPositionRegexExpression(0, "^.*$").toString(), is("ColumnPositionRegexExpression"));
 		
 	}

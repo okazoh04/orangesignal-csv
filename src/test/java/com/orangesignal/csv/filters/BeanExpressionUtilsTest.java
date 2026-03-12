@@ -16,8 +16,8 @@
 
 package com.orangesignal.csv.filters;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.text.DateFormat;
@@ -25,7 +25,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.regex.Pattern;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.orangesignal.csv.entity.Price;
 
@@ -34,10 +34,10 @@ import com.orangesignal.csv.entity.Price;
  * 
  * @author Koji Sugisawa
  */
-public class BeanExpressionUtilsTest {
+class BeanExpressionUtilsTest {
 
 	@Test
-	public void testIsNull() throws IOException {
+	void testIsNull() throws IOException {
 		assertTrue(BeanExpressionUtils.isNull(new Price(null, "COMEX 金 2009年11月限", 1088.70, 100, new Date()), "symbol"));
 		assertFalse(BeanExpressionUtils.isNull(new Price("GCX09", "COMEX 金 2009年11月限", 1088.70, 100, new Date()), "symbol"));
 		assertTrue(BeanExpressionUtils.isNull(new Price("GCX09", null, 1088.70, 100, new Date()), "name"));
@@ -49,7 +49,7 @@ public class BeanExpressionUtilsTest {
 	}
 
 	@Test
-	public void testNotNull() throws IOException {
+	void testNotNull() throws IOException {
 		assertFalse(BeanExpressionUtils.isNotNull(new Price(null, "COMEX 金 2009年11月限", 1088.70, 100, new Date()), "symbol"));
 		assertTrue(BeanExpressionUtils.isNotNull(new Price("GCX09", "COMEX 金 2009年11月限", 1088.70, 100, new Date()), "symbol"));
 		assertFalse(BeanExpressionUtils.isNotNull(new Price("GCX09", null, 1088.70, 100, new Date()), "name"));
@@ -61,7 +61,7 @@ public class BeanExpressionUtilsTest {
 	}
 
 	@Test
-	public void testIsEmpty() throws IOException {
+	void testIsEmpty() throws IOException {
 		assertTrue(BeanExpressionUtils.isEmpty(new Price(null, "COMEX 金 2009年11月限", 1088.70, 100, new Date()), "symbol"));
 		assertTrue(BeanExpressionUtils.isEmpty(new Price("", "COMEX 金 2009年11月限", 1088.70, 100, new Date()), "symbol"));
 		assertFalse(BeanExpressionUtils.isEmpty(new Price("GCX09", "COMEX 金 2009年11月限", 1088.70, 100, new Date()), "symbol"));
@@ -75,7 +75,7 @@ public class BeanExpressionUtilsTest {
 	}
 
 	@Test
-	public void testIsNotEmpty() throws IOException {
+	void testIsNotEmpty() throws IOException {
 		assertFalse(BeanExpressionUtils.isNotEmpty(new Price(null, "COMEX 金 2009年11月限", 1088.70, 100, new Date()), "symbol"));
 		assertFalse(BeanExpressionUtils.isNotEmpty(new Price("", "COMEX 金 2009年11月限", 1088.70, 100, new Date()), "symbol"));
 		assertTrue(BeanExpressionUtils.isNotEmpty(new Price("GCX09", "COMEX 金 2009年11月限", 1088.70, 100, new Date()), "symbol"));
@@ -89,7 +89,7 @@ public class BeanExpressionUtilsTest {
 	}
 
 	@Test
-	public void testEq() throws Exception {
+	void testEq() throws Exception {
 		final Price price = new Price("GCX09", "COMEX 金 2009年11月限", 1088.70, 100, new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").parse("2009/11/06 19:14:46"));
 		assertFalse(BeanExpressionUtils.eq(price, "symbol", "SIX09", false));
 		assertTrue(BeanExpressionUtils.eq(price, "symbol", "GCX09", false));
@@ -102,7 +102,7 @@ public class BeanExpressionUtilsTest {
 	}
 
 	@Test
-	public void testNe() throws Exception {
+	void testNe() throws Exception {
 		final Price price = new Price("GCX09", "COMEX 金 2009年11月限", 1088.70, 100, new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").parse("2009/11/06 19:14:46"));
 		assertTrue(BeanExpressionUtils.ne(price, "symbol", "SIX09", false));
 		assertFalse(BeanExpressionUtils.ne(price, "symbol", "GCX09", false));
@@ -115,7 +115,7 @@ public class BeanExpressionUtilsTest {
 	}
 
 	@Test
-	public void testIn() throws Exception {
+	void testIn() throws Exception {
 		final DateFormat df = new SimpleDateFormat("yyyy/MM/dd");
 		final Price price = new Price("GCX09", "COMEX 金 2009年11月限", 1088.70, 100, df.parse("2009/11/06"));
 		assertFalse(BeanExpressionUtils.in(price, "symbol", new Object[]{ "SIU09", "SIV09", "SIX09" }, false));
@@ -129,7 +129,7 @@ public class BeanExpressionUtilsTest {
 	}
 
 	@Test
-	public void testNotIn() throws Exception {
+	void testNotIn() throws Exception {
 		final DateFormat df = new SimpleDateFormat("yyyy/MM/dd");
 		final Price price = new Price("GCX09", "COMEX 金 2009年11月限", 1088.70, 100, df.parse("2009/11/06"));
 		assertTrue(BeanExpressionUtils.notIn(price, "symbol", new Object[]{ "SIU09", "SIV09", "SIX09" }, false));
@@ -143,7 +143,7 @@ public class BeanExpressionUtilsTest {
 	}
 
 	@Test
-	public void testRegex() throws Exception {
+	void testRegex() throws Exception {
 		final DateFormat df = new SimpleDateFormat("yyyy/MM/dd");
 		final Price price = new Price("GCX09", "COMEX 金 2009年11月限", 1088.70, 100, df.parse("2009/11/06"));
 		assertTrue(BeanExpressionUtils.regex(price, "symbol", Pattern.compile("^GCX[0-9]{1,2}$")));
@@ -151,7 +151,7 @@ public class BeanExpressionUtilsTest {
 	}
 
 	@Test
-	public void testGt() throws Exception {
+	void testGt() throws Exception {
 		final DateFormat df = new SimpleDateFormat("yyyy/MM/dd");
 		final Price price = new Price("GCX09", "COMEX 金 2009年11月限", 1088.70, 100, df.parse("2009/11/06"));
 		assertFalse(BeanExpressionUtils.gt(price, "price", 1098.00, null));
@@ -163,7 +163,7 @@ public class BeanExpressionUtilsTest {
 	}
 
 	@Test
-	public void testLt() throws Exception {
+	void testLt() throws Exception {
 		final DateFormat df = new SimpleDateFormat("yyyy/MM/dd");
 		final Price price = new Price("GCX09", "COMEX 金 2009年11月限", 1088.70, 100, df.parse("2009/11/06"));
 		assertTrue(BeanExpressionUtils.lt(price, "price", 1098.00, null));
@@ -175,7 +175,7 @@ public class BeanExpressionUtilsTest {
 	}
 
 	@Test
-	public void testGe() throws Exception {
+	void testGe() throws Exception {
 		final DateFormat df = new SimpleDateFormat("yyyy/MM/dd");
 		final Price price = new Price("GCX09", "COMEX 金 2009年11月限", 1088.70, 100, df.parse("2009/11/06"));
 		assertFalse(BeanExpressionUtils.ge(price, "price", 1098.00, null));
@@ -187,7 +187,7 @@ public class BeanExpressionUtilsTest {
 	}
 
 	@Test
-	public void testLe() throws Exception {
+	void testLe() throws Exception {
 		final DateFormat df = new SimpleDateFormat("yyyy/MM/dd");
 		final Price price = new Price("GCX09", "COMEX 金 2009年11月限", 1088.70, 100, df.parse("2009/11/06"));
 		assertTrue(BeanExpressionUtils.le(price, "price", 1098.00, null));
@@ -199,7 +199,7 @@ public class BeanExpressionUtilsTest {
 	}
 
 	@Test
-	public void testBetween() throws Exception {
+	void testBetween() throws Exception {
 		final DateFormat df = new SimpleDateFormat("yyyy/MM/dd");
 		final Price price = new Price("GCX09", "COMEX 金 2009年11月限", 1088.70, 100, df.parse("2009/11/06"));
 		assertTrue(BeanExpressionUtils.between(price, "price", 1000.00, 1098.00, null));

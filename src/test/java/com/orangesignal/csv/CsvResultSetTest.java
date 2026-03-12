@@ -16,13 +16,16 @@
 
 package com.orangesignal.csv;
 
-import static org.hamcrest.core.Is.is;
-import static org.hamcrest.core.IsNull.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsNull.notNullValue;
+import static org.hamcrest.core.IsNull.nullValue;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.StringReader;
+import java.math.BigDecimal;
 import java.sql.Blob;
 import java.sql.Clob;
 import java.sql.NClob;
@@ -32,20 +35,21 @@ import java.sql.SQLFeatureNotSupportedException;
 import java.util.Map;
 import java.util.regex.Pattern;
 
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 /**
  * {@link CsvResultSet} クラスの単体テストです。
  * 
  * @author Koji Sugisawa
  */
-public class CsvResultSetTest {
+class CsvResultSetTest {
 
 	private static CsvConfig cfg;
 
-	@BeforeClass
-	public static void setUpBeforeClass() throws Exception {
+	@BeforeAll
+	static void setUpBeforeClass() throws Exception {
 		cfg = new CsvConfig(',', '"', '\\');
 		cfg.setNullString("NULL");
 		cfg.setBreakString("\n");
@@ -56,34 +60,40 @@ public class CsvResultSetTest {
 	}
 
 	@Test
-	public void testCsvResultSet() throws IOException {
+	void testCsvResultSet() throws IOException {
 		final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("field_name\r\nxxx")));
 		rs.close();
 	}
 
-	@Test(expected = IllegalArgumentException.class)
-	public void testCsvResultSetIllegalArgumentException() throws IOException {
-		new CsvResultSet(null);
+	@Test
+	void testCsvResultSetIllegalArgumentException() throws IOException  {
+		Assertions.assertThrows(IllegalArgumentException.class, () -> {
+			try(CsvResultSet rs = new CsvResultSet(null)){}
+		});
 	}
 
-	@Test(expected = IOException.class)
-	public void testCsvResultSetIOException() throws IOException {
-		new CsvResultSet(new CsvReader(new StringReader(""), cfg));
+	@Test
+	void testCsvResultSetIOException() throws IOException  {
+		Assertions.assertThrows(IOException.class, () -> {
+			try(CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader(""), cfg))){}
+		});
 	}
 
-	@Test(expected = SQLException.class)
-	public void testEnsureOpen() throws Exception {
-		final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader(
+	@Test
+	void testEnsureOpen() throws Exception  {
+		Assertions.assertThrows(SQLException.class, () -> {
+			final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader(
 				"code, market, name, price, date, time, datetime, active \r\n" +
 				"9999, T1, OrangeSignal CSV test, NULL, 2009-01-01, 12:00:00, 2009-01-01 12:00:00, 0 \r\n" +
 				"9999, T1, OrangeSignal CSV test, 500.05, 2009-01-01, 12:00:00, 2009-01-01 12:00:00, 1 \r\n"
 			), cfg));
 		rs.close();
 		rs.next();
+		});
 	}
 
 	@Test
-	public void test() throws Exception {
+	void test() throws Exception {
 		final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader(
 				"code, market, name, price, date, time, datetime, active \r\n" +
 				"9999, T1, OrangeSignal CSV test, NULL, 2009-01-01, 12:00:00, 2009-01-01 12:00:00, 0 \r\n" +
@@ -130,1220 +140,1466 @@ public class CsvResultSetTest {
 		}
 	}
 
-	@Test(expected = SQLFeatureNotSupportedException.class)
-	public void testGetBigDecimalIntInt() throws Exception {
-		final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
+	@Test
+	@SuppressWarnings("deprecation")
+	void testGetBigDecimalIntInt() throws Exception  {
+		final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\n1"), cfg));
 		try {
-			rs.getBigDecimal(1, 0);
+			assertThat(rs.next(), is(true));
+			assertThat(rs.getBigDecimal(1, 0), is(new BigDecimal("1")));
 		} finally {
 			rs.close();
 		}
 	}
 
-	@Test(expected = SQLFeatureNotSupportedException.class)
-	public void testGetUnicodeStreamInt() throws Exception {
-		final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
+	@Test
+	void testGetUnicodeStreamInt() throws Exception  {
+		final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\naaa"), cfg));
 		try {
-			rs.getUnicodeStream(1);
+			assertThat(rs.next(), is(true));
+			try (@SuppressWarnings("deprecation")
+			InputStream in = rs.getUnicodeStream(1)) {
+				assertThat(in, is(notNullValue()));
+			}
 		} finally {
 			rs.close();
 		}
 	}
 
-	@Test(expected = SQLFeatureNotSupportedException.class)
-	public void testGetBigDecimalStringInt() throws Exception {
-		final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
+	@SuppressWarnings("deprecation")
+	@Test
+	void testGetBigDecimalStringInt() throws Exception  {
+		final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\n1"), cfg));
 		try {
-			rs.getBigDecimal("id", 0);
+			assertThat(rs.next(), is(true));
+			assertThat(rs.getBigDecimal("id", 0), is(new BigDecimal("1")));
 		} finally {
 			rs.close();
 		}
 	}
 
-	@Test(expected = SQLFeatureNotSupportedException.class)
-	public void testGetUnicodeStreamString() throws Exception {
-		final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
+	@Test
+	void testGetUnicodeStreamString() throws Exception  {
+		final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\naaa"), cfg));
 		try {
-			rs.getUnicodeStream("id");
+			assertThat(rs.next(), is(true));
+			try (@SuppressWarnings("deprecation")
+			InputStream in = rs.getUnicodeStream("id")) {
+				assertThat(in, is(notNullValue()));
+			}
 		} finally {
 			rs.close();
 		}
 	}
 
-	@Test(expected = SQLFeatureNotSupportedException.class)
-	public void testGetCursorName() throws Exception {
-		final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
+	@Test
+	void testGetCursorName() throws Exception  {
+		Assertions.assertThrows(SQLFeatureNotSupportedException.class, () -> {
+			final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
 		try {
 			rs.getCursorName();
 		} finally {
 			rs.close();
 		}
+		});
 	}
 
-	@Test(expected = SQLFeatureNotSupportedException.class)
-	public void testIsBeforeFirst() throws Exception {
-		final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
+	@Test
+	void testIsBeforeFirst() throws Exception  {
+		Assertions.assertThrows(SQLFeatureNotSupportedException.class, () -> {
+			final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
 		try {
 			rs.isBeforeFirst();
 		} finally {
 			rs.close();
 		}
+		});
 	}
 
-	@Test(expected = SQLFeatureNotSupportedException.class)
-	public void testIsAfterLast() throws Exception {
-		final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
+	@Test
+	void testIsAfterLast() throws Exception  {
+		Assertions.assertThrows(SQLFeatureNotSupportedException.class, () -> {
+			final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
 		try {
 			rs.isAfterLast();
 		} finally {
 			rs.close();
 		}
+		});
 	}
 
-	@Test(expected = SQLFeatureNotSupportedException.class)
-	public void testIsFirst() throws Exception {
-		final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
+	@Test
+	void testIsFirst() throws Exception  {
+		Assertions.assertThrows(SQLFeatureNotSupportedException.class, () -> {
+			final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
 		try {
 			rs.isFirst();
 		} finally {
 			rs.close();
 		}
+		});
 	}
 
-	@Test(expected = SQLFeatureNotSupportedException.class)
-	public void testIsLast() throws Exception {
-		final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
+	@Test
+	void testIsLast() throws Exception  {
+		Assertions.assertThrows(SQLFeatureNotSupportedException.class, () -> {
+			final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
 		try {
 			rs.isLast();
 		} finally {
 			rs.close();
 		}
+		});
 	}
 
-	@Test(expected = SQLFeatureNotSupportedException.class)
-	public void testBeforeFirst() throws Exception {
-		final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
+	@Test
+	void testBeforeFirst() throws Exception  {
+		Assertions.assertThrows(SQLFeatureNotSupportedException.class, () -> {
+			final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
 		try {
 			rs.beforeFirst();
 		} finally {
 			rs.close();
 		}
+		});
 	}
 
-	@Test(expected = SQLFeatureNotSupportedException.class)
-	public void testAfterLast() throws Exception {
-		final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
+	@Test
+	void testAfterLast() throws Exception  {
+		Assertions.assertThrows(SQLFeatureNotSupportedException.class, () -> {
+			final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
 		try {
 			rs.afterLast();
 		} finally {
 			rs.close();
 		}
+		});
 	}
 
-	@Test(expected = SQLFeatureNotSupportedException.class)
-	public void testFirst() throws Exception {
-		final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
+	@Test
+	void testFirst() throws Exception  {
+		Assertions.assertThrows(SQLFeatureNotSupportedException.class, () -> {
+			final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
 		try {
 			rs.first();
 		} finally {
 			rs.close();
 		}
+		});
 	}
 
-	@Test(expected = SQLFeatureNotSupportedException.class)
-	public void testLast() throws Exception {
-		final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
+	@Test
+	void testLast() throws Exception  {
+		Assertions.assertThrows(SQLFeatureNotSupportedException.class, () -> {
+			final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
 		try {
 			rs.last();
 		} finally {
 			rs.close();
 		}
+		});
 	}
 
-	@Test(expected = SQLFeatureNotSupportedException.class)
-	public void testAbsolute() throws Exception {
-		final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
+	@Test
+	void testAbsolute() throws Exception  {
+		Assertions.assertThrows(SQLFeatureNotSupportedException.class, () -> {
+			final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
 		try {
 			rs.absolute(0);
 		} finally {
 			rs.close();
 		}
+		});
 	}
 
-	@Test(expected = SQLFeatureNotSupportedException.class)
-	public void testRelative() throws Exception {
-		final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
+	@Test
+	void testRelative() throws Exception  {
+		Assertions.assertThrows(SQLFeatureNotSupportedException.class, () -> {
+			final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
 		try {
 			rs.relative(0);
 		} finally {
 			rs.close();
 		}
+		});
 	}
 
-	@Test(expected = SQLFeatureNotSupportedException.class)
-	public void testPrevious() throws Exception {
-		final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
+	@Test
+	void testPrevious() throws Exception  {
+		Assertions.assertThrows(SQLFeatureNotSupportedException.class, () -> {
+			final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
 		try {
 			rs.previous();
 		} finally {
 			rs.close();
 		}
+		});
 	}
 
-	@Test(expected = SQLFeatureNotSupportedException.class)
-	public void testSetFetchDirection() throws Exception {
-		final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
+	@Test
+	void testSetFetchDirection() throws Exception  {
+		Assertions.assertThrows(SQLFeatureNotSupportedException.class, () -> {
+			final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
 		try {
 			rs.setFetchDirection(ResultSet.FETCH_FORWARD);
 		} finally {
 			rs.close();
 		}
+		});
 	}
 
-	@Test(expected = SQLFeatureNotSupportedException.class)
-	public void testSetFetchSize() throws Exception {
-		final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
+	@Test
+	void testSetFetchSize() throws Exception  {
+		Assertions.assertThrows(SQLFeatureNotSupportedException.class, () -> {
+			final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
 		try {
 			rs.setFetchSize(0);
 		} finally {
 			rs.close();
 		}
+		});
 	}
 
-	@Test(expected = SQLFeatureNotSupportedException.class)
-	public void testRowUpdated() throws Exception {
-		final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
+	@Test
+	void testRowUpdated() throws Exception  {
+		Assertions.assertThrows(SQLFeatureNotSupportedException.class, () -> {
+			final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
 		try {
 			rs.rowUpdated();
 		} finally {
 			rs.close();
 		}
+		});
 	}
 
-	@Test(expected = SQLFeatureNotSupportedException.class)
-	public void testRowInserted() throws Exception {
-		final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
+	@Test
+	void testRowInserted() throws Exception  {
+		Assertions.assertThrows(SQLFeatureNotSupportedException.class, () -> {
+			final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
 		try {
 			rs.rowInserted();
 		} finally {
 			rs.close();
 		}
+		});
 	}
 
-	@Test(expected = SQLFeatureNotSupportedException.class)
-	public void testRowDeleted() throws Exception {
-		final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
+	@Test
+	void testRowDeleted() throws Exception  {
+		Assertions.assertThrows(SQLFeatureNotSupportedException.class, () -> {
+			final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
 		try {
 			rs.rowDeleted();
 		} finally {
 			rs.close();
 		}
+		});
 	}
 
-	@Test(expected = SQLFeatureNotSupportedException.class)
-	public void testUpdateNullInt() throws Exception {
-		final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
+	@Test
+	void testUpdateNullInt() throws Exception  {
+		Assertions.assertThrows(SQLFeatureNotSupportedException.class, () -> {
+			final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
 		try {
 			rs.updateNull(1);
 		} finally {
 			rs.close();
 		}
+		});
 	}
 
-	@Test(expected = SQLFeatureNotSupportedException.class)
-	public void testUpdateBooleanIntBoolean() throws Exception {
-		final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
+	@Test
+	void testUpdateBooleanIntBoolean() throws Exception  {
+		Assertions.assertThrows(SQLFeatureNotSupportedException.class, () -> {
+			final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
 		try {
 			rs.updateBoolean(1, false);
 		} finally {
 			rs.close();
 		}
+		});
 	}
 
-	@Test(expected = SQLFeatureNotSupportedException.class)
-	public void testUpdateByteIntByte() throws Exception {
-		final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
+	@Test
+	void testUpdateByteIntByte() throws Exception  {
+		Assertions.assertThrows(SQLFeatureNotSupportedException.class, () -> {
+			final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
 		try {
 			rs.updateByte(1, (byte) 0);
 		} finally {
 			rs.close();
 		}
+		});
 	}
 
-	@Test(expected = SQLFeatureNotSupportedException.class)
-	public void testUpdateShortIntShort() throws Exception {
-		final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
+	@Test
+	void testUpdateShortIntShort() throws Exception  {
+		Assertions.assertThrows(SQLFeatureNotSupportedException.class, () -> {
+			final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
 		try {
 			rs.updateShort(1, (short) 0);
 		} finally {
 			rs.close();
 		}
+		});
 	}
 
-	@Test(expected = SQLFeatureNotSupportedException.class)
-	public void testUpdateIntIntInt() throws Exception {
-		final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
+	@Test
+	void testUpdateIntIntInt() throws Exception  {
+		Assertions.assertThrows(SQLFeatureNotSupportedException.class, () -> {
+			final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
 		try {
 			rs.updateInt(1, 0);
 		} finally {
 			rs.close();
 		}
+		});
 	}
 
-	@Test(expected = SQLFeatureNotSupportedException.class)
-	public void testUpdateLongIntLong() throws Exception {
-		final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
+	@Test
+	void testUpdateLongIntLong() throws Exception  {
+		Assertions.assertThrows(SQLFeatureNotSupportedException.class, () -> {
+			final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
 		try {
 			rs.updateLong(1, 0L);
 		} finally {
 			rs.close();
 		}
+		});
 	}
 
-	@Test(expected = SQLFeatureNotSupportedException.class)
-	public void testUpdateFloatIntFloat() throws Exception {
-		final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
+	@Test
+	void testUpdateFloatIntFloat() throws Exception  {
+		Assertions.assertThrows(SQLFeatureNotSupportedException.class, () -> {
+			final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
 		try {
 			rs.updateFloat(1, 0F);
 		} finally {
 			rs.close();
 		}
+		});
 	}
 
-	@Test(expected = SQLFeatureNotSupportedException.class)
-	public void testUpdateDoubleIntDouble() throws Exception {
-		final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
+	@Test
+	void testUpdateDoubleIntDouble() throws Exception  {
+		Assertions.assertThrows(SQLFeatureNotSupportedException.class, () -> {
+			final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
 		try {
 			rs.updateDouble(1, 0D);
 		} finally {
 			rs.close();
 		}
+		});
 	}
 
-	@Test(expected = SQLFeatureNotSupportedException.class)
-	public void testUpdateBigDecimalIntBigDecimal() throws Exception {
-		final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
+	@Test
+	void testUpdateBigDecimalIntBigDecimal() throws Exception  {
+		Assertions.assertThrows(SQLFeatureNotSupportedException.class, () -> {
+			final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
 		try {
 			rs.updateBigDecimal(1, null);
 		} finally {
 			rs.close();
 		}
+		});
 	}
 
-	@Test(expected = SQLFeatureNotSupportedException.class)
-	public void testUpdateStringIntString() throws Exception {
-		final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
+	@Test
+	void testUpdateStringIntString() throws Exception  {
+		Assertions.assertThrows(SQLFeatureNotSupportedException.class, () -> {
+			final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
 		try {
 			rs.updateString(1, null);
 		} finally {
 			rs.close();
 		}
+		});
 	}
 
-	@Test(expected = SQLFeatureNotSupportedException.class)
-	public void testUpdateBytesIntByteArray() throws Exception {
-		final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
+	@Test
+	void testUpdateBytesIntByteArray() throws Exception  {
+		Assertions.assertThrows(SQLFeatureNotSupportedException.class, () -> {
+			final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
 		try {
 			rs.updateBytes(1, null);
 		} finally {
 			rs.close();
 		}
+		});
 	}
 
-	@Test(expected = SQLFeatureNotSupportedException.class)
-	public void testUpdateDateIntDate() throws Exception {
-		final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
+	@Test
+	void testUpdateDateIntDate() throws Exception  {
+		Assertions.assertThrows(SQLFeatureNotSupportedException.class, () -> {
+			final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
 		try {
 			rs.updateDate(1, null);
 		} finally {
 			rs.close();
 		}
+		});
 	}
 
-	@Test(expected = SQLFeatureNotSupportedException.class)
-	public void testUpdateTimeIntTime() throws Exception {
-		final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
+	@Test
+	void testUpdateTimeIntTime() throws Exception  {
+		Assertions.assertThrows(SQLFeatureNotSupportedException.class, () -> {
+			final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
 		try {
 			rs.updateTime(1, null);
 		} finally {
 			rs.close();
 		}
+		});
 	}
 
-	@Test(expected = SQLFeatureNotSupportedException.class)
-	public void testUpdateTimestampIntTimestamp() throws Exception {
-		final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
+	@Test
+	void testUpdateTimestampIntTimestamp() throws Exception  {
+		Assertions.assertThrows(SQLFeatureNotSupportedException.class, () -> {
+			final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
 		try {
 			rs.updateTimestamp(1, null);
 		} finally {
 			rs.close();
 		}
+		});
 	}
 
-	@Test(expected = SQLFeatureNotSupportedException.class)
-	public void testUpdateAsciiStreamIntInputStreamInt() throws Exception {
-		final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
+	@Test
+	void testUpdateAsciiStreamIntInputStreamInt() throws Exception  {
+		Assertions.assertThrows(SQLFeatureNotSupportedException.class, () -> {
+			final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
 		try {
 			rs.updateAsciiStream(1, null, 0);
 		} finally {
 			rs.close();
 		}
+		});
 	}
 
-	@Test(expected = SQLFeatureNotSupportedException.class)
-	public void testUpdateBinaryStreamIntInputStreamInt() throws Exception {
-		final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
+	@Test
+	void testUpdateBinaryStreamIntInputStreamInt() throws Exception  {
+		Assertions.assertThrows(SQLFeatureNotSupportedException.class, () -> {
+			final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
 		try {
 			rs.updateBinaryStream(1, null, 0);
 		} finally {
 			rs.close();
 		}
+		});
 	}
 
-	@Test(expected = SQLFeatureNotSupportedException.class)
-	public void testUpdateCharacterStreamIntReaderInt() throws Exception {
-		final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
+	@Test
+	void testUpdateCharacterStreamIntReaderInt() throws Exception  {
+		Assertions.assertThrows(SQLFeatureNotSupportedException.class, () -> {
+			final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
 		try {
 			rs.updateCharacterStream(1, null, 0);
 		} finally {
 			rs.close();
 		}
+		});
 	}
 
-	@Test(expected = SQLFeatureNotSupportedException.class)
-	public void testUpdateObjectIntObjectInt() throws Exception {
-		final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
+	@Test
+	void testUpdateObjectIntObjectInt() throws Exception  {
+		Assertions.assertThrows(SQLFeatureNotSupportedException.class, () -> {
+			final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
 		try {
 			rs.updateObject(1, null, 0);
 		} finally {
 			rs.close();
 		}
+		});
 	}
 
-	@Test(expected = SQLFeatureNotSupportedException.class)
-	public void testUpdateObjectIntObject() throws Exception {
-		final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
+	@Test
+	void testUpdateObjectIntObject() throws Exception  {
+		Assertions.assertThrows(SQLFeatureNotSupportedException.class, () -> {
+			final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
 		try {
 			rs.updateObject(1, null);
 		} finally {
 			rs.close();
 		}
+		});
 	}
 
-	@Test(expected = SQLFeatureNotSupportedException.class)
-	public void testUpdateNullString() throws Exception {
-		final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
+	@Test
+	void testUpdateNullString() throws Exception  {
+		Assertions.assertThrows(SQLFeatureNotSupportedException.class, () -> {
+			final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
 		try {
 			rs.updateNull("id");
 		} finally {
 			rs.close();
 		}
+		});
 	}
 
-	@Test(expected = SQLFeatureNotSupportedException.class)
-	public void testUpdateBooleanStringBoolean() throws Exception {
-		final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
+	@Test
+	void testUpdateBooleanStringBoolean() throws Exception  {
+		Assertions.assertThrows(SQLFeatureNotSupportedException.class, () -> {
+			final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
 		try {
 			rs.updateBoolean("id", false);
 		} finally {
 			rs.close();
 		}
+		});
 	}
 
-	@Test(expected = SQLFeatureNotSupportedException.class)
-	public void testUpdateByteStringByte() throws Exception {
-		final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
+	@Test
+	void testUpdateByteStringByte() throws Exception  {
+		Assertions.assertThrows(SQLFeatureNotSupportedException.class, () -> {
+			final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
 		try {
 			rs.updateByte("id", (byte) 0);
 		} finally {
 			rs.close();
 		}
+		});
 	}
 
-	@Test(expected = SQLFeatureNotSupportedException.class)
-	public void testUpdateShortStringShort() throws Exception {
-		final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
+	@Test
+	void testUpdateShortStringShort() throws Exception  {
+		Assertions.assertThrows(SQLFeatureNotSupportedException.class, () -> {
+			final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
 		try {
 			rs.updateShort("id", (short) 0);
 		} finally {
 			rs.close();
 		}
+		});
 	}
 
-	@Test(expected = SQLFeatureNotSupportedException.class)
-	public void testUpdateIntStringInt() throws Exception {
-		final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
+	@Test
+	void testUpdateIntStringInt() throws Exception  {
+		Assertions.assertThrows(SQLFeatureNotSupportedException.class, () -> {
+			final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
 		try {
 			rs.updateInt("id", 0);
 		} finally {
 			rs.close();
 		}
+		});
 	}
 
-	@Test(expected = SQLFeatureNotSupportedException.class)
-	public void testUpdateLongStringLong() throws Exception {
-		final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
+	@Test
+	void testUpdateLongStringLong() throws Exception  {
+		Assertions.assertThrows(SQLFeatureNotSupportedException.class, () -> {
+			final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
 		try {
 			rs.updateLong("id", 0L);
 		} finally {
 			rs.close();
 		}
+		});
 	}
 
-	@Test(expected = SQLFeatureNotSupportedException.class)
-	public void testUpdateFloatStringFloat() throws Exception {
-		final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
+	@Test
+	void testUpdateFloatStringFloat() throws Exception  {
+		Assertions.assertThrows(SQLFeatureNotSupportedException.class, () -> {
+			final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
 		try {
 			rs.updateFloat("id", 0F);
 		} finally {
 			rs.close();
 		}
+		});
 	}
 
-	@Test(expected = SQLFeatureNotSupportedException.class)
-	public void testUpdateDoubleStringDouble() throws Exception {
-		final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
+	@Test
+	void testUpdateDoubleStringDouble() throws Exception  {
+		Assertions.assertThrows(SQLFeatureNotSupportedException.class, () -> {
+			final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
 		try {
 			rs.updateDouble("id", 0D);
 		} finally {
 			rs.close();
 		}
+		});
 	}
 
-	@Test(expected = SQLFeatureNotSupportedException.class)
-	public void testUpdateBigDecimalStringBigDecimal() throws Exception {
-		final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
+	@Test
+	void testUpdateBigDecimalStringBigDecimal() throws Exception  {
+		Assertions.assertThrows(SQLFeatureNotSupportedException.class, () -> {
+			final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
 		try {
 			rs.updateBigDecimal("id", null);
 		} finally {
 			rs.close();
 		}
+		});
 	}
 
-	@Test(expected = SQLFeatureNotSupportedException.class)
-	public void testUpdateStringStringString() throws Exception {
-		final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
+	@Test
+	void testUpdateStringStringString() throws Exception  {
+		Assertions.assertThrows(SQLFeatureNotSupportedException.class, () -> {
+			final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
 		try {
 			rs.updateString("id", null);
 		} finally {
 			rs.close();
 		}
+		});
 	}
 
-	@Test(expected = SQLFeatureNotSupportedException.class)
-	public void testUpdateBytesStringByteArray() throws Exception {
-		final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
+	@Test
+	void testUpdateBytesStringByteArray() throws Exception  {
+		Assertions.assertThrows(SQLFeatureNotSupportedException.class, () -> {
+			final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
 		try {
 			rs.updateBytes("id", null);
 		} finally {
 			rs.close();
 		}
+		});
 	}
 
-	@Test(expected = SQLFeatureNotSupportedException.class)
-	public void testUpdateDateStringDate() throws Exception {
-		final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
+	@Test
+	void testUpdateDateStringDate() throws Exception  {
+		Assertions.assertThrows(SQLFeatureNotSupportedException.class, () -> {
+			final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
 		try {
 			rs.updateDate("id", null);
 		} finally {
 			rs.close();
 		}
+		});
 	}
 
-	@Test(expected = SQLFeatureNotSupportedException.class)
-	public void testUpdateTimeStringTime() throws Exception {
-		final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
+	@Test
+	void testUpdateTimeStringTime() throws Exception  {
+		Assertions.assertThrows(SQLFeatureNotSupportedException.class, () -> {
+			final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
 		try {
 			rs.updateTime("id", null);
 		} finally {
 			rs.close();
 		}
+		});
 	}
 
-	@Test(expected = SQLFeatureNotSupportedException.class)
-	public void testUpdateTimestampStringTimestamp() throws Exception {
-		final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
+	@Test
+	void testUpdateTimestampStringTimestamp() throws Exception  {
+		Assertions.assertThrows(SQLFeatureNotSupportedException.class, () -> {
+			final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
 		try {
 			rs.updateTimestamp("id", null);
 		} finally {
 			rs.close();
 		}
+		});
 	}
 
-	@Test(expected = SQLFeatureNotSupportedException.class)
-	public void testUpdateAsciiStreamStringInputStreamInt() throws Exception {
-		final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
+	@Test
+	void testUpdateAsciiStreamStringInputStreamInt() throws Exception  {
+		Assertions.assertThrows(SQLFeatureNotSupportedException.class, () -> {
+			final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
 		try {
 			rs.updateAsciiStream("id", null, 0);
 		} finally {
 			rs.close();
 		}
+		});
 	}
 
-	@Test(expected = SQLFeatureNotSupportedException.class)
-	public void testUpdateBinaryStreamStringInputStreamInt() throws Exception {
-		final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
+	@Test
+	void testUpdateBinaryStreamStringInputStreamInt() throws Exception  {
+		Assertions.assertThrows(SQLFeatureNotSupportedException.class, () -> {
+			final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
 		try {
 			rs.updateBinaryStream("id", null, 0);
 		} finally {
 			rs.close();
 		}
+		});
 	}
 
-	@Test(expected = SQLFeatureNotSupportedException.class)
-	public void testUpdateCharacterStreamStringReaderInt() throws Exception {
-		final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
+	@Test
+	void testUpdateCharacterStreamStringReaderInt() throws Exception  {
+		Assertions.assertThrows(SQLFeatureNotSupportedException.class, () -> {
+			final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
 		try {
 			rs.updateCharacterStream("id", new StringReader(""), 0);
 		} finally {
 			rs.close();
 		}
+		});
 	}
 
-	@Test(expected = SQLFeatureNotSupportedException.class)
-	public void testUpdateObjectStringObjectInt() throws Exception {
-		final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
+	@Test
+	void testUpdateObjectStringObjectInt() throws Exception  {
+		Assertions.assertThrows(SQLFeatureNotSupportedException.class, () -> {
+			final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
 		try {
 			rs.updateObject("id", null, 0);
 		} finally {
 			rs.close();
 		}
+		});
 	}
 
-	@Test(expected = SQLFeatureNotSupportedException.class)
-	public void testUpdateObjectStringObject() throws Exception {
-		final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
+	@Test
+	void testUpdateObjectStringObject() throws Exception  {
+		Assertions.assertThrows(SQLFeatureNotSupportedException.class, () -> {
+			final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
 		try {
 			rs.updateObject("id", null);
 		} finally {
 			rs.close();
 		}
+		});
 	}
 
-	@Test(expected = SQLFeatureNotSupportedException.class)
-	public void testInsertRow() throws Exception {
-		final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
+	@Test
+	void testInsertRow() throws Exception  {
+		Assertions.assertThrows(SQLFeatureNotSupportedException.class, () -> {
+			final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
 		try {
 			rs.insertRow();
 		} finally {
 			rs.close();
 		}
+		});
 	}
 
-	@Test(expected = SQLFeatureNotSupportedException.class)
-	public void testUpdateRow() throws Exception {
-		final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
+	@Test
+	void testUpdateRow() throws Exception  {
+		Assertions.assertThrows(SQLFeatureNotSupportedException.class, () -> {
+			final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
 		try {
 			rs.updateRow();
 		} finally {
 			rs.close();
 		}
+		});
 	}
 
-	@Test(expected = SQLFeatureNotSupportedException.class)
-	public void testDeleteRow() throws Exception {
-		final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
+	@Test
+	void testDeleteRow() throws Exception  {
+		Assertions.assertThrows(SQLFeatureNotSupportedException.class, () -> {
+			final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
 		try {
 			rs.deleteRow();
 		} finally {
 			rs.close();
 		}
+		});
 	}
 
-	@Test(expected = SQLFeatureNotSupportedException.class)
-	public void testRefreshRow() throws Exception {
-		final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
+	@Test
+	void testRefreshRow() throws Exception  {
+		Assertions.assertThrows(SQLFeatureNotSupportedException.class, () -> {
+			final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
 		try {
 			rs.refreshRow();
 		} finally {
 			rs.close();
 		}
+		});
 	}
 
-	@Test(expected = SQLFeatureNotSupportedException.class)
-	public void testCancelRowUpdates() throws Exception {
-		final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
+	@Test
+	void testCancelRowUpdates() throws Exception  {
+		Assertions.assertThrows(SQLFeatureNotSupportedException.class, () -> {
+			final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
 		try {
 			rs.cancelRowUpdates();
 		} finally {
 			rs.close();
 		}
+		});
 	}
 
-	@Test(expected = SQLFeatureNotSupportedException.class)
-	public void testMoveToInsertRow() throws Exception {
-		final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
+	@Test
+	void testMoveToInsertRow() throws Exception  {
+		Assertions.assertThrows(SQLFeatureNotSupportedException.class, () -> {
+			final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
 		try {
 			rs.moveToInsertRow();
 		} finally {
 			rs.close();
 		}
+		});
 	}
 
-	@Test(expected = SQLFeatureNotSupportedException.class)
-	public void testMoveToCurrentRow() throws Exception {
-		final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
+	@Test
+	void testMoveToCurrentRow() throws Exception  {
+		Assertions.assertThrows(SQLFeatureNotSupportedException.class, () -> {
+			final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
 		try {
 			rs.moveToCurrentRow();
 		} finally {
 			rs.close();
 		}
+		});
 	}
 
-	@Test(expected = SQLFeatureNotSupportedException.class)
-	public void testGetObjectIntMapOfStringClassOfQ() throws Exception {
-		final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
+	@Test
+	void testGetObjectIntMapOfStringClassOfQ() throws Exception  {
+		Assertions.assertThrows(SQLFeatureNotSupportedException.class, () -> {
+			final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
 		try {
 			rs.getObject(1, (Map<String, Class<?>>) null);
 		} finally {
 			rs.close();
 		}
+		});
 	}
 
-	@Test(expected = SQLFeatureNotSupportedException.class)
-	public void testGetRefInt() throws Exception {
-		final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
+	@Test
+	void testGetRefInt() throws Exception  {
+		Assertions.assertThrows(SQLFeatureNotSupportedException.class, () -> {
+			final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
 		try {
 			rs.getRef(1);
 		} finally {
 			rs.close();
 		}
+		});
 	}
 
-	@Test(expected = SQLFeatureNotSupportedException.class)
-	public void testGetArrayInt() throws Exception {
-		final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
+	@Test
+	void testGetArrayInt() throws Exception  {
+		Assertions.assertThrows(SQLFeatureNotSupportedException.class, () -> {
+			final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
 		try {
 			rs.getArray(1);
 		} finally {
 			rs.close();
 		}
+		});
 	}
 
-	@Test(expected = SQLFeatureNotSupportedException.class)
-	public void testGetObjectStringMapOfStringClassOfQ() throws Exception {
-		final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
+	@Test
+	void testGetObjectStringMapOfStringClassOfQ() throws Exception  {
+		Assertions.assertThrows(SQLFeatureNotSupportedException.class, () -> {
+			final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
 		try {
 			rs.getObject("id", (Map<String, Class<?>>) null);
 		} finally {
 			rs.close();
 		}
+		});
 	}
 
-	@Test(expected = SQLFeatureNotSupportedException.class)
-	public void testGetRefString() throws Exception {
-		final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
+	@Test
+	void testGetRefString() throws Exception  {
+		Assertions.assertThrows(SQLFeatureNotSupportedException.class, () -> {
+			final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
 		try {
 			rs.getRef("id");
 		} finally {
 			rs.close();
 		}
+		});
 	}
 
-	@Test(expected = SQLFeatureNotSupportedException.class)
-	public void testUpdateRefIntRef() throws Exception {
-		final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
+	@Test
+	void testUpdateRefIntRef() throws Exception  {
+		Assertions.assertThrows(SQLFeatureNotSupportedException.class, () -> {
+			final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
 		try {
 			rs.updateRef(1, null);
 		} finally {
 			rs.close();
 		}
+		});
 	}
 
-	@Test(expected = SQLFeatureNotSupportedException.class)
-	public void testUpdateRefStringRef() throws Exception {
-		final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
+	@Test
+	void testUpdateRefStringRef() throws Exception  {
+		Assertions.assertThrows(SQLFeatureNotSupportedException.class, () -> {
+			final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
 		try {
 			rs.updateRef("id", null);
 		} finally {
 			rs.close();
 		}
+		});
 	}
 
-	@Test(expected = SQLFeatureNotSupportedException.class)
-	public void testUpdateBlobIntBlob() throws Exception {
-		final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
+	@Test
+	void testUpdateBlobIntBlob() throws Exception  {
+		Assertions.assertThrows(SQLFeatureNotSupportedException.class, () -> {
+			final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
 		try {
 			final Blob blob = null;
 			rs.updateBlob(1, blob);
 		} finally {
 			rs.close();
 		}
+		});
 	}
 
-	@Test(expected = SQLFeatureNotSupportedException.class)
-	public void testUpdateBlobStringBlob() throws Exception {
-		final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
+	@Test
+	void testUpdateBlobStringBlob() throws Exception  {
+		Assertions.assertThrows(SQLFeatureNotSupportedException.class, () -> {
+			final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
 		try {
 			final Blob blob = null;
 			rs.updateBlob("id", blob);
 		} finally {
 			rs.close();
 		}
+		});
 	}
 
-	@Test(expected = SQLFeatureNotSupportedException.class)
-	public void testUpdateClobIntClob() throws Exception {
-		final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
+	@Test
+	void testUpdateClobIntClob() throws Exception  {
+		Assertions.assertThrows(SQLFeatureNotSupportedException.class, () -> {
+			final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
 		try {
 			final Clob clob = null;
 			rs.updateClob(1, clob);
 		} finally {
 			rs.close();
 		}
+		});
 	}
 
-	@Test(expected = SQLFeatureNotSupportedException.class)
-	public void testUpdateClobStringClob() throws Exception {
-		final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
+	@Test
+	void testUpdateClobStringClob() throws Exception  {
+		Assertions.assertThrows(SQLFeatureNotSupportedException.class, () -> {
+			final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
 		try {
 			final Clob clob = null;
 			rs.updateClob("id", clob);
 		} finally {
 			rs.close();
 		}
+		});
 	}
 
-	@Test(expected = SQLFeatureNotSupportedException.class)
-	public void testUpdateArrayIntArray() throws Exception {
-		final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
+	@Test
+	void testUpdateArrayIntArray() throws Exception  {
+		Assertions.assertThrows(SQLFeatureNotSupportedException.class, () -> {
+			final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
 		try {
 			rs.updateArray(1, null);
 		} finally {
 			rs.close();
 		}
+		});
 	}
 
-	@Test(expected = SQLFeatureNotSupportedException.class)
-	public void testUpdateArrayStringArray() throws Exception {
-		final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
+	@Test
+	void testUpdateArrayStringArray() throws Exception  {
+		Assertions.assertThrows(SQLFeatureNotSupportedException.class, () -> {
+			final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
 		try {
 			rs.updateArray("id", null);
 		} finally {
 			rs.close();
 		}
+		});
 	}
 
-	@Test(expected = SQLFeatureNotSupportedException.class)
-	public void testGetRowIdInt() throws Exception {
-		final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
+	@Test
+	void testGetRowIdInt() throws Exception  {
+		Assertions.assertThrows(SQLFeatureNotSupportedException.class, () -> {
+			final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
 		try {
 			rs.getRowId(1);
 		} finally {
 			rs.close();
 		}
+		});
 	}
 
-	@Test(expected = SQLFeatureNotSupportedException.class)
-	public void testGetRowIdString() throws Exception {
-		final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
+	@Test
+	void testGetRowIdString() throws Exception  {
+		Assertions.assertThrows(SQLFeatureNotSupportedException.class, () -> {
+			final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
 		try {
 			rs.getRowId("id");
 		} finally {
 			rs.close();
 		}
+		});
 	}
 
-	@Test(expected = SQLFeatureNotSupportedException.class)
-	public void testUpdateRowIdIntRowId() throws Exception {
-		final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
+	@Test
+	void testUpdateRowIdIntRowId() throws Exception  {
+		Assertions.assertThrows(SQLFeatureNotSupportedException.class, () -> {
+			final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
 		try {
 			rs.updateRowId(1, null);
 		} finally {
 			rs.close();
 		}
+		});
 	}
 
-	@Test(expected = SQLFeatureNotSupportedException.class)
-	public void testUpdateRowIdStringRowId() throws Exception {
-		final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
+	@Test
+	void testUpdateRowIdStringRowId() throws Exception  {
+		Assertions.assertThrows(SQLFeatureNotSupportedException.class, () -> {
+			final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
 		try {
 			rs.updateRowId("id", null);
 		} finally {
 			rs.close();
 		}
+		});
 	}
 
-	@Test(expected = SQLFeatureNotSupportedException.class)
-	public void testUpdateNStringIntString() throws Exception {
-		final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
+	@Test
+	void testUpdateNStringIntString() throws Exception  {
+		Assertions.assertThrows(SQLFeatureNotSupportedException.class, () -> {
+			final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
 		try {
 			rs.updateNString(1, null);
 		} finally {
 			rs.close();
 		}
+		});
 	}
 
-	@Test(expected = SQLFeatureNotSupportedException.class)
-	public void testUpdateNStringStringString() throws Exception {
-		final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
+	@Test
+	void testUpdateNStringStringString() throws Exception  {
+		Assertions.assertThrows(SQLFeatureNotSupportedException.class, () -> {
+			final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
 		try {
 			rs.updateNString("id", null);
 		} finally {
 			rs.close();
 		}
+		});
 	}
 
-	@Test(expected = SQLFeatureNotSupportedException.class)
-	public void testUpdateNClobIntNClob() throws Exception {
-		final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
+	@Test
+	void testUpdateNClobIntNClob() throws Exception  {
+		Assertions.assertThrows(SQLFeatureNotSupportedException.class, () -> {
+			final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
 		try {
 			final NClob nclob = null;
 			rs.updateNClob(1, nclob);
 		} finally {
 			rs.close();
 		}
+		});
 	}
 
-	@Test(expected = SQLFeatureNotSupportedException.class)
-	public void testUpdateNClobStringNClob() throws Exception {
-		final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
+	@Test
+	void testUpdateNClobStringNClob() throws Exception  {
+		Assertions.assertThrows(SQLFeatureNotSupportedException.class, () -> {
+			final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
 		try {
 			final NClob nclob = null;
 			rs.updateNClob("id", nclob);
 		} finally {
 			rs.close();
 		}
+		});
 	}
 
-	@Test(expected = SQLFeatureNotSupportedException.class)
-	public void testGetSQLXMLInt() throws Exception {
-		final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
+	@Test
+	void testGetSQLXMLInt() throws Exception  {
+		Assertions.assertThrows(SQLFeatureNotSupportedException.class, () -> {
+			final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
 		try {
 			rs.getSQLXML(1);
 		} finally {
 			rs.close();
 		}
+		});
 	}
 
-	@Test(expected = SQLFeatureNotSupportedException.class)
-	public void testGetSQLXMLString() throws Exception {
-		final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
+	@Test
+	void testGetSQLXMLString() throws Exception  {
+		Assertions.assertThrows(SQLFeatureNotSupportedException.class, () -> {
+			final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
 		try {
 			rs.getSQLXML("id");
 		} finally {
 			rs.close();
 		}
+		});
 	}
 
-	@Test(expected = SQLFeatureNotSupportedException.class)
-	public void testUpdateSQLXMLIntSQLXML() throws Exception {
-		final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
+	@Test
+	void testUpdateSQLXMLIntSQLXML() throws Exception  {
+		Assertions.assertThrows(SQLFeatureNotSupportedException.class, () -> {
+			final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
 		try {
 			rs.updateSQLXML(1, null);
 		} finally {
 			rs.close();
 		}
+		});
 	}
 
-	@Test(expected = SQLFeatureNotSupportedException.class)
-	public void testUpdateSQLXMLStringSQLXML() throws Exception {
-		final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
+	@Test
+	void testUpdateSQLXMLStringSQLXML() throws Exception  {
+		Assertions.assertThrows(SQLFeatureNotSupportedException.class, () -> {
+			final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
 		try {
 			rs.updateSQLXML("id", null);
 		} finally {
 			rs.close();
 		}
+		});
 	}
 
-	@Test(expected = SQLFeatureNotSupportedException.class)
-	public void testUpdateNCharacterStreamIntReaderLong() throws Exception {
-		final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
+	@Test
+	void testUpdateNCharacterStreamIntReaderLong() throws Exception  {
+		Assertions.assertThrows(SQLFeatureNotSupportedException.class, () -> {
+			final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
 		try {
 			rs.updateNCharacterStream(1, new StringReader(""), 0L);
 		} finally {
 			rs.close();
 		}
+		});
 	}
 
-	@Test(expected = SQLFeatureNotSupportedException.class)
-	public void testUpdateNCharacterStreamStringReaderLong() throws Exception {
-		final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
+	@Test
+	void testUpdateNCharacterStreamStringReaderLong() throws Exception  {
+		Assertions.assertThrows(SQLFeatureNotSupportedException.class, () -> {
+			final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
 		try {
 			rs.updateNCharacterStream("id", new StringReader(""), 0L);
 		} finally {
 			rs.close();
 		}
+		});
 	}
 
-	@Test(expected = SQLFeatureNotSupportedException.class)
-	public void testUpdateAsciiStreamIntInputStreamLong() throws Exception {
-		final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
+	@Test
+	void testUpdateAsciiStreamIntInputStreamLong() throws Exception  {
+		Assertions.assertThrows(SQLFeatureNotSupportedException.class, () -> {
+			final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
 		try {
 			rs.updateAsciiStream(1, new ByteArrayInputStream("".getBytes()), 0L);
 		} finally {
 			rs.close();
 		}
+		});
 	}
 
-	@Test(expected = SQLFeatureNotSupportedException.class)
-	public void testUpdateBinaryStreamIntInputStreamLong() throws Exception {
-		final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
+	@Test
+	void testUpdateBinaryStreamIntInputStreamLong() throws Exception  {
+		Assertions.assertThrows(SQLFeatureNotSupportedException.class, () -> {
+			final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
 		try {
 			rs.updateBinaryStream(1, new ByteArrayInputStream("".getBytes()), 0L);
 		} finally {
 			rs.close();
 		}
+		});
 	}
 
-	@Test(expected = SQLFeatureNotSupportedException.class)
-	public void testUpdateCharacterStreamIntReaderLong() throws Exception {
-		final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
+	@Test
+	void testUpdateCharacterStreamIntReaderLong() throws Exception  {
+		Assertions.assertThrows(SQLFeatureNotSupportedException.class, () -> {
+			final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
 		try {
 			rs.updateCharacterStream(1, new StringReader(""), 0L);
 		} finally {
 			rs.close();
 		}
+		});
 	}
 
-	@Test(expected = SQLFeatureNotSupportedException.class)
-	public void testUpdateAsciiStreamStringInputStreamLong() throws Exception {
-		final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
+	@Test
+	void testUpdateAsciiStreamStringInputStreamLong() throws Exception  {
+		Assertions.assertThrows(SQLFeatureNotSupportedException.class, () -> {
+			final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
 		try {
 			rs.updateAsciiStream("id", new ByteArrayInputStream("".getBytes()), 0L);
 		} finally {
 			rs.close();
 		}
+		});
 	}
 
-	@Test(expected = SQLFeatureNotSupportedException.class)
-	public void testUpdateBinaryStreamStringInputStreamLong() throws Exception {
-		final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
+	@Test
+	void testUpdateBinaryStreamStringInputStreamLong() throws Exception  {
+		Assertions.assertThrows(SQLFeatureNotSupportedException.class, () -> {
+			final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
 		try {
 			rs.updateBinaryStream("id", new ByteArrayInputStream("".getBytes()), 0L);
 		} finally {
 			rs.close();
 		}
+		});
 	}
 
-	@Test(expected = SQLFeatureNotSupportedException.class)
-	public void testUpdateCharacterStreamStringReaderLong() throws Exception {
-		final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
+	@Test
+	void testUpdateCharacterStreamStringReaderLong() throws Exception  {
+		Assertions.assertThrows(SQLFeatureNotSupportedException.class, () -> {
+			final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
 		try {
 			rs.updateCharacterStream("id", new StringReader(""), 0L);
 		} finally {
 			rs.close();
 		}
+		});
 	}
 
-	@Test(expected = SQLFeatureNotSupportedException.class)
-	public void testUpdateBlobIntInputStreamLong() throws Exception {
-		final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
+	@Test
+	void testUpdateBlobIntInputStreamLong() throws Exception  {
+		Assertions.assertThrows(SQLFeatureNotSupportedException.class, () -> {
+			final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
 		try {
 			rs.updateBlob(1, new ByteArrayInputStream("".getBytes()), 0L);
 		} finally {
 			rs.close();
 		}
+		});
 	}
 
-	@Test(expected = SQLFeatureNotSupportedException.class)
-	public void testUpdateBlobStringInputStreamLong() throws Exception {
-		final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
+	@Test
+	void testUpdateBlobStringInputStreamLong() throws Exception  {
+		Assertions.assertThrows(SQLFeatureNotSupportedException.class, () -> {
+			final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
 		try {
 			rs.updateBlob("id", new ByteArrayInputStream("".getBytes()), 0L);
 		} finally {
 			rs.close();
 		}
+		});
 	}
 
-	@Test(expected = SQLFeatureNotSupportedException.class)
-	public void testUpdateClobIntReaderLong() throws Exception {
-		final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
+	@Test
+	void testUpdateClobIntReaderLong() throws Exception  {
+		Assertions.assertThrows(SQLFeatureNotSupportedException.class, () -> {
+			final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
 		try {
 			rs.updateClob(1, new StringReader(""), 0L);
 		} finally {
 			rs.close();
 		}
+		});
 	}
 
-	@Test(expected = SQLFeatureNotSupportedException.class)
-	public void testUpdateClobStringReaderLong() throws Exception {
-		final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
+	@Test
+	void testUpdateClobStringReaderLong() throws Exception  {
+		Assertions.assertThrows(SQLFeatureNotSupportedException.class, () -> {
+			final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
 		try {
 			rs.updateClob("id", new StringReader(""), 0L);
 		} finally {
 			rs.close();
 		}
+		});
 	}
 
-	@Test(expected = SQLFeatureNotSupportedException.class)
-	public void testUpdateNClobIntReaderLong() throws Exception {
-		final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
+	@Test
+	void testUpdateNClobIntReaderLong() throws Exception  {
+		Assertions.assertThrows(SQLFeatureNotSupportedException.class, () -> {
+			final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
 		try {
 			rs.updateNClob(1, new StringReader(""), 0L);
 		} finally {
 			rs.close();
 		}
+		});
 	}
 
-	@Test(expected = SQLFeatureNotSupportedException.class)
-	public void testUpdateNClobStringReaderLong() throws Exception {
-		final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
+	@Test
+	void testUpdateNClobStringReaderLong() throws Exception  {
+		Assertions.assertThrows(SQLFeatureNotSupportedException.class, () -> {
+			final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
 		try {
 			rs.updateNClob("id", new StringReader(""), 0L);
 		} finally {
 			rs.close();
 		}
+		});
 	}
 
-	@Test(expected = SQLFeatureNotSupportedException.class)
-	public void testUpdateNCharacterStreamIntReader() throws Exception {
-		final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
+	@Test
+	void testUpdateNCharacterStreamIntReader() throws Exception  {
+		Assertions.assertThrows(SQLFeatureNotSupportedException.class, () -> {
+			final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
 		try {
 			rs.updateNCharacterStream(1, new StringReader(""));
 		} finally {
 			rs.close();
 		}
+		});
 	}
 
-	@Test(expected = SQLFeatureNotSupportedException.class)
-	public void testUpdateNCharacterStreamStringReader() throws Exception {
-		final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
+	@Test
+	void testUpdateNCharacterStreamStringReader() throws Exception  {
+		Assertions.assertThrows(SQLFeatureNotSupportedException.class, () -> {
+			final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
 		try {
 			rs.updateNCharacterStream("id", new StringReader(""));
 		} finally {
 			rs.close();
 		}
+		});
 	}
 
-	@Test(expected = SQLFeatureNotSupportedException.class)
-	public void testUpdateAsciiStreamIntInputStream() throws Exception {
-		final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
+	@Test
+	void testUpdateAsciiStreamIntInputStream() throws Exception  {
+		Assertions.assertThrows(SQLFeatureNotSupportedException.class, () -> {
+			final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
 		try {
 			rs.updateAsciiStream(1, new ByteArrayInputStream("".getBytes()));
 		} finally {
 			rs.close();
 		}
+		});
 	}
 
-	@Test(expected = SQLFeatureNotSupportedException.class)
-	public void testUpdateBinaryStreamIntInputStream() throws Exception {
-		final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
+	@Test
+	void testUpdateBinaryStreamIntInputStream() throws Exception  {
+		Assertions.assertThrows(SQLFeatureNotSupportedException.class, () -> {
+			final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
 		try {
 			rs.updateBinaryStream(1, new ByteArrayInputStream("".getBytes()));
 		} finally {
 			rs.close();
 		}
+		});
 	}
 
-	@Test(expected = SQLFeatureNotSupportedException.class)
-	public void testUpdateCharacterStreamIntReader() throws Exception {
-		final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
+	@Test
+	void testUpdateCharacterStreamIntReader() throws Exception  {
+		Assertions.assertThrows(SQLFeatureNotSupportedException.class, () -> {
+			final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
 		try {
 			rs.updateCharacterStream(1, new StringReader(""));
 		} finally {
 			rs.close();
 		}
+		});
 	}
 
-	@Test(expected = SQLFeatureNotSupportedException.class)
-	public void testUpdateAsciiStreamStringInputStream() throws Exception {
-		final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
+	@Test
+	void testUpdateAsciiStreamStringInputStream() throws Exception  {
+		Assertions.assertThrows(SQLFeatureNotSupportedException.class, () -> {
+			final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
 		try {
 			rs.updateAsciiStream("id", new ByteArrayInputStream("".getBytes()));
 		} finally {
 			rs.close();
 		}
+		});
 	}
 
-	@Test(expected = SQLFeatureNotSupportedException.class)
-	public void testUpdateBinaryStreamStringInputStream() throws Exception {
-		final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
+	@Test
+	void testUpdateBinaryStreamStringInputStream() throws Exception  {
+		Assertions.assertThrows(SQLFeatureNotSupportedException.class, () -> {
+			final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
 		try {
 			rs.updateBinaryStream("id", new ByteArrayInputStream("".getBytes()));
 		} finally {
 			rs.close();
 		}
+		});
 	}
 
-	@Test(expected = SQLFeatureNotSupportedException.class)
-	public void testUpdateCharacterStreamStringReader() throws Exception {
-		final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
+	@Test
+	void testUpdateCharacterStreamStringReader() throws Exception  {
+		Assertions.assertThrows(SQLFeatureNotSupportedException.class, () -> {
+			final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
 		try {
 			rs.updateCharacterStream("id", new StringReader(""));
 		} finally {
 			rs.close();
 		}
+		});
 	}
 
-	@Test(expected = SQLFeatureNotSupportedException.class)
-	public void testUpdateBlobIntInputStream() throws Exception {
-		final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
+	@Test
+	void testUpdateBlobIntInputStream() throws Exception  {
+		Assertions.assertThrows(SQLFeatureNotSupportedException.class, () -> {
+			final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
 		try {
 			rs.updateBlob(1, new ByteArrayInputStream("".getBytes()));
 		} finally {
 			rs.close();
 		}
+		});
 	}
 
-	@Test(expected = SQLFeatureNotSupportedException.class)
-	public void testUpdateBlobStringInputStream() throws Exception {
-		final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
+	@Test
+	void testUpdateBlobStringInputStream() throws Exception  {
+		Assertions.assertThrows(SQLFeatureNotSupportedException.class, () -> {
+			final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
 		try {
 			rs.updateBlob("id", new ByteArrayInputStream("".getBytes()));
 		} finally {
 			rs.close();
 		}
+		});
 	}
 
-	@Test(expected = SQLFeatureNotSupportedException.class)
-	public void testUpdateClobIntReader() throws Exception {
-		final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
+	@Test
+	void testUpdateClobIntReader() throws Exception  {
+		Assertions.assertThrows(SQLFeatureNotSupportedException.class, () -> {
+			final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
 		try {
 			rs.updateClob(1, new StringReader(""));
 		} finally {
 			rs.close();
 		}
+		});
 	}
 
-	@Test(expected = SQLFeatureNotSupportedException.class)
-	public void testUpdateClobStringReader() throws Exception {
-		final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
+	@Test
+	void testUpdateClobStringReader() throws Exception  {
+		Assertions.assertThrows(SQLFeatureNotSupportedException.class, () -> {
+			final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
 		try {
 			rs.updateClob("id", new StringReader(""));
 		} finally {
 			rs.close();
 		}
+		});
 	}
 
-	@Test(expected = SQLFeatureNotSupportedException.class)
-	public void testUpdateNClobIntReader() throws Exception {
-		final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
+	@Test
+	void testUpdateNClobIntReader() throws Exception  {
+		Assertions.assertThrows(SQLFeatureNotSupportedException.class, () -> {
+			final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
 		try {
 			rs.updateNClob(1, new StringReader(""));
 		} finally {
 			rs.close();
 		}
+		});
 	}
 
-	@Test(expected = SQLFeatureNotSupportedException.class)
-	public void testUpdateNClobStringReader() throws Exception {
-		final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
+	@Test
+	void testUpdateNClobStringReader() throws Exception  {
+		Assertions.assertThrows(SQLFeatureNotSupportedException.class, () -> {
+			final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
 		try {
 			rs.updateNClob("id", new StringReader(""));
 		} finally {
 			rs.close();
 		}
+		});
 	}
 
-	@Test(expected = SQLFeatureNotSupportedException.class)
-	public void testUnwrap() throws Exception {
-		final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
+	@Test
+	void testUnwrap() throws Exception  {
+		Assertions.assertThrows(SQLFeatureNotSupportedException.class, () -> {
+			final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
 		try {
 			rs.unwrap(this.getClass());
 		} finally {
 			rs.close();
 		}
+		});
 	}
 
-	@Test(expected = SQLFeatureNotSupportedException.class)
-	public void testIsWrapperFor() throws Exception {
-		final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
+	@Test
+	void testIsWrapperFor() throws Exception  {
+		Assertions.assertThrows(SQLFeatureNotSupportedException.class, () -> {
+			final CsvResultSet rs = new CsvResultSet(new CsvReader(new StringReader("id\r\nNULL"), cfg));
 		try {
 			rs.isWrapperFor(this.getClass());
 		} finally {
 			rs.close();
 		}
+		});
 	}
 
 }

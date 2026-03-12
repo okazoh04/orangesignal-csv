@@ -17,28 +17,32 @@
 package com.orangesignal.csv.filters;
 
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * {@link CsvValueNotExpression} クラスの単体テストです。
  * 
  * @author Koji Sugisawa
  */
-public class CsvValueNotExpressionTest {
+class CsvValueNotExpressionTest {
 
-	@Test(expected = IllegalArgumentException.class)
-	public void testCsvValueNotExpressionIllegalArgumentException() {
+	@Test
+	void testCsvValueNotExpressionIllegalArgumentException() {
+		assertThrows(IllegalArgumentException.class, () -> {
+
 		new CsvValueNotExpression(null);
+		});
 	}
 
 	@Test
-	public void testAccept() {
+	void testAccept() {
 		assertTrue(new CsvValueNotExpression(
 				new CsvValueFilter() { @Override public boolean accept(final List<String> values) { return false; } }
 			).accept(null));
@@ -48,7 +52,7 @@ public class CsvValueNotExpressionTest {
 	}
 
 	@Test
-	public void testToString() {
+	void testToString() {
 		assertThat(new CsvValueNotExpression(new CsvValueFilter() { @Override public boolean accept(final List<String> values) { return false; } }).toString(), is("CsvValueNotExpression"));
 		
 	}

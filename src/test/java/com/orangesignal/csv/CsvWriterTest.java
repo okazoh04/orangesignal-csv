@@ -24,26 +24,26 @@ import java.io.StringWriter;
 import java.util.Arrays;
 import java.util.List;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * {@link CsvWriter} クラスの単体テストです。
  *
  * @author Koji Sugisawa
  */
-public class CsvWriterTest {
+class CsvWriterTest {
 
 	@Test
-	public void testCsvWriterWriterIntCsvConfig() throws IOException {
+	void testCsvWriterWriterIntCsvConfig() throws IOException {
 		// Act
 		final CsvWriter writer = new CsvWriter(new StringWriter(), 8192, new CsvConfig());
 		writer.close();
 	}
 
 	@Test
-	public void testCsvWriterWriterIntCsvConfigIllegalArgumentException1() throws IOException {
+	void testCsvWriterWriterIntCsvConfigIllegalArgumentException1() throws IOException {
 		// Act
 		assertThrows(IllegalArgumentException.class, () -> {
 			final CsvWriter writer = new CsvWriter(new StringWriter(), 0, new CsvConfig());
@@ -52,7 +52,7 @@ public class CsvWriterTest {
 	}
 
 	@Test
-	public void testCsvWriterWriterIntCsvConfigIllegalArgumentException2() throws IOException {
+	void testCsvWriterWriterIntCsvConfigIllegalArgumentException2() throws IOException {
 		// Act
 		assertThrows(IllegalArgumentException.class, () -> {
 			final CsvWriter writer = new CsvWriter(new StringWriter(), -8192, new CsvConfig());
@@ -61,7 +61,7 @@ public class CsvWriterTest {
 	}
 
 	@Test
-	public void testCsvWriterWriterIntCsvConfigIllegalArgumentException3() throws IOException {
+	void testCsvWriterWriterIntCsvConfigIllegalArgumentException3() throws IOException {
 		// Act
 		final IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> {
 			final CsvWriter writer = new CsvWriter(new StringWriter(), 8192, null);
@@ -71,14 +71,14 @@ public class CsvWriterTest {
 	}
 
 	@Test
-	public void testCsvWriterWriterCsvConfig() throws IOException {
+	void testCsvWriterWriterCsvConfig() throws IOException {
 		// Act
 		final CsvWriter writer = new CsvWriter(new StringWriter(), new CsvConfig());
 		writer.close();
 	}
 
 	@Test
-	public void testCsvWriterWriterCsvConfigIllegalArgumentException() throws IOException {
+	void testCsvWriterWriterCsvConfigIllegalArgumentException() throws IOException {
 		// Act
 		final IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> {
 			final CsvWriter writer = new CsvWriter(new StringWriter(), null);
@@ -88,14 +88,14 @@ public class CsvWriterTest {
 	}
 
 	@Test
-	public void testCsvWriterWriterInt() throws IOException {
+	void testCsvWriterWriterInt() throws IOException {
 		// Act
 		final CsvWriter writer = new CsvWriter(new StringWriter(), 8192);
 		writer.close();
 	}
 
 	@Test
-	public void testCsvWriterWriterIntIllegalArgumentException1() throws IOException {
+	void testCsvWriterWriterIntIllegalArgumentException1() throws IOException {
 		// Act
 		assertThrows(IllegalArgumentException.class, () -> {
 			final CsvWriter writer = new CsvWriter(new StringWriter(), 0);
@@ -104,7 +104,7 @@ public class CsvWriterTest {
 	}
 
 	@Test
-	public void testCsvWriterWriterIntIllegalArgumentException2() throws IOException {
+	void testCsvWriterWriterIntIllegalArgumentException2() throws IOException {
 		// Act
 		assertThrows(IllegalArgumentException.class, () -> {
 			final CsvWriter writer = new CsvWriter(new StringWriter(), -8192);
@@ -113,14 +113,14 @@ public class CsvWriterTest {
 	}
 
 	@Test
-	public void testCsvWriterWriter() throws IOException {
+	void testCsvWriterWriter() throws IOException {
 		// Act
 		final CsvWriter writer = new CsvWriter(new StringWriter());
 		writer.close();
 	}
 
 	@Test
-	public void testWriteValues() throws IOException {
+	void testWriteValues() throws IOException {
 		final CsvConfig cfg = new CsvConfig(',', '"', '\\');
 		cfg.setNullString("NULL");
 		cfg.setLineSeparator("\r\n");
@@ -140,7 +140,7 @@ public class CsvWriterTest {
 	}
 
 	@Test
-	public void testWriteValues2() throws IOException {
+	void testWriteValues2() throws IOException {
 		final CsvConfig cfg = new CsvConfig(',', '"', '\\');
 		cfg.setNullString("NULL");
 		cfg.setQuotePolicy(QuotePolicy.MINIMAL);
@@ -161,7 +161,7 @@ public class CsvWriterTest {
 	}
 
 	@Test
-	public void testWriteValues3() throws IOException {
+	void testWriteValues3() throws IOException {
 		final CsvConfig cfg = new CsvConfig(',', '"', '\\');
 		cfg.setQuoteDisabled(true);
 		cfg.setNullString("NULL");
@@ -183,7 +183,7 @@ public class CsvWriterTest {
 
 /*
 	@Test
-	public void testWriteUtf8bomToStringWriter() throws IOException {
+	void testWriteUtf8bomToStringWriter() throws IOException {
 		final CsvConfig cfg = new CsvConfig();
 		cfg.setLineSeparator("\r\n");
 		cfg.setUtf8bomPolicy(true);
@@ -203,7 +203,7 @@ public class CsvWriterTest {
 */
 
 	@Test
-	public void testWriteValuesCsvValueException() throws IOException {
+	void testWriteValuesCsvValueException() throws IOException {
 		final CsvConfig cfg = new CsvConfig();
 		cfg.setVariableColumns(false);
 
@@ -226,7 +226,7 @@ public class CsvWriterTest {
 	}
 
 	@Test
-	public void testClosed() throws IOException {
+	void testClosed() throws IOException {
 		// Arrange
 		final StringWriter sw = new StringWriter();
 		final CsvWriter writer = new CsvWriter(sw, new CsvConfig());

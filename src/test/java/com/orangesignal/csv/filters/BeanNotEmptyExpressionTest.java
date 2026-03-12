@@ -17,13 +17,14 @@
 package com.orangesignal.csv.filters;
 
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Date;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import com.orangesignal.csv.entity.Price;
 
@@ -32,15 +33,18 @@ import com.orangesignal.csv.entity.Price;
  * 
  * @author Koji Sugisawa
  */
-public class BeanNotEmptyExpressionTest {
+class BeanNotEmptyExpressionTest {
 
-	@Test(expected = IllegalArgumentException.class)
-	public void testBeanNotEmptyExpressionIllegalArgumentException() {
+	@Test
+	void testBeanNotEmptyExpressionIllegalArgumentException() {
+		assertThrows(IllegalArgumentException.class, () -> {
+
 		new BeanNotEmptyExpression(null);
+		});
 	}
 
 	@Test
-	public void testAccep() throws Exception {
+	void testAccep() throws Exception {
 		assertFalse(new BeanNotEmptyExpression("symbol").accept(new Price(null, "COMEX 金 2009年11月限", 1088.70, 100, new Date())));
 		assertFalse(new BeanNotEmptyExpression("symbol").accept(new Price("", "COMEX 金 2009年11月限", 1088.70, 100, new Date())));
 		assertTrue(new BeanNotEmptyExpression("symbol").accept(new Price("GCX09", "COMEX 金 2009年11月限", 1088.70, 100, new Date())));
@@ -54,7 +58,7 @@ public class BeanNotEmptyExpressionTest {
 	}
 
 	@Test
-	public void testToString() {
+	void testToString() {
 		assertThat(new BeanNotEmptyExpression("symbol").toString(), is("BeanNotEmptyExpression"));
 		
 	}

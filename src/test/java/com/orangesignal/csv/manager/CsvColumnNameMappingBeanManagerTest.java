@@ -16,8 +16,9 @@
 
 package com.orangesignal.csv.manager;
 
-import static org.hamcrest.core.Is.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.Reader;
 import java.io.StringReader;
@@ -28,10 +29,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.BeforeClass;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import com.orangesignal.csv.Constants;
 import com.orangesignal.csv.CsvConfig;
@@ -44,15 +43,12 @@ import com.orangesignal.csv.model.SampleBean;
  *
  * @author Koji Sugisawa
  */
-public class CsvColumnNameMappingBeanManagerTest {
+class CsvColumnNameMappingBeanManagerTest {
 
 	private static CsvConfig cfg;
 
-	@Rule
-	public ExpectedException exception = ExpectedException.none();
-
-	@BeforeClass
-	public static void setUpBeforeClass() throws Exception {
+	@BeforeAll
+	static void setUpBeforeClass() throws Exception {
 		cfg = new CsvConfig(',');
 		cfg.setEscapeDisabled(false);
 		cfg.setNullString("NULL");
@@ -63,32 +59,32 @@ public class CsvColumnNameMappingBeanManagerTest {
 	}
 
 	@Test
-	public void testCsvColumnNameMappingBeanManager() {
+	void testCsvColumnNameMappingBeanManager() {
 		new CsvColumnNameMappingBeanManager();
 		new CsvColumnNameMappingBeanManager(cfg);
 	}
 
 	@Test
-	public void testCsvColumnNameMappingBeanManagerIllegalArgumentException() {
-		exception.expect(IllegalArgumentException.class);
-		exception.expectMessage("CsvConfig must not be null");
-		new CsvColumnNameMappingBeanManager(null);
+	void testCsvColumnNameMappingBeanManagerIllegalArgumentException() {
+		assertThrows(IllegalArgumentException.class, () -> {
+			new CsvColumnNameMappingBeanManager(null);
+		});
 	}
 
 	@Test
-	public void testConfig() {
+	void testConfig() {
 		new CsvColumnNameMappingBeanManager().config(cfg);
 	}
 
 	@Test
-	public void testConfigIllegalArgumentException() {
-		exception.expect(IllegalArgumentException.class);
-		exception.expectMessage("CsvConfig must not be null");
-		new CsvColumnNameMappingBeanManager().config(null);
+	void testConfigIllegalArgumentException() {
+		assertThrows(IllegalArgumentException.class, () -> {
+			new CsvColumnNameMappingBeanManager().config(null);
+		});
 	}
 
 	@Test
-	public void testLoad() throws Exception {
+	void testLoad() throws Exception {
 		final Reader reader = new StringReader(
 				"シンボル,名称,価格,出来高,日付\r\n" +
 				"GCQ09,COMEX 金 2009年08月限,1058.70,10,2008/08/06\r\n" +
@@ -125,7 +121,7 @@ public class CsvColumnNameMappingBeanManagerTest {
 	}
 
 	@Test
-	public void testSaveNoHeader() throws Exception {
+	void testSaveNoHeader() throws Exception {
 		final DateFormat df = new SimpleDateFormat("yyyy/MM/dd");
 
 		final List<SampleBean> list = new ArrayList<SampleBean>();
@@ -154,7 +150,7 @@ public class CsvColumnNameMappingBeanManagerTest {
 	}
 
 	@Test
-	public void testSave() throws Exception {
+	void testSave() throws Exception {
 		final DateFormat df = new SimpleDateFormat("yyyy/MM/dd");
 
 		final List<SampleBean> list = new ArrayList<SampleBean>();

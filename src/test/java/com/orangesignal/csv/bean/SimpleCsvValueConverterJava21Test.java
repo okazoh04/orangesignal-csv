@@ -29,15 +29,15 @@ import java.util.Currency;
 import java.util.Locale;
 import java.util.UUID;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * {@link SimpleCsvValueConverter} クラスの Java 21 (およびモダン Java) に関する単体テストです。
  */
-public class SimpleCsvValueConverterJava21Test {
+class SimpleCsvValueConverterJava21Test {
 
 	@Test
-	public void testConvertModernTypes() throws Exception {
+	void testConvertModernTypes() throws Exception {
 		final SimpleCsvValueConverter c = new SimpleCsvValueConverter();
 
 		// UUID

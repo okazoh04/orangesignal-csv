@@ -19,38 +19,38 @@ package com.orangesignal.csv;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * {@link SimpleCsvToken} クラスの単体テストです。
  *
  * @author Koji Sugisawa
  */
-public class SimpleCsvTokenTest {
+class SimpleCsvTokenTest {
 
 	@Test
-	public void testSimpleCsvToken() {
+	void testSimpleCsvToken() {
 		new SimpleCsvToken();
 		new SimpleCsvToken("a\nb\nc", 1, 3, true);
 	}
 
 	@Test
-	public void testGetValue() {
+	void testGetValue() {
 		assertThat(new SimpleCsvToken("a\nb\nc", 1, 3, true).getValue(), is("a\nb\nc"));
 	}
 
 	@Test
-	public void testGetStartLineNumber() {
+	void testGetStartLineNumber() {
 		assertThat(new SimpleCsvToken("a\nb\nc", 1, 3, true).getStartLineNumber(), is(1));
 	}
 
 	@Test
-	public void testGetEndLineNumber() {
+	void testGetEndLineNumber() {
 		assertThat(new SimpleCsvToken("a\nb\nc", 1, 3, true).getEndLineNumber(), is(3));
 	}
 
 	@Test
-	public void testIsEnclosed() {
+	void testIsEnclosed() {
 		assertThat(new SimpleCsvToken("a\nb\nc", 1, 3, true).isEnclosed(), is(true));
 	}
 

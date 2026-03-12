@@ -26,20 +26,21 @@ import java.sql.SQLFeatureNotSupportedException;
 import java.sql.Types;
 import java.util.regex.Pattern;
 
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 /**
  * {@link CsvResultSetMetaData} クラスの単体テストです。
  *
  * @author Koji Sugisawa
  */
-public class CsvResultSetMetaDataTest {
+class CsvResultSetMetaDataTest {
 
 	private static CsvConfig cfg;
 
-	@BeforeClass
-	public static void setUpBeforeClass() throws Exception {
+	@BeforeAll
+	static void setUpBeforeClass() throws Exception {
 		cfg = new CsvConfig(',', '"', '\\');
 		cfg.setNullString("NULL");
 		cfg.setBreakString("\n");
@@ -50,7 +51,7 @@ public class CsvResultSetMetaDataTest {
 	}
 
 	@Test
-	public void test() throws Exception {
+	void test() throws Exception {
 		final CsvReader reader = new CsvReader(new StringReader("id\r\nNULL"), cfg);
 		try {
 			final CsvResultSetMetaData meta = new CsvResultSetMetaData(reader);
@@ -80,48 +81,56 @@ public class CsvResultSetMetaDataTest {
 		}
 	}
 
-	@Test(expected = SQLException.class)
-	public void testGetColumnNameSQLException1() throws Exception {
-		final CsvReader reader = new CsvReader(new StringReader("id\r\nNULL"), cfg);
+	@Test
+	void testGetColumnNameSQLException1() throws Exception  {
+		Assertions.assertThrows(SQLException.class, () -> {
+			final CsvReader reader = new CsvReader(new StringReader("id\r\nNULL"), cfg);
 		try {
 			final CsvResultSetMetaData meta = new CsvResultSetMetaData(reader);
 			meta.getColumnName(0);
 		} finally {
 			reader.close();
 		}
+		});
 	}
 
-	@Test(expected = SQLException.class)
-	public void testGetColumnNameSQLException2() throws Exception {
-		final CsvReader reader = new CsvReader(new StringReader("id\r\nNULL"), cfg);
+	@Test
+	void testGetColumnNameSQLException2() throws Exception  {
+		Assertions.assertThrows(SQLException.class, () -> {
+			final CsvReader reader = new CsvReader(new StringReader("id\r\nNULL"), cfg);
 		try {
 			final CsvResultSetMetaData meta = new CsvResultSetMetaData(reader);
 			meta.getColumnName(meta.getColumnCount() + 1);
 		} finally {
 			reader.close();
 		}
+		});
 	}
 
-	@Test(expected = SQLFeatureNotSupportedException.class)
-	public void testUnwrap() throws Exception {
-		final CsvReader reader = new CsvReader(new StringReader("id\r\nNULL"), cfg);
+	@Test
+	void testUnwrap() throws Exception  {
+		Assertions.assertThrows(SQLFeatureNotSupportedException.class, () -> {
+			final CsvReader reader = new CsvReader(new StringReader("id\r\nNULL"), cfg);
 		try {
 			final CsvResultSetMetaData meta = new CsvResultSetMetaData(reader);
 			meta.unwrap(this.getClass());
 		} finally {
 			reader.close();
 		}
+		});
 	}
 
-	@Test(expected = SQLFeatureNotSupportedException.class)
-	public void testIsWrapperFor() throws Exception {
-		final CsvReader reader = new CsvReader(new StringReader("id\r\nNULL"), cfg);
+	@Test
+	void testIsWrapperFor() throws Exception  {
+		Assertions.assertThrows(SQLFeatureNotSupportedException.class, () -> {
+			final CsvReader reader = new CsvReader(new StringReader("id\r\nNULL"), cfg);
 		try {
 			final CsvResultSetMetaData meta = new CsvResultSetMetaData(reader);
 			meta.isWrapperFor(this.getClass());
 		} finally {
 			reader.close();
 		}
+		});
 	}
 
 }

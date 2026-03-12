@@ -17,6 +17,7 @@
 package com.orangesignal.csv.io;
 
 import static org.hamcrest.core.Is.is;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 import java.io.IOException;
@@ -28,10 +29,8 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.TimeZone;
 
-import org.junit.BeforeClass;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import com.orangesignal.csv.Constants;
 import com.orangesignal.csv.CsvConfig;
@@ -46,15 +45,12 @@ import com.orangesignal.csv.model.SampleBean;
  * @author Koji Sugisawa
  * @since 1.4.0
  */
-public class CsvColumnNameMappingBeanWriterTest {
-
-	@Rule
-	public ExpectedException exception = ExpectedException.none();
+class CsvColumnNameMappingBeanWriterTest {
 
 	private static CsvConfig cfg;
 
-	@BeforeClass
-	public static void setUpBeforeClass() throws Exception {
+	@BeforeAll
+	static void setUpBeforeClass() throws Exception {
 		cfg = new CsvConfig(',');
 		cfg.setEscapeDisabled(false);
 		cfg.setNullString("NULL");
@@ -68,7 +64,7 @@ public class CsvColumnNameMappingBeanWriterTest {
 	// 利便性のための静的メソッド
 
 	@Test
-	public void testNewInstanceCsvWriterClass() throws IOException {
+	void testNewInstanceCsvWriterClass() throws IOException {
 		final CsvWriter w = new CsvWriter(new StringWriter(), cfg);
 		final Class<SampleBean> c = SampleBean.class;
 
@@ -77,31 +73,25 @@ public class CsvColumnNameMappingBeanWriterTest {
 	}
 
 	@Test
-	public void testNewInstanceCsvWriterClassIllegalArgumentException1() throws IOException {
-		exception.expect(IllegalArgumentException.class);
-		exception.expectMessage("CsvWriter must not be null");
-
+	void testNewInstanceCsvWriterClassIllegalArgumentException1() throws IOException {
 		final CsvWriter w = null;
 		final Class<SampleBean> c = SampleBean.class;
 
-		final CsvColumnNameMappingBeanWriter<SampleBean> writer = CsvColumnNameMappingBeanWriter.newInstance(w, c);
-		writer.close();
+		final Throwable e = assertThrows(IllegalArgumentException.class, () -> CsvColumnNameMappingBeanWriter.newInstance(w, c));
+		assertThat(e.getMessage(), is("CsvWriter must not be null"));
 	}
 
 	@Test
-	public void testNewInstanceCsvWriterClassIllegalArgumentException2() throws IOException {
-		exception.expect(IllegalArgumentException.class);
-		exception.expectMessage("Class must not be null");
-
+	void testNewInstanceCsvWriterClassIllegalArgumentException2() throws IOException {
 		final CsvWriter w = new CsvWriter(new StringWriter(), cfg);
 		final Class<SampleBean> c = null;
 
-		final CsvColumnNameMappingBeanWriter<SampleBean> writer = CsvColumnNameMappingBeanWriter.newInstance(w, c);
-		writer.close();
+		final Throwable e = assertThrows(IllegalArgumentException.class, () -> CsvColumnNameMappingBeanWriter.newInstance(w, c));
+		assertThat(e.getMessage(), is("Class must not be null"));
 	}
 
 	@Test
-	public void testNewInstanceCsvWriterCsvColumnNameMappingBeanTemplate() throws IOException {
+	void testNewInstanceCsvWriterCsvColumnNameMappingBeanTemplate() throws IOException {
 		final CsvWriter w = new CsvWriter(new StringWriter(), cfg);
 		final CsvColumnNameMappingBeanTemplate<SampleBean> template = CsvColumnNameMappingBeanTemplate.newInstance(SampleBean.class);
 
@@ -110,34 +100,28 @@ public class CsvColumnNameMappingBeanWriterTest {
 	}
 
 	@Test
-	public void testNewInstanceCsvWriterCsvColumnNameMappingBeanTemplateIllegalArgumentException1() throws IOException {
-		exception.expect(IllegalArgumentException.class);
-		exception.expectMessage("CsvWriter must not be null");
-
+	void testNewInstanceCsvWriterCsvColumnNameMappingBeanTemplateIllegalArgumentException1() throws IOException {
 		final CsvWriter w = null;
 		final CsvColumnNameMappingBeanTemplate<SampleBean> template = CsvColumnNameMappingBeanTemplate.newInstance(SampleBean.class);
 
-		final CsvColumnNameMappingBeanWriter<SampleBean> writer = CsvColumnNameMappingBeanWriter.newInstance(w, template);
-		writer.close();
+		final Throwable e = assertThrows(IllegalArgumentException.class, () -> CsvColumnNameMappingBeanWriter.newInstance(w, template));
+		assertThat(e.getMessage(), is("CsvWriter must not be null"));
 	}
 
 	@Test
-	public void testNewInstanceCsvWriterCsvColumnNameMappingBeanTemplateIllegalArgumentException2() throws IOException {
-		exception.expect(IllegalArgumentException.class);
-		exception.expectMessage("CsvColumnNameMappingBeanTemplate must not be null");
-
+	void testNewInstanceCsvWriterCsvColumnNameMappingBeanTemplateIllegalArgumentException2() throws IOException {
 		final CsvWriter w = new CsvWriter(new StringWriter(), cfg);
 		final CsvColumnNameMappingBeanTemplate<SampleBean> template = null;
 
-		final CsvColumnNameMappingBeanWriter<SampleBean> writer = CsvColumnNameMappingBeanWriter.newInstance(w, template);
-		writer.close();
+		final Throwable e = assertThrows(IllegalArgumentException.class, () -> CsvColumnNameMappingBeanWriter.newInstance(w, template));
+		assertThat(e.getMessage(), is("CsvColumnNameMappingBeanTemplate must not be null"));
 	}
 
 	// ------------------------------------------------------------------------
 	// コンストラクタ
 
 	@Test
-	public void testConstructorCsvWriterClass() throws IOException {
+	void testConstructorCsvWriterClass() throws IOException {
 		final CsvWriter w = new CsvWriter(new StringWriter(), cfg);
 		final Class<SampleBean> c = SampleBean.class;
 
@@ -146,31 +130,25 @@ public class CsvColumnNameMappingBeanWriterTest {
 	}
 
 	@Test
-	public void testConstructorCsvWriterClassIllegalArgumentException1() throws IOException {
-		exception.expect(IllegalArgumentException.class);
-		exception.expectMessage("CsvWriter must not be null");
-
+	void testConstructorCsvWriterClassIllegalArgumentException1() throws IOException {
 		final CsvWriter w = null;
 		final Class<SampleBean> c = SampleBean.class;
 
-		final CsvColumnNameMappingBeanWriter<SampleBean> writer = new CsvColumnNameMappingBeanWriter<SampleBean>(w, c);
-		writer.close();
+		final Throwable e = assertThrows(IllegalArgumentException.class, () -> new CsvColumnNameMappingBeanWriter<SampleBean>(w, c));
+		assertThat(e.getMessage(), is("CsvWriter must not be null"));
 	}
 
 	@Test
-	public void testConstructorCsvWriterClassIllegalArgumentException2() throws IOException {
-		exception.expect(IllegalArgumentException.class);
-		exception.expectMessage("Class must not be null");
-
+	void testConstructorCsvWriterClassIllegalArgumentException2() throws IOException {
 		final CsvWriter w = new CsvWriter(new StringWriter(), cfg);
 		final Class<SampleBean> c = null;
 
-		final CsvColumnNameMappingBeanWriter<SampleBean> writer = new CsvColumnNameMappingBeanWriter<SampleBean>(w, c);
-		writer.close();
+		final Throwable e = assertThrows(IllegalArgumentException.class, () -> new CsvColumnNameMappingBeanWriter<SampleBean>(w, c));
+		assertThat(e.getMessage(), is("Class must not be null"));
 	}
 
 	@Test
-	public void testConstructorCsvWriterCsvColumnNameMappingBeanTemplate() throws IOException {
+	void testConstructorCsvWriterCsvColumnNameMappingBeanTemplate() throws IOException {
 		final CsvWriter w = new CsvWriter(new StringWriter(), cfg);
 		final CsvColumnNameMappingBeanTemplate<SampleBean> template = CsvColumnNameMappingBeanTemplate.newInstance(SampleBean.class);
 
@@ -179,34 +157,28 @@ public class CsvColumnNameMappingBeanWriterTest {
 	}
 
 	@Test
-	public void testConstructorCsvWriterCsvColumnNameMappingBeanTemplateIllegalArgumentException1() throws IOException {
-		exception.expect(IllegalArgumentException.class);
-		exception.expectMessage("CsvWriter must not be null");
-
+	void testConstructorCsvWriterCsvColumnNameMappingBeanTemplateIllegalArgumentException1() throws IOException {
 		final CsvWriter w = null;
 		final CsvColumnNameMappingBeanTemplate<SampleBean> template = CsvColumnNameMappingBeanTemplate.newInstance(SampleBean.class);
 
-		final CsvColumnNameMappingBeanWriter<SampleBean> writer = new CsvColumnNameMappingBeanWriter<SampleBean>(w, template);
-		writer.close();
+		final Throwable e = assertThrows(IllegalArgumentException.class, () -> new CsvColumnNameMappingBeanWriter<SampleBean>(w, template));
+		assertThat(e.getMessage(), is("CsvWriter must not be null"));
 	}
 
 	@Test
-	public void testConstructorCsvWriterCsvColumnNameMappingBeanTemplateIllegalArgumentException2() throws IOException {
-		exception.expect(IllegalArgumentException.class);
-		exception.expectMessage("CsvColumnNameMappingBeanTemplate must not be null");
-
+	void testConstructorCsvWriterCsvColumnNameMappingBeanTemplateIllegalArgumentException2() throws IOException {
 		final CsvWriter w = new CsvWriter(new StringWriter(), cfg);
 		final CsvColumnNameMappingBeanTemplate<SampleBean> template = null;
 
-		final CsvColumnNameMappingBeanWriter<SampleBean> writer = new CsvColumnNameMappingBeanWriter<SampleBean>(w, template);
-		writer.close();
+		final Throwable e = assertThrows(IllegalArgumentException.class, () -> new CsvColumnNameMappingBeanWriter<SampleBean>(w, template));
+		assertThat(e.getMessage(), is("CsvColumnNameMappingBeanTemplate must not be null"));
 	}
 
 	// ------------------------------------------------------------------------
 	// オーバーライド メソッド
 
 	@Test
-	public void testFlush() throws IOException {
+	void testFlush() throws IOException {
 		final StringWriter sw = new StringWriter();
 		final CsvColumnNameMappingBeanWriter<SampleBean> writer = CsvColumnNameMappingBeanWriter.newInstance(new CsvWriter(sw, cfg), SampleBean.class);
 		try {
@@ -228,36 +200,34 @@ public class CsvColumnNameMappingBeanWriterTest {
 	}
 
 	@Test
-	public void testFlushIOException() throws IOException {
-		exception.expect(IOException.class);
-		exception.expectMessage("CsvWriter closed");
+	void testFlushIOException() throws IOException {
 		final CsvColumnNameMappingBeanWriter<SampleBean> writer = CsvColumnNameMappingBeanWriter.newInstance(
 				new CsvWriter(new StringWriter(), cfg),
 				SampleBean.class
 			);
 		writer.close();
 		// Act
-		writer.flush();
+		final Throwable e = assertThrows(IOException.class, () -> writer.flush());
+		assertThat(e.getMessage(), is("CsvWriter closed"));
 	}
 
 	@Test
-	public void testCloseIOException() throws IOException {
-		exception.expect(IOException.class);
-		exception.expectMessage("CsvWriter closed");
+	void testCloseIOException() throws IOException {
 		final CsvColumnNameMappingBeanWriter<SampleBean> writer = CsvColumnNameMappingBeanWriter.newInstance(
 				new CsvWriter(new StringWriter(), cfg),
 				SampleBean.class
 			);
 		writer.close();
 		// Act
-		writer.close();
+		final Throwable e = assertThrows(IOException.class, () -> writer.close());
+		assertThat(e.getMessage(), is("CsvWriter closed"));
 	}
 
 	// ------------------------------------------------------------------------
 	// パブリック メソッド
 
 	@Test
-	public void testWriteNoHeader() throws IOException {
+	void testWriteNoHeader() throws IOException {
 		final StringWriter sw = new StringWriter();
 		final CsvColumnNameMappingBeanWriter<SampleBean> writer = CsvColumnNameMappingBeanWriter.newInstance(new CsvWriter(sw, cfg), SampleBean.class, false);
 		try {
@@ -287,7 +257,7 @@ public class CsvColumnNameMappingBeanWriterTest {
 	}
 
 	@Test
-	public void testWriteHeader() throws IOException {
+	void testWriteHeader() throws IOException {
 		final StringWriter sw = new StringWriter();
 		final CsvColumnNameMappingBeanWriter<SampleBean> writer = CsvColumnNameMappingBeanWriter.newInstance(new CsvWriter(sw, cfg), SampleBean.class);
 		try {
@@ -317,7 +287,7 @@ public class CsvColumnNameMappingBeanWriterTest {
 	}
 
 	@Test
-	public void testWrite1() throws Exception {
+	void testWrite1() throws Exception {
 		final StringWriter sw = new StringWriter();
 		final CsvColumnNameMappingBeanWriter<SampleBean> writer = CsvColumnNameMappingBeanWriter.newInstance(
 				new CsvWriter(sw, cfg),
@@ -346,7 +316,7 @@ public class CsvColumnNameMappingBeanWriterTest {
 	}
 
 	@Test
-	public void testWrite2() throws IOException {
+	void testWrite2() throws IOException {
 		final StringWriter sw = new StringWriter();
 		final CsvColumnNameMappingBeanWriter<SampleBean> writer = CsvColumnNameMappingBeanWriter.newInstance(
 				new CsvWriter(sw, cfg),
@@ -366,7 +336,7 @@ public class CsvColumnNameMappingBeanWriterTest {
 	}
 
 	@Test
-	public void testWrite3() throws IOException {
+	void testWrite3() throws IOException {
 		final StringWriter sw = new StringWriter();
 		final CsvColumnNameMappingBeanWriter<SampleBean> writer = CsvColumnNameMappingBeanWriter.newInstance(
 				new CsvWriter(sw, cfg),
@@ -385,7 +355,7 @@ public class CsvColumnNameMappingBeanWriterTest {
 	}
 
 	@Test
-	public void testWrite4() throws IOException {
+	void testWrite4() throws IOException {
 		final Map<String, String> columnMapping = new LinkedHashMap<String, String>();
 		columnMapping.put("シンボル", "symbol");
 		columnMapping.put("名称",     "name");
@@ -408,7 +378,7 @@ public class CsvColumnNameMappingBeanWriterTest {
 	}
 
 	@Test
-	public void testWrite5() throws IOException {
+	void testWrite5() throws IOException {
 		final Map<String, String> columnMapping = new LinkedHashMap<String, String>();
 		columnMapping.put("シンボル", "symbol");
 		columnMapping.put("価格",     "price");
@@ -430,7 +400,7 @@ public class CsvColumnNameMappingBeanWriterTest {
 	}
 
 	@Test
-	public void testWrite6() throws Exception {
+	void testWrite6() throws Exception {
 		final StringWriter sw = new StringWriter();
 		final CsvColumnNameMappingBeanWriter<SampleBean> writer = CsvColumnNameMappingBeanWriter.newInstance(
 				new CsvWriter(sw, cfg),
@@ -454,7 +424,7 @@ public class CsvColumnNameMappingBeanWriterTest {
 	}
 
 	@Test
-	public void testFilter() throws Exception {
+	void testFilter() throws Exception {
 		final StringWriter sw = new StringWriter();
 		final CsvColumnNameMappingBeanWriter<SampleBean> writer = CsvColumnNameMappingBeanWriter.newInstance(
 				new CsvWriter(sw, cfg),

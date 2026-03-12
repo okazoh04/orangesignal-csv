@@ -16,9 +16,10 @@
 
 package com.orangesignal.csv.io;
 
-import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertNull;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -26,8 +27,8 @@ import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import com.orangesignal.csv.Constants;
 import com.orangesignal.csv.CsvConfig;
@@ -36,20 +37,18 @@ import com.orangesignal.csv.bean.CsvBeanTemplate;
 import com.orangesignal.csv.filters.SimpleCsvNamedValueFilter;
 import com.orangesignal.csv.model.SampleBean;
 
-import static org.junit.Assert.assertThrows;
-
 /**
  * {@link CsvBeanReader} クラスの単体テストです。
  *
  * @author Koji Sugisawa
  * @since 1.4.0
  */
-public class CsvBeanReaderTest {
+class CsvBeanReaderTest {
 
 	private static CsvConfig cfg;
 
-	@BeforeClass
-	public static void setUpBeforeClass() throws Exception {
+	@BeforeAll
+	static void setUpBeforeClass() throws Exception {
 		cfg = new CsvConfig(',');
 		cfg.setEscapeDisabled(false);
 		cfg.setNullString("NULL");
@@ -63,7 +62,7 @@ public class CsvBeanReaderTest {
 	// 利便性のための静的メソッド
 
 	@Test
-	public void testNewInstanceCsvReaderClass() throws IOException {
+	void testNewInstanceCsvReaderClass() throws IOException {
 		final CsvBeanReader<SampleBean> reader = CsvBeanReader.newInstance(
 				new CsvReader(new StringReader("")),
 				SampleBean.class
@@ -72,7 +71,7 @@ public class CsvBeanReaderTest {
 	}
 
 	@Test
-	public void testNewInstanceCsvReaderCsvBeanTemplate() throws IOException {
+	void testNewInstanceCsvReaderCsvBeanTemplate() throws IOException {
 		final CsvBeanReader<SampleBean> reader = CsvBeanReader.newInstance(
 				new CsvReader(new StringReader("")),
 				CsvBeanTemplate.newInstance(SampleBean.class)
@@ -84,7 +83,7 @@ public class CsvBeanReaderTest {
 	// コンストラクタ
 
 	@Test
-	public void testConstructorCsvReaderClass() throws IOException {
+	void testConstructorCsvReaderClass() throws IOException {
 		final CsvBeanReader<SampleBean> reader = new CsvBeanReader<SampleBean>(
 				new CsvReader(new StringReader("")),
 				SampleBean.class
@@ -93,30 +92,33 @@ public class CsvBeanReaderTest {
 	}
 
 	@Test
-	public void testConstructorCsvReaderClassIllegalArgumentException1() throws IOException {
+	void testConstructorCsvReaderClassIllegalArgumentException1() throws IOException {
 		final IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> {
-			new CsvBeanReader<SampleBean>(
+			try(CsvBeanReader<SampleBean> reader = new CsvBeanReader<SampleBean>(
 					null,
 					SampleBean.class
 				);
+			) {}
 		});
 		assertThat(e.getMessage(), is("CsvReader must not be null"));
 	}
 
 	@Test
-	public void testConstructorCsvReaderClassIllegalArgumentException2() throws IOException {
+	void testConstructorCsvReaderClassIllegalArgumentException2() throws IOException {
 		final IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> {
 			final Class<SampleBean> type = null;
-			new CsvBeanReader<SampleBean>(
+
+			try(CsvBeanReader<SampleBean> reader = new CsvBeanReader<SampleBean>(
 					new CsvReader(new StringReader("")),
 					type
-				);
+				)){
+			}
 		});
 		assertThat(e.getMessage(), is("Class must not be null"));
 	}
 
 	@Test
-	public void testConstructorCsvReaderCsvBeanTemplate() throws IOException {
+	void testConstructorCsvReaderCsvBeanTemplate() throws IOException {
 		final CsvBeanReader<SampleBean> reader = new CsvBeanReader<SampleBean>(
 				new CsvReader(new StringReader("")),
 				CsvBeanTemplate.newInstance(SampleBean.class)
@@ -125,24 +127,26 @@ public class CsvBeanReaderTest {
 	}
 
 	@Test
-	public void testConstructorCsvReaderCsvBeanTemplateIllegalArgumentException1() throws IOException {
+	void testConstructorCsvReaderCsvBeanTemplateIllegalArgumentException1() throws IOException {
 		final IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> {
-			new CsvBeanReader<SampleBean>(
+			try(CsvBeanReader<SampleBean> reader = new CsvBeanReader<SampleBean>(
 					null,
 					CsvBeanTemplate.newInstance(SampleBean.class)
 				);
+			) {}
 		});
 		assertThat(e.getMessage(), is("CsvReader must not be null"));
 	}
 
 	@Test
-	public void testConstructorCsvReaderClassCsvBeanConfigIllegalArgumentException2() throws IOException {
+	void testConstructorCsvReaderClassCsvBeanConfigIllegalArgumentException2() throws IOException {
 		final IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> {
 			final CsvBeanTemplate<SampleBean> template = null;
-			new CsvBeanReader<SampleBean>(
+			try(CsvBeanReader<SampleBean> reader = new CsvBeanReader<SampleBean>(
 					new CsvReader(new StringReader("")),
 					template
 				);
+			) {}
 		});
 		assertThat(e.getMessage(), is("CsvBeanTemplate must not be null"));
 	}
@@ -151,7 +155,7 @@ public class CsvBeanReaderTest {
 	// オーバーライド メソッド
 
 	@Test
-	public void testClosed() throws IOException {
+	void testClosed() throws IOException {
 		final CsvBeanReader<SampleBean> reader = CsvBeanReader.newInstance(new CsvReader(new StringReader("")), SampleBean.class);
 		reader.close();
 		// Act
@@ -165,7 +169,7 @@ public class CsvBeanReaderTest {
 	// パブリック メソッド
 
 	@Test
-	public void testLoad1() throws IOException {
+	void testLoad1() throws IOException {
 		final CsvBeanReader<SampleBean> reader = CsvBeanReader.newInstance(
 				new CsvReader(new StringReader("symbol,name,price,volume\r\nAAAA,aaa,10000,10\r\nBBBB,bbb,NULL,0"), cfg),
 				SampleBean.class
@@ -191,7 +195,7 @@ public class CsvBeanReaderTest {
 	}
 
 	@Test
-	public void testLoad2() throws IOException {
+	void testLoad2() throws IOException {
 		final CsvBeanReader<SampleBean> reader = CsvBeanReader.newInstance(
 				new CsvReader(new StringReader("symbol,name,price,volume\r\nAAAA,aaa,10000,10\r\nBBBB,bbb,NULL,0"), cfg),
 				CsvBeanTemplate.newInstance(SampleBean.class).includes("name")
@@ -215,7 +219,7 @@ public class CsvBeanReaderTest {
 	}
 
 	@Test
-	public void testLoad3() throws IOException {
+	void testLoad3() throws IOException {
 		final CsvBeanReader<SampleBean> reader = CsvBeanReader.newInstance(
 				new CsvReader(new StringReader("symbol,name,price,volume\r\nAAAA,aaa,10000,10\r\nBBBB,bbb,NULL,0"), cfg),
 				CsvBeanTemplate.newInstance(SampleBean.class).excludes("name")
@@ -239,7 +243,7 @@ public class CsvBeanReaderTest {
 	}
 
 	@Test
-	public void testLoad4() throws Exception {
+	void testLoad4() throws Exception {
 		final CsvBeanReader<SampleBean> reader = CsvBeanReader.newInstance(
 				new CsvReader(new StringReader("symbol,name,price,volume,date\r\nAAAA,aaa,10\\,000,10,2008/10/28\r\nBBBB,bbb,NULL,0,NULL"), cfg),
 				CsvBeanTemplate.newInstance(SampleBean.class)
@@ -268,7 +272,7 @@ public class CsvBeanReaderTest {
 	}
 
 	@Test
-	public void testLoadFilter() throws Exception {
+	void testLoadFilter() throws Exception {
 		final DateFormat df = new SimpleDateFormat("yyyy/MM/dd");
 
 		final CsvBeanReader<SampleBean> reader = CsvBeanReader.newInstance(

@@ -16,21 +16,20 @@
 
 package com.orangesignal.csv.io;
 
-import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.hamcrest.core.Is.is;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.Map;
 
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.orangesignal.csv.Constants;
 import com.orangesignal.csv.CsvConfig;
@@ -43,15 +42,12 @@ import com.orangesignal.csv.filters.SimpleCsvValueFilter;
  * @author Koji Sugisawa
  * @since 1.4.0
  */
-public class CsvColumnPositionMapReaderTest {
-
-	@Rule
-	public ExpectedException exception = ExpectedException.none();
+class CsvColumnPositionMapReaderTest {
 
 	private CsvConfig cfg;
 
-	@Before
-	public void setUp() throws Exception {
+	@BeforeEach
+	void setUp() throws Exception {
 		cfg = new CsvConfig(',');
 		cfg.setNullString("NULL");
 		cfg.setIgnoreTrailingWhitespaces(true);
@@ -64,31 +60,31 @@ public class CsvColumnPositionMapReaderTest {
 	// コンストラクタ
 
 	@Test
-	public void testConstructorCsvReaderIllegalArgumentException() throws IOException {
-		exception.expect(IllegalArgumentException.class);
-		exception.expectMessage("CsvReader must not be null");
-		final CsvColumnPositionMapReader reader = new CsvColumnPositionMapReader(null);
-		reader.close();
+	void testConstructorCsvReaderIllegalArgumentException() throws IOException {
+		assertThrows(IllegalArgumentException.class, () -> {
+			final CsvColumnPositionMapReader reader = new CsvColumnPositionMapReader(null);
+			reader.close();
+		});
 	}
 
 	// ------------------------------------------------------------------------
 	// オーバーライド メソッド
 
 	@Test
-	public void testClosed() throws IOException {
-		exception.expect(IOException.class);
-		exception.expectMessage("CsvReader closed");
-		final CsvColumnPositionMapReader reader = new CsvColumnPositionMapReader(new CsvReader(new StringReader("symbol,name,price,volume\r\nAAAA,aaa,10000,10\r\nBBBB,bbb,NULL,0"), cfg));
-		reader.close();
-		// Act
-		reader.close();
+	void testClosed() throws IOException {
+		assertThrows(IOException.class, () -> {
+			final CsvColumnPositionMapReader reader = new CsvColumnPositionMapReader(new CsvReader(new StringReader("symbol,name,price,volume\r\nAAAA,aaa,10000,10\r\nBBBB,bbb,NULL,0"), cfg));
+			reader.close();
+			// Act
+			reader.close();
+		});
 	}
 
 	// ------------------------------------------------------------------------
 	// パブリック メソッド
 
 	@Test
-	public void testRead1() throws IOException {
+	void testRead1() throws IOException {
 		cfg.setSkipLines(1);	// ヘッダは不要なので読飛ばす指定をする
 		final CsvColumnPositionMapReader reader = new CsvColumnPositionMapReader(new CsvReader(new StringReader("symbol,name,price,volume\r\nAAAA,aaa,10000,10\r\nBBBB,bbb,NULL,0"), cfg));
 		try {
@@ -113,7 +109,7 @@ public class CsvColumnPositionMapReaderTest {
 	}
 
 	@Test
-	public void testReadFilter() throws IOException {
+	void testReadFilter() throws IOException {
 		final CsvColumnPositionMapReader reader = new CsvColumnPositionMapReader(new CsvReader(new StringReader(
 //				"symbol,name,price,volume,date\r\n" +
 				"GCU09,COMEX 金 2009年09月限,1068.70,10,2008/09/06\r\n" +
@@ -148,7 +144,7 @@ public class CsvColumnPositionMapReaderTest {
 	// セッター / ゲッター
 
 	@Test
-	public void testFilter() throws IOException {
+	void testFilter() throws IOException {
 		final SimpleCsvValueFilter filter = new SimpleCsvValueFilter().ne(0, "gcu09", true);
 		assertNotNull(filter);
 

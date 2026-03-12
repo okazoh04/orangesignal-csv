@@ -16,12 +16,12 @@
 
 package com.orangesignal.csv.bean;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.orangesignal.csv.model.SampleBean;
 
-import static org.junit.Assert.assertThrows;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * {@link CsvBeanTemplate} クラスの単体テストです。
@@ -29,10 +29,10 @@ import static org.junit.Assert.assertEquals;
  * @author Koji Sugisawa
  * @since 1.4.0
  */
-public class CsvBeanTemplateTest {
+class CsvBeanTemplateTest {
 
 	@Test
-	public void testIncludesIllegalArgumentException() {
+	void testIncludesIllegalArgumentException() {
 		final IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> {
 			new CsvBeanTemplate<SampleBean>(SampleBean.class).excludes("aaa").includes("bbb");
 		});
@@ -40,7 +40,7 @@ public class CsvBeanTemplateTest {
 	}
 
 	@Test
-	public void testExcludesIllegalArgumentException() {
+	void testExcludesIllegalArgumentException() {
 		final IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> {
 			new CsvBeanTemplate<SampleBean>(SampleBean.class).includes("aaa").excludes("bbb");
 		});

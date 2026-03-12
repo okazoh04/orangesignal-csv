@@ -17,38 +17,45 @@
 package com.orangesignal.csv.filters;
 
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * {@link ColumnPositionBetweenExpression} クラスの単体テストです。
  * 
  * @author Koji Sugisawa
  */
-public class ColumnPositionBetweenExpressionTest {
+class ColumnPositionBetweenExpressionTest {
 
 	@Test
-	public void testColumnPositionBetweenExpression() {
+	void testColumnPositionBetweenExpression() {
 		new ColumnPositionBetweenExpression(0, "x002", "x003");
 	}
 
-	@Test(expected = IllegalArgumentException.class)
-	public void testColumnPositionBetweenExpressionIllegalArgumentException1() {
-		new ColumnPositionBetweenExpression(0, null, "x003");
-	}
+	@Test
+	void testColumnPositionBetweenExpressionIllegalArgumentException1() {
+		assertThrows(IllegalArgumentException.class, () -> {
 
-	@Test(expected = IllegalArgumentException.class)
-	public void testColumnPositionBetweenExpressionIllegalArgumentException2() {
-		new ColumnPositionBetweenExpression(0, "x002", null);
+		new ColumnPositionBetweenExpression(0, null, "x003");
+		});
 	}
 
 	@Test
-	public void testAcceptListOfString() {
+	void testColumnPositionBetweenExpressionIllegalArgumentException2() {
+		assertThrows(IllegalArgumentException.class, () -> {
+
+		new ColumnPositionBetweenExpression(0, "x002", null);
+		});
+	}
+
+	@Test
+	void testAcceptListOfString() {
 		assertFalse(new ColumnPositionBetweenExpression(0, "x002", "x003").accept(Arrays.asList(new String[]{ null, "x001", "x002", "x003", "x004" })));
 		assertFalse(new ColumnPositionBetweenExpression(1, "x002", "x003").accept(Arrays.asList(new String[]{ null, "x001", "x002", "x003", "x004" })));
 		assertTrue(new ColumnPositionBetweenExpression(2, "x002", "x003").accept(Arrays.asList(new String[]{ null, "x001", "x002", "x003", "x004" })));
@@ -57,7 +64,7 @@ public class ColumnPositionBetweenExpressionTest {
 	}
 
 	@Test
-	public void testAcceptListOfStringListOfString() {
+	void testAcceptListOfStringListOfString() {
 		assertFalse(new ColumnPositionBetweenExpression(0, "x002", "x003").accept(null, Arrays.asList(new String[]{ null, "x001", "x002", "x003", "x004" })));
 		assertFalse(new ColumnPositionBetweenExpression(1, "x002", "x003").accept(null, Arrays.asList(new String[]{ null, "x001", "x002", "x003", "x004" })));
 		assertTrue(new ColumnPositionBetweenExpression(2, "x002", "x003").accept(null, Arrays.asList(new String[]{ null, "x001", "x002", "x003", "x004" })));
@@ -66,7 +73,7 @@ public class ColumnPositionBetweenExpressionTest {
 	}
 
 	@Test
-	public void testToString() {
+	void testToString() {
 		assertThat(new ColumnPositionBetweenExpression(0, "x002", "x003").toString(), is("ColumnPositionBetweenExpression"));
 		
 	}

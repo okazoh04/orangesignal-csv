@@ -16,9 +16,10 @@
 
 package com.orangesignal.csv.io;
 
-import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertNull;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -28,10 +29,8 @@ import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.junit.BeforeClass;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import com.orangesignal.csv.Constants;
 import com.orangesignal.csv.CsvConfig;
@@ -46,15 +45,12 @@ import com.orangesignal.csv.model.SampleBean;
  * @author Koji Sugisawa
  * @since 1.4.0
  */
-public class CsvColumnPositionMappingBeanReaderTest {
-
-	@Rule
-	public ExpectedException exception = ExpectedException.none();
+class CsvColumnPositionMappingBeanReaderTest {
 
 	private static CsvConfig cfg;
 
-	@BeforeClass
-	public static void setUpBeforeClass() throws Exception {
+	@BeforeAll
+	static void setUpBeforeClass() throws Exception {
 		cfg = new CsvConfig(',');
 		cfg.setEscapeDisabled(false);
 		cfg.setNullString("NULL");
@@ -68,7 +64,7 @@ public class CsvColumnPositionMappingBeanReaderTest {
 	// 利便性のための静的メソッド
 
 	@Test
-	public void testNewInstanceCsvReaderClass() throws IOException {
+	void testNewInstanceCsvReaderClass() throws IOException {
 		final CsvColumnPositionMappingBeanReader<SampleBean> reader = CsvColumnPositionMappingBeanReader.newInstance(
 				new CsvReader(new StringReader("")),
 				SampleBean.class
@@ -77,7 +73,7 @@ public class CsvColumnPositionMappingBeanReaderTest {
 	}
 
 	@Test
-	public void testNewInstanceCsvReaderCsvColumnNameMappingBeanTemplate() throws IOException {
+	void testNewInstanceCsvReaderCsvColumnNameMappingBeanTemplate() throws IOException {
 		final CsvColumnPositionMappingBeanReader<SampleBean> reader = CsvColumnPositionMappingBeanReader.newInstance(
 				new CsvReader(new StringReader("")),
 				CsvColumnPositionMappingBeanTemplate.newInstance(SampleBean.class)
@@ -89,7 +85,7 @@ public class CsvColumnPositionMappingBeanReaderTest {
 	// コンストラクタ
 
 	@Test
-	public void testConstructorCsvReaderClass() throws IOException {
+	void testConstructorCsvReaderClass() throws IOException {
 		final CsvColumnPositionMappingBeanReader<SampleBean> reader = new CsvColumnPositionMappingBeanReader<SampleBean>(
 				new CsvReader(new StringReader("")),
 				SampleBean.class
@@ -98,30 +94,30 @@ public class CsvColumnPositionMappingBeanReaderTest {
 	}
 
 	@Test
-	public void testConstructorCsvReaderClassIllegalArgumentException1() throws IOException {
-		exception.expect(IllegalArgumentException.class);
-		exception.expectMessage("CsvReader must not be null");
-		final CsvColumnPositionMappingBeanReader<SampleBean> reader = new CsvColumnPositionMappingBeanReader<SampleBean>(
-				null,
-				SampleBean.class
-			);
-		reader.close();
+	void testConstructorCsvReaderClassIllegalArgumentException1() throws IOException {
+		assertThrows(IllegalArgumentException.class, () -> {
+			final CsvColumnPositionMappingBeanReader<SampleBean> reader = new CsvColumnPositionMappingBeanReader<SampleBean>(
+					null,
+					SampleBean.class
+				);
+			reader.close();
+		});
 	}
 
 	@Test
-	public void testConstructorCsvReaderClassIllegalArgumentException2() throws IOException {
-		exception.expect(IllegalArgumentException.class);
-		exception.expectMessage("Class must not be null");
-		final Class<SampleBean> type = null;
-		final CsvColumnPositionMappingBeanReader<SampleBean> reader = new CsvColumnPositionMappingBeanReader<SampleBean>(
-				new CsvReader(new StringReader("")),
-				type
-			);
-		reader.close();
+	void testConstructorCsvReaderClassIllegalArgumentException2() throws IOException {
+		assertThrows(IllegalArgumentException.class, () -> {
+			final Class<SampleBean> type = null;
+			final CsvColumnPositionMappingBeanReader<SampleBean> reader = new CsvColumnPositionMappingBeanReader<SampleBean>(
+					new CsvReader(new StringReader("")),
+					type
+				);
+			reader.close();
+		});
 	}
 
 	@Test
-	public void testConstructorCsvReaderCsvBeanTemplate() throws IOException {
+	void testConstructorCsvReaderCsvBeanTemplate() throws IOException {
 		final CsvColumnPositionMappingBeanReader<SampleBean> reader = new CsvColumnPositionMappingBeanReader<SampleBean>(
 				new CsvReader(new StringReader("")),
 				CsvColumnPositionMappingBeanTemplate.newInstance(SampleBean.class)
@@ -130,46 +126,46 @@ public class CsvColumnPositionMappingBeanReaderTest {
 	}
 
 	@Test
-	public void testConstructorCsvReaderCsvBeanTemplateIllegalArgumentException1() throws IOException {
-		exception.expect(IllegalArgumentException.class);
-		exception.expectMessage("CsvReader must not be null");
-		final CsvColumnPositionMappingBeanReader<SampleBean> reader = new CsvColumnPositionMappingBeanReader<SampleBean>(
-				null,
-				CsvColumnPositionMappingBeanTemplate.newInstance(SampleBean.class)
-			);
-		reader.close();
+	void testConstructorCsvReaderCsvBeanTemplateIllegalArgumentException1() throws IOException {
+		assertThrows(IllegalArgumentException.class, () -> {
+			final CsvColumnPositionMappingBeanReader<SampleBean> reader = new CsvColumnPositionMappingBeanReader<SampleBean>(
+					null,
+					CsvColumnPositionMappingBeanTemplate.newInstance(SampleBean.class)
+				);
+			reader.close();
+		});
 	}
 
 	@Test
-	public void testConstructorCsvReaderClassCsvBeanConfigIllegalArgumentException2() throws IOException {
-		exception.expect(IllegalArgumentException.class);
-		exception.expectMessage("CsvColumnPositionMappingBeanTemplate must not be null");
-		final CsvColumnPositionMappingBeanTemplate<SampleBean> template = null;
-		final CsvColumnPositionMappingBeanReader<SampleBean> reader = new CsvColumnPositionMappingBeanReader<SampleBean>(
-				new CsvReader(new StringReader("")),
-				template
-			);
-		reader.close();
+	void testConstructorCsvReaderClassCsvBeanConfigIllegalArgumentException2() throws IOException {
+		assertThrows(IllegalArgumentException.class, () -> {
+			final CsvColumnPositionMappingBeanTemplate<SampleBean> template = null;
+			final CsvColumnPositionMappingBeanReader<SampleBean> reader = new CsvColumnPositionMappingBeanReader<SampleBean>(
+					new CsvReader(new StringReader("")),
+					template
+				);
+			reader.close();
+		});
 	}
 
 	// ------------------------------------------------------------------------
 	// オーバーライド メソッド
 
 	@Test
-	public void testClosed() throws IOException {
-		exception.expect(IOException.class);
-		exception.expectMessage("CsvReader closed");
-		final CsvColumnPositionMappingBeanReader<SampleBean> reader = CsvColumnPositionMappingBeanReader.newInstance(new CsvReader(new StringReader("")), SampleBean.class);
-		reader.close();
-		// Act
-		reader.close();
+	void testClosed() throws IOException {
+		assertThrows(IOException.class, () -> {
+			final CsvColumnPositionMappingBeanReader<SampleBean> reader = CsvColumnPositionMappingBeanReader.newInstance(new CsvReader(new StringReader("")), SampleBean.class);
+			reader.close();
+			// Act
+			reader.close();
+		});
 	}
 
 	// ------------------------------------------------------------------------
 	// パブリック メソッド
 
 	@Test
-	public void testRead1() throws IOException {
+	void testRead1() throws IOException {
 		cfg.setSkipLines(0);	// 項目位置を指定しない場合はヘッダから判断して欲しいので読飛ばししない
 		final CsvColumnPositionMappingBeanReader<SampleBean> reader = CsvColumnPositionMappingBeanReader.newInstance(
 				new CsvReader(new StringReader("symbol,name,price,volume\r\nAAAA,aaa,10000,10\r\nBBBB,bbb,NULL,0"), cfg),
@@ -196,7 +192,7 @@ public class CsvColumnPositionMappingBeanReaderTest {
 	}
 
 	@Test
-	public void testRead2() throws IOException {
+	void testRead2() throws IOException {
 		cfg.setSkipLines(1);	// 項目位置指定時はヘッダは不要なので読飛ばす指定をする
 		final CsvColumnPositionMappingBeanReader<SampleBean> reader = CsvColumnPositionMappingBeanReader.newInstance(
 				new CsvReader(new StringReader("symbol,name,price,volume\r\nAAAA,aaa,10000,10\r\nBBBB,bbb,NULL,0"), cfg),
@@ -227,7 +223,7 @@ public class CsvColumnPositionMappingBeanReaderTest {
 	}
 
 	@Test
-	public void testRead3() throws IOException {
+	void testRead3() throws IOException {
 		cfg.setSkipLines(1);	// 項目位置指定時はヘッダは不要なので読飛ばす指定をする
 		final CsvColumnPositionMappingBeanReader<SampleBean> reader = CsvColumnPositionMappingBeanReader.newInstance(
 				new CsvReader(new StringReader("symbol,name,price,volume\r\nAAAA,aaa,10000,10\r\nBBBB,bbb,NULL,0"), cfg),
@@ -258,7 +254,7 @@ public class CsvColumnPositionMappingBeanReaderTest {
 	}
 
 	@Test
-	public void testRead4() throws IOException {
+	void testRead4() throws IOException {
 		cfg.setSkipLines(1);	// 項目位置指定時はヘッダは不要なので読飛ばす指定をする
 		final CsvColumnPositionMappingBeanReader<SampleBean> reader = CsvColumnPositionMappingBeanReader.newInstance(
 				new CsvReader(new StringReader("symbol,name,price,volume\r\nAAAA,aaa,10000,10\r\nBBBB,bbb,NULL,0"), cfg),
@@ -289,7 +285,7 @@ public class CsvColumnPositionMappingBeanReaderTest {
 	}
 
 	@Test
-	public void testRead5() throws IOException {
+	void testRead5() throws IOException {
 		cfg.setSkipLines(1);	// 項目位置指定時はヘッダは不要なので読飛ばす指定をする
 		final CsvColumnPositionMappingBeanReader<SampleBean> reader = CsvColumnPositionMappingBeanReader.newInstance(
 				new CsvReader(new StringReader("symbol,name,price,volume\r\nAAAA,aaa,10000,10\r\nBBBB,bbb,NULL,0"), cfg),
@@ -320,7 +316,7 @@ public class CsvColumnPositionMappingBeanReaderTest {
 	}
 
 	@Test
-	public void testRead6() throws IOException {
+	void testRead6() throws IOException {
 		cfg.setSkipLines(1);	// 項目位置指定時はヘッダは不要なので読飛ばす指定をする
 
 		final Map<Integer, String> columnMapping = new HashMap<Integer, String>();
@@ -355,7 +351,7 @@ public class CsvColumnPositionMappingBeanReaderTest {
 	}
 
 	@Test
-	public void testRead7() throws IOException {
+	void testRead7() throws IOException {
 		cfg.setSkipLines(1);	// 項目位置指定時はヘッダは不要なので読飛ばす指定をする
 
 		final Map<Integer, String> columnMapping = new HashMap<Integer, String>();
@@ -390,7 +386,7 @@ public class CsvColumnPositionMappingBeanReaderTest {
 	}
 
 	@Test
-	public void testRead8() throws IOException {
+	void testRead8() throws IOException {
 		cfg.setSkipLines(0);
 		final CsvColumnPositionMappingBeanReader<SampleBean> reader = CsvColumnPositionMappingBeanReader.newInstance(
 				new CsvReader(new StringReader("AAAA,aaa,10\\,000,10,2008/10/28,10:24:00\r\nBBBB,bbb,NULL,0,NULL,NULL"), cfg),
@@ -425,7 +421,7 @@ public class CsvColumnPositionMappingBeanReaderTest {
 	}
 
 	@Test
-	public void testFilter() throws Exception {
+	void testFilter() throws Exception {
 		final DateFormat df = new SimpleDateFormat("yyyy/MM/dd");
 
 		final CsvColumnPositionMappingBeanReader<SampleBean> reader = CsvColumnPositionMappingBeanReader.newInstance(

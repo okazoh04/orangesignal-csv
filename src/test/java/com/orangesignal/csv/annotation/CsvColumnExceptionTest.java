@@ -19,7 +19,7 @@ package com.orangesignal.csv.annotation;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * {@link CsvColumnException} クラスの単体テストです。
@@ -27,10 +27,10 @@ import org.junit.Test;
  * @author Koji Sugisawa
  * @since 2.2
  */
-public class CsvColumnExceptionTest {
+class CsvColumnExceptionTest {
 
 	@Test
-	public void test() {
+	void test() {
 		final CsvColumnException e = new CsvColumnException("abcdefg", "12345");
 		assertThat(e.getMessage(), is("abcdefg"));
 		assertThat(e.getObject().toString(), is("12345"));

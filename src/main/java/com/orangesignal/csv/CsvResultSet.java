@@ -16,15 +16,18 @@
 
 package com.orangesignal.csv;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
 import java.io.StringReader;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.sql.Array;
 import java.sql.Blob;
 import java.sql.Clob;
@@ -232,16 +235,6 @@ public class CsvResultSet implements ResultSet {
 		return Double.valueOf(s).doubleValue();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 * この実装は常に {@link SQLFeatureNotSupportedException} をスローします。
-	 */
-	@SuppressWarnings("deprecation")
-	@Override
-	public BigDecimal getBigDecimal(final int columnIndex, final int scale) throws SQLFeatureNotSupportedException {
-		throw new SQLFeatureNotSupportedException("getBigDecimal(int, int) not supported");
-	}
-
 	@Override
 	public byte[] getBytes(final int columnIndex) throws SQLException {
 		final String s = getString(columnIndex);
@@ -301,12 +294,26 @@ public class CsvResultSet implements ResultSet {
 
 	/**
 	 * {@inheritDoc}
-	 * この実装は常に {@link SQLFeatureNotSupportedException} をスローします。
+	 * @deprecated JDBC 4.2 以降は {@link #getCharacterStream(int)} または {@link #getBinaryStream(int)} を使用してください。
 	 */
-	@SuppressWarnings("deprecation")
+	@Deprecated
 	@Override
-	public InputStream getUnicodeStream(final int columnIndex) throws SQLFeatureNotSupportedException {
-		throw new SQLFeatureNotSupportedException("getUnicodeStream(int) not supported");
+	public InputStream getUnicodeStream(final int columnIndex) throws SQLException {
+		final String s = getString(columnIndex);
+		if (s == null) {
+			return null;
+		}
+		return new ByteArrayInputStream(s.getBytes(StandardCharsets.UTF_8));
+	}
+
+	/**
+	 * {@inheritDoc}
+	 * @deprecated JDBC 4.2 以降は {@link #getCharacterStream(String)} または {@link #getBinaryStream(String)} を使用してください。
+	 */
+	@Deprecated
+	@Override
+	public InputStream getUnicodeStream(final String columnLabel) throws SQLException {
+		return getUnicodeStream(findColumn(columnLabel));
 	}
 
 	@Override
@@ -360,16 +367,6 @@ public class CsvResultSet implements ResultSet {
 		return getDouble(findColumn(columnLabel));
 	}
 
-	/**
-	 * {@inheritDoc}
-	 * この実装は {@link SQLFeatureNotSupportedException} をスローします。
-	 */
-	@SuppressWarnings("deprecation")
-	@Override
-	public BigDecimal getBigDecimal(final String columnLabel, final int scale) throws SQLException {
-		return getBigDecimal(findColumn(columnLabel), scale);
-	}
-
 	@Override
 	public byte[] getBytes(final String columnLabel) throws SQLException {
 		return getBytes(findColumn(columnLabel));
@@ -393,16 +390,6 @@ public class CsvResultSet implements ResultSet {
 	@Override
 	public InputStream getAsciiStream(final String columnLabel) throws SQLException {
 		return getAsciiStream(findColumn(columnLabel));
-	}
-
-	/**
-	 * {@inheritDoc}
-	 * この実装は {@link SQLFeatureNotSupportedException} をスローします。
-	 */
-	@SuppressWarnings("deprecation")
-	@Override
-	public InputStream getUnicodeStream(final String columnLabel) throws SQLException {
-		return getUnicodeStream(findColumn(columnLabel));
 	}
 
 	@Override
@@ -486,12 +473,44 @@ public class CsvResultSet implements ResultSet {
 
 	@Override
 	public BigDecimal getBigDecimal(final int columnIndex) throws SQLException {
-		return new BigDecimal(getString(columnIndex));
+		final String s = getString(columnIndex);
+		if (s == null) {
+			return null;
+		}
+		try {
+			return new BigDecimal(s);
+		} catch (final NumberFormatException e) {
+			throw new SQLException(String.format("Bad format for BigDecimal '%s' in column %d.", s, columnIndex), e);
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 * @deprecated JDBC 4.2 以降は {@link #getBigDecimal(int)} を使用してください。
+	 */
+	@Deprecated
+	@Override
+	public BigDecimal getBigDecimal(final int columnIndex, final int scale) throws SQLException {
+		final BigDecimal bd = getBigDecimal(columnIndex);
+		if (bd == null) {
+			return null;
+		}
+		return bd.setScale(scale, RoundingMode.HALF_UP);
 	}
 
 	@Override
 	public BigDecimal getBigDecimal(final String columnLabel) throws SQLException {
 		return getBigDecimal(findColumn(columnLabel));
+	}
+
+	/**
+	 * {@inheritDoc}
+	 * @deprecated JDBC 4.2 以降は {@link #getBigDecimal(String)} を使用してください。
+	 */
+	@Deprecated
+	@Override
+	public BigDecimal getBigDecimal(final String columnLabel, final int scale) throws SQLException {
+		return getBigDecimal(findColumn(columnLabel), scale);
 	}
 
 	// ------------------------------------------------------------------------

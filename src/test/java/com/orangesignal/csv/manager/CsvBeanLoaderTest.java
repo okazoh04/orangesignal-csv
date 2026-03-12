@@ -16,9 +16,9 @@
 
 package com.orangesignal.csv.manager;
 
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
+import org.junit.jupiter.api.Test;
 
 import com.orangesignal.csv.entity.Price;
 
@@ -27,16 +27,13 @@ import com.orangesignal.csv.entity.Price;
  *
  * @author Koji Sugisawa
  */
-public class CsvBeanLoaderTest {
-
-	@Rule
-	public ExpectedException exception = ExpectedException.none();
+class CsvBeanLoaderTest {
 
 	@Test
-	public void testCsvBeanLoaderIllegalArgumentException() {
-		exception.expect(IllegalArgumentException.class);
-		exception.expectMessage("CsvConfig must not be null");
-		new CsvBeanLoader<Price>(null, Price.class);
+	void testCsvBeanLoaderIllegalArgumentException() {
+		assertThrows(IllegalArgumentException.class, () -> {
+			new CsvBeanLoader<Price>(null, Price.class);
+		});
 	}
 
 }

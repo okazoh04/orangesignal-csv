@@ -16,9 +16,9 @@
 
 package com.orangesignal.csv;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
-import static org.hamcrest.MatcherAssert.assertThat;
 
 import java.io.Reader;
 import java.io.StringReader;
@@ -28,10 +28,10 @@ import java.util.List;
 
 import jakarta.annotation.Resource;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import com.orangesignal.csv.entity.Price;
 import com.orangesignal.csv.filters.SimpleBeanFilter;
@@ -40,11 +40,11 @@ import com.orangesignal.csv.manager.CsvBeanManager;
 import com.orangesignal.csv.model.SampleBean;
 
 /**
- * Spring Framework 対応テストです。
+ * Spring Framework との統合テストです。
  * 
  * @author Koji Sugisawa
  */
-@RunWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration(locations = { "/applicationContext.xml" })
 public class SpringTest {
 
@@ -58,7 +58,7 @@ public class SpringTest {
 	private CsvBeanManager manager;
 
 	@Test
-	public void testCsvConfig() {
+	void testCsvConfig() {
 		assertThat(cfg.getSeparator(), is(','));
 		assertThat(cfg.getQuote(), is('"'));
 		assertThat(cfg.getEscape(), is('\\'));
@@ -76,7 +76,7 @@ public class SpringTest {
 	}
 
 	@Test
-	public void testCsvListHandler() throws Exception {
+	void testCsvListHandler() throws Exception {
 		final Reader reader = new StringReader(
 				"シンボル,名称,価格,出来高,日付\r\n" +
 				"GCQ09,COMEX 金 2009年08月限,1058.70,10,2008/08/06\r\n" +
@@ -114,7 +114,7 @@ public class SpringTest {
 	}
 
 	@Test
-	public void testCsvBeanManager() throws Exception {
+	void testCsvBeanManager() throws Exception {
 		assertThat(manager, notNullValue());
 		final Reader reader = new StringReader(
 				"symbol,name,price,volume,date\r\n" +

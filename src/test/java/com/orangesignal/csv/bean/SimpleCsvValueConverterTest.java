@@ -19,14 +19,14 @@ package com.orangesignal.csv.bean;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.hamcrest.core.IsNull.nullValue;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.orangesignal.csv.handlers.SampleType;
 
@@ -35,23 +35,23 @@ import com.orangesignal.csv.handlers.SampleType;
  *
  * @author Koji Sugisawa
  */
-public class SimpleCsvValueConverterTest {
+class SimpleCsvValueConverterTest {
 
 	@Test
-	public void testGetDateFormat() {
+	void testGetDateFormat() {
 		final SimpleCsvValueConverter c = new SimpleCsvValueConverter();
 		assertThat(c.getDateFormat(), nullValue());
 	}
 
 	@Test
-	public void testSetDateFormat() {
+	void testSetDateFormat() {
 		final SimpleCsvValueConverter c = new SimpleCsvValueConverter();
 		c.setDateFormat(new SimpleDateFormat("yyyy/MM/dd"));
 		assertThat(c.getDateFormat(), notNullValue());
 	}
 
 	@Test
-	public void testConvertStringClassOfQ() {
+	void testConvertStringClassOfQ() {
 		final SimpleCsvValueConverter c = new SimpleCsvValueConverter();
 
 		// boolean
@@ -156,7 +156,7 @@ public class SimpleCsvValueConverterTest {
 	}
 
 	@Test
-	public void testConvertObject() throws ParseException {
+	void testConvertObject() throws ParseException {
 		final SimpleCsvValueConverter c = new SimpleCsvValueConverter();
 		assertNull(c.convert(null));
 		assertThat(c.convert(Boolean.FALSE), is("false"));

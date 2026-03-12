@@ -17,15 +17,16 @@
 package com.orangesignal.csv.filters;
 
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import com.orangesignal.csv.entity.Price;
 
@@ -34,25 +35,34 @@ import com.orangesignal.csv.entity.Price;
  * 
  * @author Koji Sugisawa
  */
-public class BeanBetweenExpressionTest {
+class BeanBetweenExpressionTest {
 
-	@Test(expected = IllegalArgumentException.class)
-	public void testBeanBetweenExpressionIllegalArgumentException1() {
+	@Test
+	void testBeanBetweenExpressionIllegalArgumentException1() {
+		assertThrows(IllegalArgumentException.class, () -> {
+
 		new BeanBetweenExpression(null, "val1", "val2");
-	}
-
-	@Test(expected = IllegalArgumentException.class)
-	public void testBeanBetweenExpressionIllegalArgumentException2() {
-		new BeanBetweenExpression("field", null, "val2");
-	}
-
-	@Test(expected = IllegalArgumentException.class)
-	public void testBeanBetweenExpressionIllegalArgumentException3() {
-		new BeanBetweenExpression("field", "val1", null);
+		});
 	}
 
 	@Test
-	public void testBeanBetweenExpression() {
+	void testBeanBetweenExpressionIllegalArgumentException2() {
+		assertThrows(IllegalArgumentException.class, () -> {
+
+		new BeanBetweenExpression("field", null, "val2");
+		});
+	}
+
+	@Test
+	void testBeanBetweenExpressionIllegalArgumentException3() {
+		assertThrows(IllegalArgumentException.class, () -> {
+
+		new BeanBetweenExpression("field", "val1", null);
+		});
+	}
+
+	@Test
+	void testBeanBetweenExpression() {
 		new BeanBetweenExpression("field", "val1", "val2");
 		new BeanBetweenExpression("field", "val1", "val2", null);
 		new BeanBetweenExpression("field", 100.02, 1000.15);
@@ -62,7 +72,7 @@ public class BeanBetweenExpressionTest {
 	}
 
 	@Test
-	public void testAccept() throws Exception {
+	void testAccept() throws Exception {
 		final DateFormat df = new SimpleDateFormat("yyyy/MM/dd");
 		final Price price = new Price("GCX09", "COMEX 金 2009年11月限", 1088.70, 100, df.parse("2009/11/06"));
 
@@ -81,7 +91,7 @@ public class BeanBetweenExpressionTest {
 	}
 
 	@Test
-	public void testToString() {
+	void testToString() {
 		assertThat(new BeanBetweenExpression("price", 1000.00, 1098.00).toString(), is("BeanBetweenExpression"));
 		
 	}

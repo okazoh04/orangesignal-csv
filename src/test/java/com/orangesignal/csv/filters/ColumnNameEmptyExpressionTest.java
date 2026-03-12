@@ -17,29 +17,33 @@
 package com.orangesignal.csv.filters;
 
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
 import java.util.List;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * {@link ColumnNameEmptyExpression} クラスの単体テストです。
  * 
  * @author Koji Sugisawa
  */
-public class ColumnNameEmptyExpressionTest {
+class ColumnNameEmptyExpressionTest {
 
-	@Test(expected = IllegalArgumentException.class)
-	public void testColumnNameEmptyExpressionIllegalArgumentException() {
+	@Test
+	void testColumnNameEmptyExpressionIllegalArgumentException() {
+		assertThrows(IllegalArgumentException.class, () -> {
+
 		new ColumnNameEmptyExpression(null);
+		});
 	}
 
 	@Test
-	public void testAccep() {
+	void testAccep() {
 		final List<String> header = Arrays.asList(new String[]{ "col0", "col1", "col2", "col3", "col4" });
 		assertTrue(new ColumnNameEmptyExpression("col0").accept(header, Arrays.asList(new String[]{ null, "x001", "x002", "x003", "x004" })));
 		assertFalse(new ColumnNameEmptyExpression("col1").accept(header, Arrays.asList(new String[]{ null, "x001", "x002", "x003", "x004" })));
@@ -49,13 +53,16 @@ public class ColumnNameEmptyExpressionTest {
 		assertFalse(new ColumnNameEmptyExpression("col2").accept(header, Arrays.asList(new String[]{ "", "x001", "x002", "x003", "x004" })));
 	}
 
-	@Test(expected = IllegalArgumentException.class)
-	public void testAcceptIllegalArgumentException() {
+	@Test
+	void testAcceptIllegalArgumentException() {
+		assertThrows(IllegalArgumentException.class, () -> {
+
 		new ColumnNameEmptyExpression("col").accept(Arrays.asList(new String[]{ "col0", "col1", "col2" }), null);
+		});
 	}
 
 	@Test
-	public void testToString() {
+	void testToString() {
 		assertThat(new ColumnNameEmptyExpression("col").toString(), is("ColumnNameEmptyExpression"));
 		
 	}

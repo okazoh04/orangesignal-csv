@@ -17,28 +17,32 @@
 package com.orangesignal.csv.filters;
 
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * {@link BeanNotExpression} クラスの単体テストです。
  * 
  * @author Koji Sugisawa
  */
-public class BeanNotExpressionTest {
+class BeanNotExpressionTest {
 
-	@Test(expected = IllegalArgumentException.class)
-	public void testBeanNotExpressionIllegalArgumentException() {
+	@Test
+	void testBeanNotExpressionIllegalArgumentException() {
+		assertThrows(IllegalArgumentException.class, () -> {
+
 		new BeanNotExpression(null);
+		});
 	}
 
 	@Test
-	public void testAccept() throws IOException {
+	void testAccept() throws IOException {
 		assertTrue(new BeanNotExpression(
 				new BeanFilter() { @Override public boolean accept(final Object bean) { return false; } }
 			).accept(null));
@@ -48,7 +52,7 @@ public class BeanNotExpressionTest {
 	}
 
 	@Test
-	public void testToString() {
+	void testToString() {
 		assertThat(new BeanNotExpression(new BeanFilter() { @Override public boolean accept(final Object bean) { return false; } }).toString(), is("BeanNotExpression"));
 		
 	}

@@ -26,10 +26,10 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.TimeZone;
 
-import org.junit.BeforeClass;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.BeforeAll;
+
+import org.junit.jupiter.api.Test;
+
 
 import com.orangesignal.csv.Constants;
 import com.orangesignal.csv.CsvConfig;
@@ -41,7 +41,7 @@ import com.orangesignal.csv.entity.WritableEntity;
 import com.orangesignal.csv.entity.WritableNoHeaderEntity;
 import com.orangesignal.csv.filters.SimpleCsvNamedValueFilter;
 
-import static org.junit.Assert.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * {@link CsvEntityWriter} クラスの単体テストです。
@@ -49,15 +49,12 @@ import static org.junit.Assert.assertThrows;
  * @author Koji Sugisawa
  * @since 1.4.0
  */
-public class CsvEntityWriterTest {
+class CsvEntityWriterTest {
 
-	@Rule
-	public TemporaryFolder folder = new TemporaryFolder();
+private static CsvConfig cfg;
 
-	private static CsvConfig cfg;
-
-	@BeforeClass
-	public static void setUpBeforeClass() throws Exception {
+	@BeforeAll
+	static void setUpBeforeClass() throws Exception {
 		cfg = new CsvConfig(',');
 		cfg.setEscapeDisabled(false);
 		cfg.setNullString("NULL");
@@ -71,7 +68,7 @@ public class CsvEntityWriterTest {
 	// 利便性のための静的メソッド
 
 	@Test
-	public void testNewInstanceCsvWriterClass() throws IOException {
+	void testNewInstanceCsvWriterClass() throws IOException {
 		final CsvWriter w = new CsvWriter(new StringWriter(), cfg);
 		final Class<Price> c = Price.class;
 
@@ -80,7 +77,7 @@ public class CsvEntityWriterTest {
 	}
 
 	@Test
-	public void testNewInstanceCsvWriterClassIllegalArgumentException1() throws IOException {
+	void testNewInstanceCsvWriterClassIllegalArgumentException1() throws IOException {
 		final IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> {
 			final CsvWriter w = null;
 			final Class<Price> c = Price.class;
@@ -92,7 +89,7 @@ public class CsvEntityWriterTest {
 	}
 
 	@Test
-	public void testNewInstanceCsvWriterClassIllegalArgumentException2() throws IOException {
+	void testNewInstanceCsvWriterClassIllegalArgumentException2() throws IOException {
 		final IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> {
 			final CsvWriter w = new CsvWriter(new StringWriter(), cfg);
 			final Class<Price> c = null;
@@ -104,7 +101,7 @@ public class CsvEntityWriterTest {
 	}
 
 	@Test
-	public void testNewInstanceCsvWriterCsvEntityTemplate() throws IOException {
+	void testNewInstanceCsvWriterCsvEntityTemplate() throws IOException {
 		final CsvWriter w = new CsvWriter(new StringWriter(), cfg);
 		final CsvEntityTemplate<Price> template = CsvEntityTemplate.newInstance(Price.class);
 
@@ -113,7 +110,7 @@ public class CsvEntityWriterTest {
 	}
 
 	@Test
-	public void testNewInstanceCsvWriterCsvEntityTemplateIllegalArgumentException1() throws IOException {
+	void testNewInstanceCsvWriterCsvEntityTemplateIllegalArgumentException1() throws IOException {
 		final IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> {
 			final CsvWriter w = null;
 			final CsvEntityTemplate<Price> template = CsvEntityTemplate.newInstance(Price.class);
@@ -125,7 +122,7 @@ public class CsvEntityWriterTest {
 	}
 
 	@Test
-	public void testNewInstanceCsvWriterCsvEntityTemplateIllegalArgumentException2() throws IOException {
+	void testNewInstanceCsvWriterCsvEntityTemplateIllegalArgumentException2() throws IOException {
 		final IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> {
 			final CsvWriter w = new CsvWriter(new StringWriter(), cfg);
 			final CsvEntityTemplate<Price> template = null;
@@ -140,7 +137,7 @@ public class CsvEntityWriterTest {
 	// コンストラクタ
 
 	@Test
-	public void testConstructorCsvWriterClass() throws IOException {
+	void testConstructorCsvWriterClass() throws IOException {
 		final CsvWriter w = new CsvWriter(new StringWriter(), cfg);
 		final Class<Price> c = Price.class;
 
@@ -149,7 +146,7 @@ public class CsvEntityWriterTest {
 	}
 
 	@Test
-	public void testConstructorCsvWriterClassIllegalArgumentException1() throws IOException {
+	void testConstructorCsvWriterClassIllegalArgumentException1() throws IOException {
 		final IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> {
 			final CsvWriter w = null;
 			final Class<Price> c = Price.class;
@@ -161,7 +158,7 @@ public class CsvEntityWriterTest {
 	}
 
 	@Test
-	public void testConstructorCsvWriterClassIllegalArgumentException2() throws IOException {
+	void testConstructorCsvWriterClassIllegalArgumentException2() throws IOException {
 		final IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> {
 			final CsvWriter w = new CsvWriter(new StringWriter(), cfg);
 			final Class<Price> c = null;
@@ -173,7 +170,7 @@ public class CsvEntityWriterTest {
 	}
 
 	@Test
-	public void testConstructorCsvWriterCsvEntityTemplate() throws IOException {
+	void testConstructorCsvWriterCsvEntityTemplate() throws IOException {
 		final CsvWriter w = new CsvWriter(new StringWriter(), cfg);
 		final CsvEntityTemplate<Price> template = CsvEntityTemplate.newInstance(Price.class);
 
@@ -182,7 +179,7 @@ public class CsvEntityWriterTest {
 	}
 
 	@Test
-	public void testConstructorCsvWriterCsvEntityTemplateIllegalArgumentException1() throws IOException {
+	void testConstructorCsvWriterCsvEntityTemplateIllegalArgumentException1() throws IOException {
 		final IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> {
 			final CsvWriter w = null;
 			final CsvEntityTemplate<Price> template = CsvEntityTemplate.newInstance(Price.class);
@@ -194,7 +191,7 @@ public class CsvEntityWriterTest {
 	}
 
 	@Test
-	public void testConstructorCsvWriterCsvEntityTemplateIllegalArgumentException2() throws IOException {
+	void testConstructorCsvWriterCsvEntityTemplateIllegalArgumentException2() throws IOException {
 		final IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> {
 			final CsvWriter w = new CsvWriter(new StringWriter(), cfg);
 			final CsvEntityTemplate<Price> template = null;
@@ -209,7 +206,7 @@ public class CsvEntityWriterTest {
 	// オーバーライド メソッド
 
 	@Test
-	public void testFlush() throws Exception {
+	void testFlush() throws Exception {
 		final StringWriter sw = new StringWriter();
 		final CsvEntityWriter<Price> writer = CsvEntityWriter.newInstance(
 				new CsvWriter(sw, cfg),
@@ -241,7 +238,7 @@ public class CsvEntityWriterTest {
 	}
 
 	@Test
-	public void testFlushIOException() throws IOException {
+	void testFlushIOException() throws IOException {
 		final IOException e = assertThrows(IOException.class, () -> {
 			final CsvEntityWriter<Price> writer = CsvEntityWriter.newInstance(
 					new CsvWriter(new StringWriter(), cfg),
@@ -255,7 +252,7 @@ public class CsvEntityWriterTest {
 	}
 
 	@Test
-	public void testCloseIOException() throws IOException {
+	void testCloseIOException() throws IOException {
 		final IOException e = assertThrows(IOException.class, () -> {
 			final CsvEntityWriter<Price> writer = CsvEntityWriter.newInstance(
 					new CsvWriter(new StringWriter(), cfg),
@@ -272,7 +269,7 @@ public class CsvEntityWriterTest {
 	// パブリック メソッド
 
 	@Test
-	public void testWriteHeader1() throws Exception {
+	void testWriteHeader1() throws Exception {
 		final StringWriter sw = new StringWriter();
 		final CsvEntityWriter<Price> writer = CsvEntityWriter.newInstance(new CsvWriter(sw, cfg), Price.class);
 		try {
@@ -313,7 +310,7 @@ public class CsvEntityWriterTest {
 	}
 
 	@Test
-	public void testWriteHeader2() throws Exception {
+	void testWriteHeader2() throws Exception {
 		final StringWriter sw = new StringWriter();
 		final CsvEntityWriter<Price> writer = CsvEntityWriter.newInstance(new CsvWriter(sw, cfg), Price.class, true);
 		try {
@@ -354,7 +351,7 @@ public class CsvEntityWriterTest {
 	}
 
 	@Test
-	public void testWriteDisableHeader1() throws Exception {
+	void testWriteDisableHeader1() throws Exception {
 		final StringWriter sw = new StringWriter();
 
 		// Arrange
@@ -387,7 +384,7 @@ public class CsvEntityWriterTest {
 	}
 
 	@Test
-	public void testWriteDisableHeader2() throws Exception {
+	void testWriteDisableHeader2() throws Exception {
 		final StringWriter sw = new StringWriter();
 
 		// Arrange
@@ -420,7 +417,7 @@ public class CsvEntityWriterTest {
 	}
 
 	@Test
-	public void testWrite() throws Exception {
+	void testWrite() throws Exception {
 		final StringWriter sw = new StringWriter();
 		final CsvEntityWriter<Price> writer = CsvEntityWriter.newInstance(
 				new CsvWriter(sw, cfg),
@@ -440,7 +437,7 @@ public class CsvEntityWriterTest {
 	}
 /*
 	@Test
-	public void testIssue29() throws Exception {
+	void testIssue29() throws Exception {
 		final StringWriter sw = new StringWriter();
 		final CsvEntityWriter<Travel> writer = CsvEntityWriter.newInstance(
 				new CsvWriter(sw, cfg),
@@ -460,7 +457,7 @@ public class CsvEntityWriterTest {
 	}
 */
 	@Test
-	public void testDefaultValue() throws Exception {
+	void testDefaultValue() throws Exception {
 		final StringWriter sw = new StringWriter();
 		final CsvEntityWriter<DefaultValuePrice> writer = CsvEntityWriter.newInstance(
 				new CsvWriter(sw, cfg),
@@ -480,7 +477,7 @@ public class CsvEntityWriterTest {
 	}
 
 	@Test
-	public void testWritable() throws Exception {
+	void testWritable() throws Exception {
 		final StringWriter sw = new StringWriter();
 		final CsvEntityWriter<WritableEntity> writer = CsvEntityWriter.newInstance(
 				new CsvWriter(sw, cfg),
@@ -525,7 +522,7 @@ public class CsvEntityWriterTest {
 	}
 
 	@Test
-	public void testWritableNoHeader() throws Exception {
+	void testWritableNoHeader() throws Exception {
 		final StringWriter sw = new StringWriter();
 		final CsvEntityWriter<WritableNoHeaderEntity> writer = CsvEntityWriter.newInstance(
 				new CsvWriter(sw, cfg),
@@ -566,7 +563,7 @@ public class CsvEntityWriterTest {
 	}
 
 	@Test
-	public void testFilter() throws Exception {
+	void testFilter() throws Exception {
 		final StringWriter sw = new StringWriter();
 		final CsvEntityWriter<Price> writer = CsvEntityWriter.newInstance(
 				new CsvWriter(sw, cfg),
@@ -593,7 +590,7 @@ public class CsvEntityWriterTest {
 	// getter / setter
 
 	@Test
-	public void testGetTemplate() throws Exception {
+	void testGetTemplate() throws Exception {
 		// Arrange
 		final CsvEntityWriter<Price> writer = new CsvEntityWriter<Price>(new CsvWriter(new StringWriter(), cfg), Price.class);
 		try {
@@ -605,7 +602,7 @@ public class CsvEntityWriterTest {
 	}
 
 	@Test
-	public void testIsDisableWriteHeader() throws IOException {
+	void testIsDisableWriteHeader() throws IOException {
 		CsvEntityWriter<Price> writer;
 
 		// Arrange

@@ -36,10 +36,9 @@ import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
-import org.junit.BeforeClass;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.io.TempDir;
+import org.junit.jupiter.api.Test;
 
 import com.orangesignal.csv.entryfilters.RegexEntryNameFilter;
 import com.orangesignal.csv.filters.SimpleBeanFilter;
@@ -57,7 +56,7 @@ import com.orangesignal.jlha.LhaOutputStream;
  * 
  * @author Koji Sugisawa
  */
-public class CsvTest {
+class CsvTest {
 
 	private static final String path = "src/test/resources/";
 	private static final String encoding = "Windows-31J";
@@ -65,11 +64,11 @@ public class CsvTest {
 
 	private static List<String[]> data;
 
-	@Rule
-	public TemporaryFolder tempFolder = new TemporaryFolder();
+	@TempDir
+	public File tempFolder;
 
-	@BeforeClass
-	public static void setUpBeforeClass() throws Exception {
+	@BeforeAll
+	static void setUpBeforeClass() throws Exception {
 		cfg = new CsvConfig(',');
 		cfg.setIgnoreTrailingWhitespaces(true);
 		cfg.setIgnoreLeadingWhitespaces(true);
@@ -84,7 +83,7 @@ public class CsvTest {
 	}
 
 	@Test
-	public void testLoadCsvReaderCsvHandlerOfT() throws IOException {
+	void testLoadCsvReaderCsvHandlerOfT() throws IOException {
 		final CsvReader reader = new CsvReader(new InputStreamReader(new FileInputStream(new File(path, "n225.csv")), encoding), cfg);
 		try {
 			final List<String[]> list = Csv.load(reader, new StringArrayListHandler());
@@ -95,7 +94,7 @@ public class CsvTest {
 	}
 
 	@Test
-	public void testLoadReaderCsvConfigCsvHandlerOfT() throws IOException {
+	void testLoadReaderCsvConfigCsvHandlerOfT() throws IOException {
 		final Reader reader = new InputStreamReader(new FileInputStream(new File(path, "n225.csv")), encoding);
 		try {
 			final List<String[]> list = Csv.load(reader, cfg, new StringArrayListHandler());
@@ -106,7 +105,7 @@ public class CsvTest {
 	}
 
 	@Test
-	public void testLoadInputStreamStringCsvConfigCsvHandlerOfT() throws IOException {
+	void testLoadInputStreamStringCsvConfigCsvHandlerOfT() throws IOException {
 		final InputStream in = new FileInputStream(new File (path, "n225.csv"));
 		try {
 			final List<String[]> list = Csv.load(in, encoding, cfg, new StringArrayListHandler());
@@ -117,7 +116,7 @@ public class CsvTest {
 	}
 
 	@Test
-	public void testLoadInputStreamCsvConfigCsvHandlerOfT() throws IOException {
+	void testLoadInputStreamCsvConfigCsvHandlerOfT() throws IOException {
 		final InputStream in = new FileInputStream(new File(path, "n225.csv"));
 		try {
 			final List<String[]> list = Csv.load(in, cfg, new StringArrayListHandler());
@@ -128,19 +127,19 @@ public class CsvTest {
 	}
 
 	@Test
-	public void testLoadFileStringCsvConfigCsvHandlerOfT() throws IOException {
+	void testLoadFileStringCsvConfigCsvHandlerOfT() throws IOException {
 		final List<String[]> list = Csv.load(new File(path, "n225.csv"), encoding, cfg, new StringArrayListHandler());
 		assertThat(list.size(), is(2694));
 	}
 
 	@Test
-	public void testLoadFileCsvConfigCsvHandlerOfT() throws IOException {
+	void testLoadFileCsvConfigCsvHandlerOfT() throws IOException {
 		final List<String[]> list = Csv.load(new File(path, "n225.csv"), cfg, new StringArrayListHandler());
 		assertThat(list.size(), is(2694));
 	}
 
 	@Test
-	public void testLoadLhaInputStreamStringCsvConfigCsvListHandlerOfTLhaEntryFilter() throws IOException {
+	void testLoadLhaInputStreamStringCsvConfigCsvListHandlerOfTLhaEntryFilter() throws IOException {
 		final LhaInputStream lha = new LhaInputStream(new FileInputStream(new File(path, "n225.lzh")));
 		try {
 			final List<String[]> list = Csv.load(lha, encoding, cfg, new StringArrayListHandler(), new RegexEntryNameFilter("^.+\\.csv$"));
@@ -151,7 +150,7 @@ public class CsvTest {
 	}
 
 	@Test
-	public void testLoadLhaInputStreamStringCsvConfigCsvListHandlerOfT() throws IOException {
+	void testLoadLhaInputStreamStringCsvConfigCsvListHandlerOfT() throws IOException {
 		final LhaInputStream lha = new LhaInputStream(new FileInputStream(new File(path, "n225.lzh")));
 		try {
 			final List<String[]> list = Csv.load(lha, encoding, cfg, new StringArrayListHandler());
@@ -162,7 +161,7 @@ public class CsvTest {
 	}
 
 	@Test
-	public void testLoadLhaInputStreamCsvConfigCsvListHandlerOfTLhaEntryFilter() throws IOException {
+	void testLoadLhaInputStreamCsvConfigCsvListHandlerOfTLhaEntryFilter() throws IOException {
 		final LhaInputStream lha = new LhaInputStream(new FileInputStream(new File(path, "n225.lzh")));
 		try {
 			final List<String[]> list = Csv.load(lha, cfg, new StringArrayListHandler(), new RegexEntryNameFilter("^.+\\.csv$"));
@@ -173,7 +172,7 @@ public class CsvTest {
 	}
 
 	@Test
-	public void testLoadLhaInputStreamCsvConfigCsvListHandlerOfT() throws IOException {
+	void testLoadLhaInputStreamCsvConfigCsvListHandlerOfT() throws IOException {
 		final LhaInputStream lha = new LhaInputStream(new FileInputStream(new File(path, "n225.lzh")));
 		try {
 			final List<String[]> list = Csv.load(lha, cfg, new StringArrayListHandler());
@@ -184,7 +183,7 @@ public class CsvTest {
 	}
 
 	@Test
-	public void testLoadLhaFileStringCsvConfigCsvListHandlerOfTLhaEntryFilter() throws IOException {
+	void testLoadLhaFileStringCsvConfigCsvListHandlerOfTLhaEntryFilter() throws IOException {
 		final LhaFile lha = new LhaFile(new File(path, "n225.lzh"));
 		try {
 			final List<String[]> list = Csv.load(lha, encoding, cfg, new StringArrayListHandler(), new RegexEntryNameFilter("^.+\\.csv$"));
@@ -195,7 +194,7 @@ public class CsvTest {
 	}
 
 	@Test
-	public void testLoadLhaFileStringCsvConfigCsvListHandlerOfT() throws IOException {
+	void testLoadLhaFileStringCsvConfigCsvListHandlerOfT() throws IOException {
 		final LhaFile lha = new LhaFile(new File(path, "n225.lzh"));
 		try {
 			final List<String[]> list = Csv.load(lha, encoding, cfg, new StringArrayListHandler());
@@ -206,7 +205,7 @@ public class CsvTest {
 	}
 
 	@Test
-	public void testLoadLhaFileCsvConfigCsvListHandlerOfTLhaEntryFilter() throws IOException {
+	void testLoadLhaFileCsvConfigCsvListHandlerOfTLhaEntryFilter() throws IOException {
 		final LhaFile lha = new LhaFile(new File(path, "n225.lzh"));
 		try {
 			final List<String[]> list = Csv.load(lha, cfg, new StringArrayListHandler(), new RegexEntryNameFilter("^.+\\.csv$"));
@@ -217,7 +216,7 @@ public class CsvTest {
 	}
 
 	@Test
-	public void testLoadLhaFileCsvConfigCsvListHandlerOfT() throws IOException {
+	void testLoadLhaFileCsvConfigCsvListHandlerOfT() throws IOException {
 		final LhaFile lha = new LhaFile(new File(path, "n225.lzh"));
 		try {
 			final List<String[]> list = Csv.load(lha, cfg, new StringArrayListHandler());
@@ -228,7 +227,7 @@ public class CsvTest {
 	}
 
 	@Test
-	public void testLoadZipInputStreamStringCsvConfigCsvListHandlerOfTZipEntryFilter() throws IOException {
+	void testLoadZipInputStreamStringCsvConfigCsvListHandlerOfTZipEntryFilter() throws IOException {
 		final ZipInputStream zip = new ZipInputStream(new FileInputStream(new File(path, "sample.zip")));
 		try {
 			final List<String[]> list =
@@ -249,7 +248,7 @@ public class CsvTest {
 	}
 
 	@Test
-	public void testLoadZipInputStreamStringCsvConfigCsvListHandlerOfT() throws IOException {
+	void testLoadZipInputStreamStringCsvConfigCsvListHandlerOfT() throws IOException {
 		final ZipInputStream zip = new ZipInputStream(new FileInputStream(new File(path, "n225.zip")));
 		try {
 			final List<String[]> list = Csv.load(zip, encoding, cfg, new StringArrayListHandler());
@@ -260,7 +259,7 @@ public class CsvTest {
 	}
 
 	@Test
-	public void testLoadZipInputStreamCsvConfigCsvListHandlerOfTZipEntryFilter() throws IOException {
+	void testLoadZipInputStreamCsvConfigCsvListHandlerOfTZipEntryFilter() throws IOException {
 		final ZipInputStream zip = new ZipInputStream(new FileInputStream(new File(path, "n225.zip")));
 		try {
 			final List<String[]> list = Csv.load(zip, cfg, new StringArrayListHandler(), new RegexEntryNameFilter("^.+\\.csv$"));
@@ -271,7 +270,7 @@ public class CsvTest {
 	}
 
 	@Test
-	public void testLoadZipInputStreamCsvConfigCsvListHandlerOfT() throws IOException {
+	void testLoadZipInputStreamCsvConfigCsvListHandlerOfT() throws IOException {
 		final ZipInputStream zip = new ZipInputStream(new FileInputStream(new File(path, "n225.zip")));
 		try {
 			final List<String[]> list = Csv.load(zip, cfg, new StringArrayListHandler());
@@ -282,7 +281,7 @@ public class CsvTest {
 	}
 
 	@Test
-	public void testLoadZipFileStringCsvConfigCsvListHandlerOfTZipEntryFilter() throws IOException {
+	void testLoadZipFileStringCsvConfigCsvListHandlerOfTZipEntryFilter() throws IOException {
 		final ZipFile zip = new ZipFile(new File(path, "sample.zip"));
 		try {
 			final List<Sample> list = Csv.load(zip, "utf-8", cfg,
@@ -303,7 +302,7 @@ public class CsvTest {
 	}
 
 	@Test
-	public void testLoadZipFileStringCsvConfigCsvListHandlerOfT() throws IOException {
+	void testLoadZipFileStringCsvConfigCsvListHandlerOfT() throws IOException {
 		final ZipFile zip = new ZipFile(new File(path, "n225.zip"));
 		try {
 			final List<String[]> list = Csv.load(zip, encoding, cfg, new StringArrayListHandler());
@@ -314,7 +313,7 @@ public class CsvTest {
 	}
 
 	@Test
-	public void testLoadZipFileCsvConfigCsvListHandlerOfTZipEntryFilter() throws IOException {
+	void testLoadZipFileCsvConfigCsvListHandlerOfTZipEntryFilter() throws IOException {
 		final ZipFile zip = new ZipFile(new File(path, "n225.zip"));
 		try {
 			final List<String[]> list = Csv.load(zip, cfg, new StringArrayListHandler(), new RegexEntryNameFilter("^.+\\.csv$"));
@@ -325,7 +324,7 @@ public class CsvTest {
 	}
 
 	@Test
-	public void testLoadZipFileCsvConfigCsvListHandlerOfT() throws IOException {
+	void testLoadZipFileCsvConfigCsvListHandlerOfT() throws IOException {
 		final ZipFile zip = new ZipFile(new File(path, "n225.zip"));
 		try {
 			final List<String[]> list = Csv.load(zip, cfg, new StringArrayListHandler());
@@ -336,8 +335,8 @@ public class CsvTest {
 	}
 
 	@Test
-	public void testSaveTCsvWriterCsvHandlerOfT() throws IOException {
-		final File file = tempFolder.newFile("test.csv");
+	void testSaveTCsvWriterCsvHandlerOfT() throws IOException {
+		final File file = new File(tempFolder, "test.csv");
 		final CsvWriter writer = new CsvWriter(new OutputStreamWriter(new FileOutputStream(file), encoding), cfg);
 		try {
 			Csv.save(data, writer, new StringArrayListHandler());
@@ -349,8 +348,8 @@ public class CsvTest {
 	}
 
 	@Test
-	public void testSaveTWriterCsvConfigCsvHandlerOfT() throws IOException {
-		final File file = tempFolder.newFile("test.csv");
+	void testSaveTWriterCsvConfigCsvHandlerOfT() throws IOException {
+		final File file = new File(tempFolder, "test.csv");
 		final Writer writer = new OutputStreamWriter(new FileOutputStream(file), encoding);
 		try {
 			Csv.save(data, writer, cfg, new StringArrayListHandler());
@@ -362,8 +361,8 @@ public class CsvTest {
 	}
 
 	@Test
-	public void testSaveTOutputStreamStringCsvConfigCsvHandlerOfT() throws IOException {
-		final File file = tempFolder.newFile("test.csv");
+	void testSaveTOutputStreamStringCsvConfigCsvHandlerOfT() throws IOException {
+		final File file = new File(tempFolder, "test.csv");
 		final OutputStream out = new FileOutputStream(file);
 		try {
 			Csv.save(data, out, encoding, cfg, new StringArrayListHandler());
@@ -375,8 +374,8 @@ public class CsvTest {
 	}
 
 	@Test
-	public void testSaveTOutputStreamCsvConfigCsvHandlerOfT() throws IOException {
-		final File file = tempFolder.newFile("test.csv");
+	void testSaveTOutputStreamCsvConfigCsvHandlerOfT() throws IOException {
+		final File file = new File(tempFolder, "test.csv");
 		final OutputStream out = new FileOutputStream(file);
 		try {
 			Csv.save(data, out, cfg, new StringArrayListHandler());
@@ -388,24 +387,24 @@ public class CsvTest {
 	}
 
 	@Test
-	public void testSaveTFileStringCsvConfigCsvHandlerOfT() throws IOException {
-		final File file = tempFolder.newFile("test.csv");
+	void testSaveTFileStringCsvConfigCsvHandlerOfT() throws IOException {
+		final File file = new File(tempFolder, "test.csv");
 		Csv.save(data, file, encoding, cfg, new StringArrayListHandler());
 		final List<String[]> list = Csv.load(file, cfg, new StringArrayListHandler());
 		assertThat(list.size(), is(2));
 	}
 
 	@Test
-	public void testSaveTFileCsvConfigCsvHandlerOfT() throws IOException {
-		final File file = tempFolder.newFile("test.csv");
+	void testSaveTFileCsvConfigCsvHandlerOfT() throws IOException {
+		final File file = new File(tempFolder, "test.csv");
 		Csv.save(data, file, cfg, new StringArrayListHandler());
 		final List<String[]> list = Csv.load(file, cfg, new StringArrayListHandler());
 		assertThat(list.size(), is(2));
 	}
 
 	@Test
-	public void testSaveListOfTLhaOutputStreamStringCsvConfigCsvListHandlerOfTString() throws IOException {
-		final File file = tempFolder.newFile("test.lzh");
+	void testSaveListOfTLhaOutputStreamStringCsvConfigCsvListHandlerOfTString() throws IOException {
+		final File file = new File(tempFolder, "test.lzh");
 		final LhaOutputStream lha = new LhaOutputStream(new FileOutputStream(file));
 		try {
 			Csv.save(data, lha, encoding, cfg, new StringArrayListHandler(), "test.csv");
@@ -422,8 +421,8 @@ public class CsvTest {
 	}
 
 	@Test
-	public void testSaveListOfTLhaOutputStreamCsvConfigCsvListHandlerOfTString() throws IOException {
-		final File file = tempFolder.newFile("test.lzh");
+	void testSaveListOfTLhaOutputStreamCsvConfigCsvListHandlerOfTString() throws IOException {
+		final File file = new File(tempFolder, "test.lzh");
 		final LhaOutputStream lha = new LhaOutputStream(new FileOutputStream(file));
 		try {
 			Csv.save(data, lha, cfg, new StringArrayListHandler(), "test.csv");
@@ -440,8 +439,8 @@ public class CsvTest {
 	}
 
 	@Test
-	public void testSaveListOfTZipOutputStreamStringCsvConfigCsvListHandlerOfTString() throws IOException {
-		final File file = tempFolder.newFile("test.zip");
+	void testSaveListOfTZipOutputStreamStringCsvConfigCsvListHandlerOfTString() throws IOException {
+		final File file = new File(tempFolder, "test.zip");
 		final ZipOutputStream zip = new ZipOutputStream(new FileOutputStream(file));
 		try {
 			Csv.save(data, zip, encoding, cfg, new StringArrayListHandler(), "test.csv");
@@ -458,8 +457,8 @@ public class CsvTest {
 	}
 
 	@Test
-	public void testSaveListOfTZipOutputStreamCsvConfigCsvListHandlerOfTString() throws IOException {
-		final File file = tempFolder.newFile("test.zip");
+	void testSaveListOfTZipOutputStreamCsvConfigCsvListHandlerOfTString() throws IOException {
+		final File file = new File(tempFolder, "test.zip");
 		final ZipOutputStream zip = new ZipOutputStream(new FileOutputStream(file));
 		try {
 			Csv.save(data, zip, cfg, new StringArrayListHandler(), "test.csv");

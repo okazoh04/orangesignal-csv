@@ -17,18 +17,18 @@
 package com.orangesignal.csv.handlers;
 
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.sql.ResultSet;
 import java.util.regex.Pattern;
 
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import com.orangesignal.csv.Constants;
 import com.orangesignal.csv.CsvConfig;
@@ -40,12 +40,12 @@ import com.orangesignal.csv.CsvWriter;
  * 
  * @author Koji Sugisawa
  */
-public class ResultSetHandlerTest {
+class ResultSetHandlerTest {
 
 	private static CsvConfig cfg;
 
-	@BeforeClass
-	public static void setUpBeforeClass() throws Exception {
+	@BeforeAll
+	static void setUpBeforeClass() throws Exception {
 		cfg = new CsvConfig(',', '"', '\\');
 		cfg.setNullString("NULL");
 		cfg.setBreakString("\n");
@@ -57,7 +57,7 @@ public class ResultSetHandlerTest {
 	}
 
 	@Test
-	public void testLoad() throws Exception {
+	void testLoad() throws Exception {
 		final ResultSet rs = new ResultSetHandler().load(
 				new CsvReader(new StringReader(
 					"# text/tab-separated-values   \r\n" +
@@ -89,7 +89,7 @@ public class ResultSetHandlerTest {
 	}
 
 	@Test
-	public void testSaveNoHeader()  throws Exception {
+	void testSaveNoHeader()  throws Exception {
 		final ResultSet rs = new ResultSetHandler().load(
 				new CsvReader(new StringReader(
 					"# text/tab-separated-values   \r\n" +
@@ -115,7 +115,7 @@ public class ResultSetHandlerTest {
 	}
 
 	@Test
-	public void testSave()  throws Exception {
+	void testSave()  throws Exception {
 		final ResultSet rs = new ResultSetHandler().load(
 				new CsvReader(new StringReader(
 					"# text/tab-separated-values   \r\n" +

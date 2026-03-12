@@ -17,28 +17,24 @@
 package com.orangesignal.csv.filters;
 
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.IOException;
 
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.Test;
 
 /**
  * {@link BeanAndExpression} クラスの単体テストです。
  * 
  * @author Koji Sugisawa
  */
-public class BeanAndExpressionTest {
-
-	@Rule
-	public ExpectedException exception = ExpectedException.none();
+class BeanAndExpressionTest {
 
 	@Test
-	public void testBeanAndExpression() {
+	void testBeanAndExpression() {
 		// Act
 		new BeanAndExpression();
 		// Act
@@ -46,17 +42,16 @@ public class BeanAndExpressionTest {
 	}
 
 	@Test
-	public void testBeanAndExpressionIllegalArgumentException() {
+	void testBeanAndExpressionIllegalArgumentException() {
 		// Arrange
-		exception.expect(IllegalArgumentException.class);
-		exception.expectMessage("BeanFilter must not be null");
 		final BeanFilter[] filters = null;
 		// Act
-		new BeanAndExpression(filters);
+		final Throwable e = assertThrows(IllegalArgumentException.class, () -> new BeanAndExpression(filters));
+		assertThat(e.getMessage(), is("BeanFilter must not be null"));
 	}
 
 	@Test
-	public void testAccept() throws IOException {
+	void testAccept() throws IOException {
 		assertFalse(new BeanAndExpression(
 				new BeanFilter() { @Override public boolean accept(final Object bean) { return false; } },
 				new BeanFilter() { @Override public boolean accept(final Object bean) { return false; } }
@@ -99,15 +94,13 @@ public class BeanAndExpressionTest {
 	}
 
 	@Test
-	public void testAcceptIllegalArgumentException() throws IOException {
-		// Arrange
-		exception.expect(IllegalArgumentException.class);
+	void testAcceptIllegalArgumentException() throws IOException {
 		// Act
-		new BeanAndExpression().accept(null);
+		assertThrows(IllegalArgumentException.class, () -> new BeanAndExpression().accept(null));
 	}
 
 	@Test
-	public void testToString() {
+	void testToString() {
 		assertThat(new BeanAndExpression().toString(), is("BeanAndExpression"));
 	}
 

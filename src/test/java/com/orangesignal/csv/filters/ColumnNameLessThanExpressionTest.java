@@ -17,34 +17,41 @@
 package com.orangesignal.csv.filters;
 
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
 import java.util.List;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * {@link ColumnNameLessThanExpression} クラスの単体テストです。
  * 
  * @author Koji Sugisawa
  */
-public class ColumnNameLessThanExpressionTest {
+class ColumnNameLessThanExpressionTest {
 
-	@Test(expected = IllegalArgumentException.class)
-	public void testColumnNameLessThanExpressionIllegalArgumentException1() {
+	@Test
+	void testColumnNameLessThanExpressionIllegalArgumentException1() {
+		assertThrows(IllegalArgumentException.class, () -> {
+
 		new ColumnNameLessThanExpression(null, "x002");
-	}
-
-	@Test(expected = IllegalArgumentException.class)
-	public void testColumnNameLessThanExpressionIllegalArgumentException2() {
-		new ColumnNameLessThanExpression("col", null);
+		});
 	}
 
 	@Test
-	public void testAccept() {
+	void testColumnNameLessThanExpressionIllegalArgumentException2() {
+		assertThrows(IllegalArgumentException.class, () -> {
+
+		new ColumnNameLessThanExpression("col", null);
+		});
+	}
+
+	@Test
+	void testAccept() {
 		final List<String> header = Arrays.asList(new String[]{ "col0", "col1", "col2", "col3", "col4" });
 		final List<String> values = Arrays.asList(new String[]{ null, "x001", "x002", "x003", "x004" });
 		assertFalse(new ColumnNameLessThanExpression("col0", "x002").accept(header, values));
@@ -54,13 +61,16 @@ public class ColumnNameLessThanExpressionTest {
 		assertFalse(new ColumnNameLessThanExpression("col4", "x002").accept(header, values));
 	}
 
-	@Test(expected = IllegalArgumentException.class)
-	public void testAcceptIllegalArgumentException() {
+	@Test
+	void testAcceptIllegalArgumentException() {
+		assertThrows(IllegalArgumentException.class, () -> {
+
 		new ColumnNameLessThanExpression("col", "x001").accept(Arrays.asList(new String[]{ "col0", "col1", "col2" }), null);
+		});
 	}
 
 	@Test
-	public void testToString() {
+	void testToString() {
 		assertThat(new ColumnNameLessThanExpression("col", "x001").toString(), is("ColumnNameLessThanExpression"));
 		
 	}

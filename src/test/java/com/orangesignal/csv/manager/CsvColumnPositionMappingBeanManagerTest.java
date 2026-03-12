@@ -16,8 +16,9 @@
 
 package com.orangesignal.csv.manager;
 
-import static org.hamcrest.core.Is.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.Reader;
 import java.io.StringReader;
@@ -28,10 +29,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.orangesignal.csv.Constants;
 import com.orangesignal.csv.CsvConfig;
@@ -44,15 +43,12 @@ import com.orangesignal.csv.model.SampleBean;
  *
  * @author Koji Sugisawa
  */
-public class CsvColumnPositionMappingBeanManagerTest {
+class CsvColumnPositionMappingBeanManagerTest {
 
 	private CsvConfig cfg;
 
-	@Rule
-	public ExpectedException exception = ExpectedException.none();
-
-	@Before
-	public void setUp() throws Exception {
+	@BeforeEach
+	void setUp() throws Exception {
 		cfg = new CsvConfig(',');
 		cfg.setEscapeDisabled(false);
 		cfg.setNullString("NULL");
@@ -63,32 +59,32 @@ public class CsvColumnPositionMappingBeanManagerTest {
 	}
 
 	@Test
-	public void testCsvColumnPositionMappingBeanManager() {
+	void testCsvColumnPositionMappingBeanManager() {
 		new CsvColumnPositionMappingBeanManager();
 		new CsvColumnPositionMappingBeanManager(cfg);
 	}
 
 	@Test
-	public void testCsvColumnPositionMappingBeanManagerIllegalArgumentException() {
-		exception.expect(IllegalArgumentException.class);
-		exception.expectMessage("CsvConfig must not be null");
-		new CsvColumnPositionMappingBeanManager(null);
+	void testCsvColumnPositionMappingBeanManagerIllegalArgumentException() {
+		assertThrows(IllegalArgumentException.class, () -> {
+			new CsvColumnPositionMappingBeanManager(null);
+		});
 	}
 
 	@Test
-	public void testConfig() {
+	void testConfig() {
 		new CsvColumnPositionMappingBeanManager().config(cfg);
 	}
 
 	@Test
-	public void testConfigIllegalArgumentException() {
-		exception.expect(IllegalArgumentException.class);
-		exception.expectMessage("CsvConfig must not be null");
-		new CsvColumnPositionMappingBeanManager().config(null);
+	void testConfigIllegalArgumentException() {
+		assertThrows(IllegalArgumentException.class, () -> {
+			new CsvColumnPositionMappingBeanManager().config(null);
+		});
 	}
 
 	@Test
-	public void testLoad() throws Exception {
+	void testLoad() throws Exception {
 		final Reader reader = new StringReader(
 				"GCQ09,COMEX 金 2009年08月限,1058.70,10,2008/08/06\r\n" +
 				"GCU09,COMEX 金 2009年09月限,1068.70,10,2008/09/06\r\n" +
@@ -124,7 +120,7 @@ public class CsvColumnPositionMappingBeanManagerTest {
 	}
 
 	@Test
-	public void testSaveNoHeader() throws Exception {
+	void testSaveNoHeader() throws Exception {
 		final DateFormat df = new SimpleDateFormat("yyyy/MM/dd");
 
 		final List<SampleBean> list = new ArrayList<SampleBean>();
@@ -152,7 +148,7 @@ public class CsvColumnPositionMappingBeanManagerTest {
 	}
 
 	@Test
-	public void testSave() throws Exception {
+	void testSave() throws Exception {
 		final DateFormat df = new SimpleDateFormat("yyyy/MM/dd");
 
 		final List<SampleBean> list = new ArrayList<SampleBean>();

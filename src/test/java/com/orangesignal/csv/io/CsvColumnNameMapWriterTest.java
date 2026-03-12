@@ -17,11 +17,12 @@
 package com.orangesignal.csv.io;
 
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.IOException;
 import java.io.StringWriter;
@@ -29,10 +30,8 @@ import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.orangesignal.csv.Constants;
 import com.orangesignal.csv.CsvConfig;
@@ -45,15 +44,12 @@ import com.orangesignal.csv.filters.SimpleCsvNamedValueFilter;
  * @author Koji Sugisawa
  * @since 1.4.0
  */
-public class CsvColumnNameMapWriterTest {
-
-	@Rule
-	public ExpectedException exception = ExpectedException.none();
+class CsvColumnNameMapWriterTest {
 
 	private CsvConfig cfg;
 
-	@Before
-	public void setUp() throws Exception {
+	@BeforeEach
+	void setUp() throws Exception {
 		cfg = new CsvConfig(',');
 		cfg.setNullString("NULL");
 		cfg.setIgnoreTrailingWhitespaces(true);
@@ -66,26 +62,22 @@ public class CsvColumnNameMapWriterTest {
 	// コンストラクタ
 
 	@Test
-	public void testConstructorCsvWriterIllegalArgumentException() throws IOException {
-		exception.expect(IllegalArgumentException.class);
-		exception.expectMessage("CsvWriter must not be null");
-		final CsvColumnNameMapWriter writer = new CsvColumnNameMapWriter(null);
-		writer.close();
+	void testConstructorCsvWriterIllegalArgumentException() throws IOException {
+		final Throwable e = assertThrows(IllegalArgumentException.class, () -> new CsvColumnNameMapWriter(null));
+		assertThat(e.getMessage(), is("CsvWriter must not be null"));
 	}
 
 	@Test
-	public void testConstructorCsvWriterListIllegalArgumentException() throws IOException {
-		exception.expect(IllegalArgumentException.class);
-		exception.expectMessage("CsvWriter must not be null");
-		final CsvColumnNameMapWriter writer = new CsvColumnNameMapWriter(null, Arrays.asList("symbol", "name", "price", "volume"));
-		writer.close();
+	void testConstructorCsvWriterListIllegalArgumentException() throws IOException {
+		final Throwable e = assertThrows(IllegalArgumentException.class, () -> new CsvColumnNameMapWriter(null, Arrays.asList("symbol", "name", "price", "volume")));
+		assertThat(e.getMessage(), is("CsvWriter must not be null"));
 	}
 
 	// ------------------------------------------------------------------------
 	// オーバーライド メソッド
 
 	@Test
-	public void testFlush() throws IOException {
+	void testFlush() throws IOException {
 		final StringWriter sw = new StringWriter();
 		final CsvColumnNameMapWriter writer = new CsvColumnNameMapWriter(new CsvWriter(sw, cfg));
 		try {
@@ -118,30 +110,28 @@ public class CsvColumnNameMapWriterTest {
 	}
 
 	@Test
-	public void testFlushIOException() throws IOException {
-		exception.expect(IOException.class);
-		exception.expectMessage("CsvWriter closed");
+	void testFlushIOException() throws IOException {
 		final CsvColumnNameMapWriter writer = new CsvColumnNameMapWriter(new CsvWriter(new StringWriter(), cfg));
 		writer.close();
 		// Act
-		writer.flush();
+		final Throwable e = assertThrows(IOException.class, () -> writer.flush());
+		assertThat(e.getMessage(), is("CsvWriter closed"));
 	}
 
 	@Test
-	public void testCloseIOException() throws IOException {
-		exception.expect(IOException.class);
-		exception.expectMessage("CsvWriter closed");
+	void testCloseIOException() throws IOException {
 		final CsvColumnNameMapWriter writer = new CsvColumnNameMapWriter(new CsvWriter(new StringWriter(), cfg));
 		writer.close();
 		// Act
-		writer.close();
+		final Throwable e = assertThrows(IOException.class, () -> writer.close());
+		assertThat(e.getMessage(), is("CsvWriter closed"));
 	}
 
 	// ------------------------------------------------------------------------
 	// パブリック メソッド
 
 	@Test
-	public void testWriteNoHeader() throws IOException {
+	void testWriteNoHeader() throws IOException {
 		final StringWriter sw = new StringWriter();
 		final CsvColumnNameMapWriter writer = new CsvColumnNameMapWriter(new CsvWriter(sw, cfg), false);
 		try {
@@ -176,7 +166,7 @@ public class CsvColumnNameMapWriterTest {
 	}
 
 	@Test
-	public void testWriteHeader() throws IOException {
+	void testWriteHeader() throws IOException {
 		final StringWriter sw = new StringWriter();
 		final CsvColumnNameMapWriter writer = new CsvColumnNameMapWriter(new CsvWriter(sw, cfg));
 		try {
@@ -211,19 +201,18 @@ public class CsvColumnNameMapWriterTest {
 	}
 
 	@Test
-	public void testNoHeader() throws IOException {
-		exception.expect(IOException.class);
-		exception.expectMessage("No header is available");
+	void testNoHeader() throws IOException {
 		final CsvColumnNameMapWriter writer = new CsvColumnNameMapWriter(new CsvWriter(new StringWriter(), cfg));
 		try {
-			writer.write(null);
+			final Throwable e = assertThrows(IOException.class, () -> writer.write(null));
+			assertThat(e.getMessage(), is("No header is available"));
 		} finally {
 			writer.close();
 		}
 	}
 
 	@Test
-	public void testWrite1() throws IOException {
+	void testWrite1() throws IOException {
 		final StringWriter sw = new StringWriter();
 		final CsvColumnNameMapWriter writer = new CsvColumnNameMapWriter(new CsvWriter(sw, cfg));
 		try {
@@ -249,7 +238,7 @@ public class CsvColumnNameMapWriterTest {
 	}
 
 	@Test
-	public void testWrite2() throws IOException {
+	void testWrite2() throws IOException {
 		final StringWriter sw = new StringWriter();
 		final CsvColumnNameMapWriter writer = new CsvColumnNameMapWriter(
 				new CsvWriter(sw, cfg),
@@ -278,7 +267,7 @@ public class CsvColumnNameMapWriterTest {
 	}
 
 	@Test
-	public void testWriteFilter() throws Exception {
+	void testWriteFilter() throws Exception {
 		final StringWriter sw = new StringWriter();
 		final CsvColumnNameMapWriter writer = new CsvColumnNameMapWriter(new CsvWriter(sw, cfg));
 		try {
@@ -321,7 +310,7 @@ public class CsvColumnNameMapWriterTest {
 	// セッター / ゲッター
 
 	@Test
-	public void testFilter() throws Exception {
+	void testFilter() throws Exception {
 		final SimpleCsvNamedValueFilter filter = new SimpleCsvNamedValueFilter().ne("symbol", "gcu09", true);
 		assertNotNull(filter);
 

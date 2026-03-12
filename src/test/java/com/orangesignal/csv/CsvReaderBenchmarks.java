@@ -21,7 +21,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.List;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.supercsv.io.CsvListReader;
 import org.supercsv.prefs.CsvPreference;
 
@@ -39,7 +39,7 @@ import com.orangesignal.jlha.LhaHeader;
 public class CsvReaderBenchmarks extends AbstractBenchmark {
 
 	@Test
-	public void testOrangeSignalCSV() throws IOException {
+	void testOrangeSignalCSV() throws IOException {
 		final CsvConfig cfg = new CsvConfig(CsvConfig.DEFAULT_SEPARATOR);
 		cfg.setQuoteDisabled(false);
 		cfg.setIgnoreEmptyLines(true);
@@ -51,6 +51,7 @@ public class CsvReaderBenchmarks extends AbstractBenchmark {
 			for (final LhaHeader entry : entries) {
 				final CsvReader reader = new CsvReader(new InputStreamReader(lhaFile.getInputStream(entry), "Windows-31J"), cfg);
 				try {
+					@SuppressWarnings("unused")
 					List<String> values;
 					while ((values = reader.readValues()) != null) {
 						continue;
@@ -65,7 +66,7 @@ public class CsvReaderBenchmarks extends AbstractBenchmark {
 	}
 
 	@Test
-	public void testOpenCSV() throws IOException, CsvValidationException {
+	void testOpenCSV() throws IOException, CsvValidationException {
 		final LhaFile lhaFile = new LhaFile(new File("src/test/resources/", "ken_all.lzh"));
 		try {
 			final LhaHeader[] entries = lhaFile.getEntries();
@@ -73,6 +74,7 @@ public class CsvReaderBenchmarks extends AbstractBenchmark {
 				final com.opencsv.CSVReader reader =
 						new com.opencsv.CSVReader(new InputStreamReader(lhaFile.getInputStream(entry), "Windows-31J"));
 				try {
+					@SuppressWarnings("unused")
 					String[] values;
 					while ((values = reader.readNext()) != null) {
 						continue;
@@ -87,13 +89,14 @@ public class CsvReaderBenchmarks extends AbstractBenchmark {
 	}
 
 	@Test
-	public void testSuperCSV() throws IOException {
+	void testSuperCSV() throws IOException {
 		final LhaFile lhaFile = new LhaFile(new File("src/test/resources/", "ken_all.lzh"));
 		try {
 			final LhaHeader[] entries = lhaFile.getEntries();
 			for (final LhaHeader entry : entries) {
 				final CsvListReader reader = new CsvListReader(new InputStreamReader(lhaFile.getInputStream(entry), "Windows-31J"), CsvPreference.STANDARD_PREFERENCE);
 				try {
+					@SuppressWarnings("unused")
 					List<String> values;
 					while ((values = reader.read()) != null) {
 						continue;

@@ -17,49 +17,62 @@
 package com.orangesignal.csv.filters;
 
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * {@link ColumnNameRegexExpression} クラスの単体テストです。
  * 
  * @author Koji Sugisawa
  */
-public class ColumnNameRegexExpressionTest {
+class ColumnNameRegexExpressionTest {
 
-	@Test(expected = IllegalArgumentException.class)
-	public void testColumnNameRegexExpressionIllegalArgumentException1() {
+	@Test
+	void testColumnNameRegexExpressionIllegalArgumentException1() {
+		assertThrows(IllegalArgumentException.class, () -> {
+
 		final String pattern = null;
 		new ColumnNameRegexExpression("col", pattern);
-	}
-
-	@Test(expected = IllegalArgumentException.class)
-	public void testColumnNameRegexExpressionIllegalArgumentException2() {
-		final String pattern = null;
-		new ColumnNameRegexExpression("col", pattern, false);
-	}
-
-	@Test(expected = IllegalArgumentException.class)
-	public void testColumnNameRegexExpressionIllegalArgumentException3() {
-		final String pattern = null;
-		new ColumnNameRegexExpression("col", pattern, Pattern.CASE_INSENSITIVE);
-	}
-
-	@Test(expected = IllegalArgumentException.class)
-	public void testColumnNameRegexExpressionIllegalArgumentException4() {
-		final Pattern pattern = null;
-		new ColumnNameRegexExpression("col", pattern);
+		});
 	}
 
 	@Test
-	public void testColumnNameRegexExpression() {
+	void testColumnNameRegexExpressionIllegalArgumentException2() {
+		assertThrows(IllegalArgumentException.class, () -> {
+
+		final String pattern = null;
+		new ColumnNameRegexExpression("col", pattern, false);
+		});
+	}
+
+	@Test
+	void testColumnNameRegexExpressionIllegalArgumentException3() {
+		assertThrows(IllegalArgumentException.class, () -> {
+
+		final String pattern = null;
+		new ColumnNameRegexExpression("col", pattern, Pattern.CASE_INSENSITIVE);
+		});
+	}
+
+	@Test
+	void testColumnNameRegexExpressionIllegalArgumentException4() {
+		assertThrows(IllegalArgumentException.class, () -> {
+
+		final Pattern pattern = null;
+		new ColumnNameRegexExpression("col", pattern);
+		});
+	}
+
+	@Test
+	void testColumnNameRegexExpression() {
 		new ColumnNameRegexExpression("col", "^.*$");
 		new ColumnNameRegexExpression("col", "^.*$", false);
 		new ColumnNameRegexExpression("col", "^.*$", true);
@@ -68,7 +81,7 @@ public class ColumnNameRegexExpressionTest {
 	}
 
 	@Test
-	public void testAccept() {
+	void testAccept() {
 		final List<String> header = Arrays.asList(new String[]{ "col0", "col1", "col2" });
 		final List<String> values = Arrays.asList(new String[]{ null, "aaa", "bbb" });
 		assertFalse(new ColumnNameRegexExpression("col0", "^[a]+$").accept(header, values));
@@ -88,13 +101,16 @@ public class ColumnNameRegexExpressionTest {
 		assertFalse(new ColumnNameRegexExpression("col2", Pattern.compile("^[a]+$")).accept(header, values));
 	}
 
-	@Test(expected = IllegalArgumentException.class)
-	public void testAcceptIllegalArgumentException() {
+	@Test
+	void testAcceptIllegalArgumentException() {
+		assertThrows(IllegalArgumentException.class, () -> {
+
 		new ColumnNameRegexExpression("col", "^.*$").accept(Arrays.asList(new String[]{ "col0", "col1", "col2" }), null);
+		});
 	}
 
 	@Test
-	public void testToString() {
+	void testToString() {
 		assertThat(new ColumnNameRegexExpression("col", "^.*$").toString(), is("ColumnNameRegexExpression"));
 		
 	}

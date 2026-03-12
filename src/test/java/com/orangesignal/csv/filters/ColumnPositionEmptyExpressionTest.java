@@ -17,28 +17,28 @@
 package com.orangesignal.csv.filters;
 
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * {@link ColumnPositionEmptyExpression} クラスの単体テストです。
  * 
  * @author Koji Sugisawa
  */
-public class ColumnPositionEmptyExpressionTest {
+class ColumnPositionEmptyExpressionTest {
 
 	@Test
-	public void testColumnPositionEmptyExpression() {
+	void testColumnPositionEmptyExpression() {
 		new ColumnPositionEmptyExpression(0);
 	}
 
 	@Test
-	public void testAcceptListOfString() {
+	void testAcceptListOfString() {
 		assertTrue(new ColumnPositionEmptyExpression(0).accept(Arrays.asList(new String[]{ null, "aaa", "bbb" })));
 		assertFalse(new ColumnPositionEmptyExpression(1).accept(Arrays.asList(new String[]{ null, "aaa", "bbb" })));
 		assertFalse(new ColumnPositionEmptyExpression(2).accept(Arrays.asList(new String[]{ null, "aaa", "bbb" })));
@@ -48,7 +48,7 @@ public class ColumnPositionEmptyExpressionTest {
 	}
 
 	@Test
-	public void testAcceptListOfStringListOfString() {
+	void testAcceptListOfStringListOfString() {
 		assertTrue(new ColumnPositionEmptyExpression(0).accept(null, Arrays.asList(new String[]{ null, "aaa", "bbb" })));
 		assertFalse(new ColumnPositionEmptyExpression(1).accept(null, Arrays.asList(new String[]{ null, "aaa", "bbb" })));
 		assertFalse(new ColumnPositionEmptyExpression(2).accept(null, Arrays.asList(new String[]{ null, "aaa", "bbb" })));
@@ -58,7 +58,7 @@ public class ColumnPositionEmptyExpressionTest {
 	}
 
 	@Test
-	public void testToString() {
+	void testToString() {
 		assertThat(new ColumnPositionEmptyExpression(0).toString(), is("ColumnPositionEmptyExpression"));
 		
 	}

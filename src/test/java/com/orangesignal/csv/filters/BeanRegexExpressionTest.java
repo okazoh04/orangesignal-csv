@@ -17,15 +17,16 @@
 package com.orangesignal.csv.filters;
 
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.regex.Pattern;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import com.orangesignal.csv.entity.Price;
 
@@ -34,34 +35,46 @@ import com.orangesignal.csv.entity.Price;
  * 
  * @author Koji Sugisawa
  */
-public class BeanRegexExpressionTest {
+class BeanRegexExpressionTest {
 
-	@Test(expected = IllegalArgumentException.class)
-	public void testBeanRegexExpressionIllegalArgumentException1() {
+	@Test
+	void testBeanRegexExpressionIllegalArgumentException1() {
+		assertThrows(IllegalArgumentException.class, () -> {
+
 		final String pattern = null;
 		new BeanRegexExpression("symbol", pattern);
-	}
-
-	@Test(expected = IllegalArgumentException.class)
-	public void testBeanRegexExpressionIllegalArgumentException2() {
-		final String pattern = null;
-		new BeanRegexExpression("symbol", pattern, false);
-	}
-
-	@Test(expected = IllegalArgumentException.class)
-	public void testBeanRegexExpressionIllegalArgumentException3() {
-		final String pattern = null;
-		new BeanRegexExpression("symbol", pattern, Pattern.CASE_INSENSITIVE);
-	}
-
-	@Test(expected = IllegalArgumentException.class)
-	public void testBeanRegexExpressionIllegalArgumentException4() {
-		final Pattern pattern = null;
-		new BeanRegexExpression("symbol", pattern);
+		});
 	}
 
 	@Test
-	public void testBeanRegexExpression() {
+	void testBeanRegexExpressionIllegalArgumentException2() {
+		assertThrows(IllegalArgumentException.class, () -> {
+
+		final String pattern = null;
+		new BeanRegexExpression("symbol", pattern, false);
+		});
+	}
+
+	@Test
+	void testBeanRegexExpressionIllegalArgumentException3() {
+		assertThrows(IllegalArgumentException.class, () -> {
+
+		final String pattern = null;
+		new BeanRegexExpression("symbol", pattern, Pattern.CASE_INSENSITIVE);
+		});
+	}
+
+	@Test
+	void testBeanRegexExpressionIllegalArgumentException4() {
+		assertThrows(IllegalArgumentException.class, () -> {
+
+		final Pattern pattern = null;
+		new BeanRegexExpression("symbol", pattern);
+		});
+	}
+
+	@Test
+	void testBeanRegexExpression() {
 		new BeanRegexExpression("symbol", "^.*$");
 		new BeanRegexExpression("symbol", "^.*$", false);
 		new BeanRegexExpression("symbol", "^.*$", true);
@@ -70,7 +83,7 @@ public class BeanRegexExpressionTest {
 	}
 
 	@Test
-	public void testAccept() throws Exception {
+	void testAccept() throws Exception {
 		final DateFormat df = new SimpleDateFormat("yyyy/MM/dd");
 		final Price price = new Price("GCX09", "COMEX 金 2009年11月限", 1088.70, 100, df.parse("2009/11/06"));
 		assertTrue(new BeanRegexExpression("symbol", "^GCX[0-9]{1,2}$").accept(price));
@@ -86,7 +99,7 @@ public class BeanRegexExpressionTest {
 	}
 
 	@Test
-	public void testToString() {
+	void testToString() {
 		assertThat(new BeanRegexExpression("symbol", "^.*$").toString(), is("BeanRegexExpression"));
 		
 	}

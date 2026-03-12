@@ -17,18 +17,18 @@
 package com.orangesignal.csv.entryfilters;
 
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.zip.ZipEntry;
 
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import com.orangesignal.jlha.LhaHeader;
 
@@ -37,33 +37,36 @@ import com.orangesignal.jlha.LhaHeader;
  * 
  * @author Koji Sugisawa
  */
-public class SuffixEntryNameFilterTest {
+class SuffixEntryNameFilterTest {
 
-	@Rule
-	public ExpectedException exception = ExpectedException.none();
+	
 
 	@Test
-	public void testSuffixEntryNameFilterStringArrayBooleanIllegalArgumentException() {
+	void testSuffixEntryNameFilterStringArrayBooleanIllegalArgumentException() {
+		Throwable e = assertThrows(IllegalArgumentException.class, () -> {
+
 		// Arrange
-		exception.expect(IllegalArgumentException.class);
-		exception.expectMessage("Suffixes must not be null");
 		final String[] suffixes = null;
 		// Act
 		new SuffixEntryNameFilter(suffixes, false);
+		});
+		assertThat(e.getMessage(), is("Suffixes must not be null"));
 	}
 
 	@Test
-	public void testSuffixEntryNameFilterCollectionOfStringBooleanIllegalArgumentException() {
+	void testSuffixEntryNameFilterCollectionOfStringBooleanIllegalArgumentException() {
+		Throwable e = assertThrows(IllegalArgumentException.class, () -> {
+
 		// Arrange
-		exception.expect(IllegalArgumentException.class);
-		exception.expectMessage("Suffixes must not be null");
 		final Collection<String> suffixes = null;
 		// Act
 		new SuffixEntryNameFilter(suffixes, false);
+		});
+		assertThat(e.getMessage(), is("Suffixes must not be null"));
 	}
 
 	@Test
-	public void testAcceptZipEntry() {
+	void testAcceptZipEntry() {
 		final String s = "test.csv";
 
 		final SuffixEntryNameFilter filter1 = new SuffixEntryNameFilter(s);
@@ -183,7 +186,7 @@ public class SuffixEntryNameFilterTest {
 	}
 
 	@Test
-	public void testAcceptLhaHeader() {
+	void testAcceptLhaHeader() {
 		final String s = "test.csv";
 
 		final SuffixEntryNameFilter filter1 = new SuffixEntryNameFilter(s);
@@ -303,7 +306,7 @@ public class SuffixEntryNameFilterTest {
 	}
 
 	@Test
-	public void testToString() {
+	void testToString() {
 		// Act + Assert
 		assertThat(new SuffixEntryNameFilter(new String[]{ ".csv", ".tsv" }).toString(), is("SuffixEntryNameFilter(.csv,.tsv)"));
 	}

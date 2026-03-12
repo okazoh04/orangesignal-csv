@@ -21,41 +21,41 @@ import static org.hamcrest.MatcherAssert.assertThat;
 
 import java.util.regex.Pattern;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * {@link CsvExpressions} クラスの単体テストです。
  * 
  * @author Koji Sugisawa
  */
-public class CsvExpressionsTest {
+class CsvExpressionsTest {
 
 	@Test
-	public void testIsNull() {
+	void testIsNull() {
 		assertThat(CsvExpressions.isNull(0), instanceOf(ColumnPositionNullExpression.class));
 		assertThat(CsvExpressions.isNull("col"), instanceOf(ColumnNameNullExpression.class));
 	}
 
 	@Test
-	public void testNotNull() {
+	void testNotNull() {
 		assertThat(CsvExpressions.isNotNull(0), instanceOf(ColumnPositionNotNullExpression.class));
 		assertThat(CsvExpressions.isNotNull("col"), instanceOf(ColumnNameNotNullExpression.class));
 	}
 
 	@Test
-	public void testIsEmpty() {
+	void testIsEmpty() {
 		assertThat(CsvExpressions.isEmpty(0), instanceOf(ColumnPositionEmptyExpression.class));
 		assertThat(CsvExpressions.isEmpty("col"), instanceOf(ColumnNameEmptyExpression.class));
 	}
 
 	@Test
-	public void testIsNotEmpty() {
+	void testIsNotEmpty() {
 		assertThat(CsvExpressions.isNotEmpty(0), instanceOf(ColumnPositionNotEmptyExpression.class));
 		assertThat(CsvExpressions.isNotEmpty("col"), instanceOf(ColumnNameNotEmptyExpression.class));
 	}
 
 	@Test
-	public void testEq() {
+	void testEq() {
 		assertThat(CsvExpressions.eq(0, "val"), instanceOf(ColumnPositionEqualExpression.class));
 		assertThat(CsvExpressions.eq(0, "val", false), instanceOf(ColumnPositionEqualExpression.class));
 		assertThat(CsvExpressions.eq(0, "val", true), instanceOf(ColumnPositionEqualExpression.class));
@@ -65,7 +65,7 @@ public class CsvExpressionsTest {
 	}
 
 	@Test
-	public void testNe() {
+	void testNe() {
 		assertThat(CsvExpressions.ne(0, "val"), instanceOf(ColumnPositionNotEqualExpression.class));
 		assertThat(CsvExpressions.ne(0, "val", false), instanceOf(ColumnPositionNotEqualExpression.class));
 		assertThat(CsvExpressions.ne(0, "val", true), instanceOf(ColumnPositionNotEqualExpression.class));
@@ -75,7 +75,7 @@ public class CsvExpressionsTest {
 	}
 
 	@Test
-	public void testIn() {
+	void testIn() {
 		assertThat(CsvExpressions.in(0, "val1", "val2", "val3"), instanceOf(ColumnPositionInExpression.class));
 		assertThat(CsvExpressions.in(0, new String[]{ "val1", "val2", "val3" }, false), instanceOf(ColumnPositionInExpression.class));
 		assertThat(CsvExpressions.in(0, new String[]{ "val1", "val2", "val3" }, true), instanceOf(ColumnPositionInExpression.class));
@@ -85,7 +85,7 @@ public class CsvExpressionsTest {
 	}
 
 	@Test
-	public void testNotIn() {
+	void testNotIn() {
 		assertThat(CsvExpressions.notIn(0, "val1", "val2", "val3"), instanceOf(ColumnPositionNotInExpression.class));
 		assertThat(CsvExpressions.notIn(0, new String[]{ "val1", "val2", "val3" }, false), instanceOf(ColumnPositionNotInExpression.class));
 		assertThat(CsvExpressions.notIn(0, new String[]{ "val1", "val2", "val3" }, true), instanceOf(ColumnPositionNotInExpression.class));
@@ -95,7 +95,7 @@ public class CsvExpressionsTest {
 	}
 
 	@Test
-	public void testRegex() {
+	void testRegex() {
 		assertThat(CsvExpressions.regex(0, "^.*$"), instanceOf(ColumnPositionRegexExpression.class));
 		assertThat(CsvExpressions.regex(0, "^.*$", false), instanceOf(ColumnPositionRegexExpression.class));
 		assertThat(CsvExpressions.regex(0, "^.*$", Pattern.CASE_INSENSITIVE), instanceOf(ColumnPositionRegexExpression.class));
@@ -107,49 +107,49 @@ public class CsvExpressionsTest {
 	}
 
 	@Test
-	public void testGt() {
+	void testGt() {
 		assertThat(CsvExpressions.gt(0, "val"), instanceOf(ColumnPositionGreaterThanExpression.class));
 		assertThat(CsvExpressions.gt("col", "val"), instanceOf(ColumnNameGreaterThanExpression.class));
 	}
 
 	@Test
-	public void testLt() {
+	void testLt() {
 		assertThat(CsvExpressions.lt(0, "val"), instanceOf(ColumnPositionLessThanExpression.class));
 		assertThat(CsvExpressions.lt("col", "val"), instanceOf(ColumnNameLessThanExpression.class));
 	}
 
 	@Test
-	public void testGe() {
+	void testGe() {
 		assertThat(CsvExpressions.ge(0, "val"), instanceOf(ColumnPositionGreaterThanOrEqualExpression.class));
 		assertThat(CsvExpressions.ge("col", "val"), instanceOf(ColumnNameGreaterThanOrEqualExpression.class));
 	}
 
 	@Test
-	public void testLe() {
+	void testLe() {
 		assertThat(CsvExpressions.le(0, "val"), instanceOf(ColumnPositionLessThanOrEqualExpression.class));
 		assertThat(CsvExpressions.le("col", "val"), instanceOf(ColumnNameLessThanOrEqualExpression.class));
 	}
 
 	@Test
-	public void testBetween() {
+	void testBetween() {
 		assertThat(CsvExpressions.between(0, "val1", "val2"), instanceOf(ColumnPositionBetweenExpression.class));
 		assertThat(CsvExpressions.between("col", "val1", "val2"), instanceOf(ColumnNameBetweenExpression.class));
 	}
 
 	@Test
-	public void testAnd() {
+	void testAnd() {
 		assertThat(CsvExpressions.and((CsvValueFilter) CsvExpressions.isNull(0), (CsvValueFilter) CsvExpressions.isNull(1)), instanceOf(CsvValueAndExpression.class));
 		assertThat(CsvExpressions.and((CsvNamedValueFilter) CsvExpressions.isNull(0), (CsvNamedValueFilter) CsvExpressions.isNull(1)), instanceOf(CsvNamedValueAndExpression.class));
 	}
 
 	@Test
-	public void testOr() {
+	void testOr() {
 		assertThat(CsvExpressions.or((CsvValueFilter) CsvExpressions.isNull(0), (CsvValueFilter) CsvExpressions.isNull(1)), instanceOf(CsvValueOrExpression.class));
 		assertThat(CsvExpressions.or((CsvNamedValueFilter) CsvExpressions.isNull(0), (CsvNamedValueFilter) CsvExpressions.isNull(1)), instanceOf(CsvNamedValueOrExpression.class));
 	}
 
 	@Test
-	public void testNot() {
+	void testNot() {
 		assertThat(CsvExpressions.not((CsvValueFilter) CsvExpressions.isNull(0)), instanceOf(CsvValueNotExpression.class));
 		assertThat(CsvExpressions.not((CsvNamedValueFilter) CsvExpressions.isNull(0)), instanceOf(CsvNamedValueNotExpression.class));
 	}

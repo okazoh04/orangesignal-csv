@@ -21,7 +21,8 @@ import static org.hamcrest.MatcherAssert.assertThat;
 
 import java.util.Date;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import com.orangesignal.csv.model.SamplePrice;
 
@@ -30,60 +31,75 @@ import com.orangesignal.csv.model.SamplePrice;
  *
  * @author Koji Sugisawa
  */
-public class BeanOrderTest {
+class BeanOrderTest {
 
 	@Test
-	public void testBeanOrder() {
+	void testBeanOrder() {
 		new BeanOrder("date", false, true);
 	}
 
-	@Test(expected = IllegalArgumentException.class)
-	public void testBeanOrderIllegalArgumentException() {
+	@Test
+	void testBeanOrderIllegalArgumentException() {
+		assertThrows(IllegalArgumentException.class, () -> {
+
 		new BeanOrder(null, false, true);
+		});
 	}
 
 	@Test
-	public void testAscString() {
+	void testAscString() {
 		BeanOrder.asc("date");
 	}
 
-	@Test(expected = IllegalArgumentException.class)
-	public void testAscStringIllegalArgumentException() {
+	@Test
+	void testAscStringIllegalArgumentException() {
+		assertThrows(IllegalArgumentException.class, () -> {
+
 		BeanOrder.asc(null);
+		});
 	}
 
 	@Test
-	public void testAscStringBoolean() {
+	void testAscStringBoolean() {
 		BeanOrder.asc("symbol", true);
 	}
 
-	@Test(expected = IllegalArgumentException.class)
-	public void testAscStringBooleanIllegalArgumentException() {
+	@Test
+	void testAscStringBooleanIllegalArgumentException() {
+		assertThrows(IllegalArgumentException.class, () -> {
+
 		BeanOrder.asc(null, true);
+		});
 	}
 
 	@Test
-	public void testDescString() {
+	void testDescString() {
 		BeanOrder.desc("date");
 	}
 
-	@Test(expected = IllegalArgumentException.class)
-	public void testDescStringIllegalArgumentException() {
+	@Test
+	void testDescStringIllegalArgumentException() {
+		assertThrows(IllegalArgumentException.class, () -> {
+
 		BeanOrder.desc(null);
+		});
 	}
 
 	@Test
-	public void testDescStringBoolean() {
+	void testDescStringBoolean() {
 		BeanOrder.desc("symbol", true);
 	}
 
-	@Test(expected = IllegalArgumentException.class)
-	public void testDescStringBooleanIllegalArgumentException() {
+	@Test
+	void testDescStringBooleanIllegalArgumentException() {
+		assertThrows(IllegalArgumentException.class, () -> {
+
 		BeanOrder.desc(null, true);
+		});
 	}
 
 	@Test
-	public void testCompare() {
+	void testCompare() {
 		final Date now = new Date();
 		final SamplePrice p1 = new SamplePrice();
 		p1.setName("Y");
@@ -101,7 +117,7 @@ public class BeanOrderTest {
 	}
 
 	@Test
-	public void testToString() {
+	void testToString() {
 		assertThat(BeanOrder.asc("date").toString(), is("date asc"));
 		assertThat(BeanOrder.asc("symbol", true).toString(), is("symbol asc"));
 		assertThat(BeanOrder.desc("date").toString(), is("date desc"));

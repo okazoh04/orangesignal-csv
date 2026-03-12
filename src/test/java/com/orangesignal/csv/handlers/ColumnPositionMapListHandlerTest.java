@@ -17,9 +17,9 @@
 package com.orangesignal.csv.handlers;
 
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -29,8 +29,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.orangesignal.csv.Constants;
 import com.orangesignal.csv.CsvConfig;
@@ -43,12 +43,12 @@ import com.orangesignal.csv.filters.SimpleCsvValueFilter;
  *
  * @author Koji Sugisawa
  */
-public class ColumnPositionMapListHandlerTest {
+class ColumnPositionMapListHandlerTest {
 
 	private CsvConfig cfg;
 
-	@Before
-	public void setUp() throws Exception {
+	@BeforeEach
+	void setUp() throws Exception {
 		cfg = new CsvConfig(',');
 		cfg.setNullString("NULL");
 		cfg.setIgnoreTrailingWhitespaces(true);
@@ -58,7 +58,7 @@ public class ColumnPositionMapListHandlerTest {
 	}
 
 	@Test
-	public void testLoad() throws IOException {
+	void testLoad() throws IOException {
 		cfg.setSkipLines(1);	// ヘッダは不要なので読飛ばす指定をする
 		final CsvReader reader = new CsvReader(new StringReader("symbol,name,price,volume\r\nAAAA,aaa,10000,10\r\nBBBB,bbb,NULL,0"), cfg);
 		try {
@@ -81,7 +81,7 @@ public class ColumnPositionMapListHandlerTest {
 	}
 
 	@Test
-	public void testLoadOffsetLimit() throws IOException {
+	void testLoadOffsetLimit() throws IOException {
 		cfg.setSkipLines(1);	// ヘッダは不要なので読飛ばす指定をする
 		final CsvReader reader = new CsvReader(new StringReader("symbol,name,price,volume\r\nAAAA,aaa,10000,10\r\nBBBB,bbb,NULL,0"), cfg);
 		try {
@@ -99,7 +99,7 @@ public class ColumnPositionMapListHandlerTest {
 	}
 
 	@Test
-	public void testLoadFilter() throws IOException {
+	void testLoadFilter() throws IOException {
 		final CsvReader reader = new CsvReader(new StringReader(
 //				"symbol,name,price,volume,date\r\n" +
 				"GCU09,COMEX 金 2009年09月限,1068.70,10,2008/09/06\r\n" +
@@ -125,7 +125,7 @@ public class ColumnPositionMapListHandlerTest {
 	}
 
 	@Test
-	public void testSave() throws IOException {
+	void testSave() throws IOException {
 		final List<Map<Integer, String>> list = new ArrayList<Map<Integer, String>>(3);
 		final Map<Integer, String> m0 = new HashMap<Integer, String>(4);
 		m0.put(0, "symbol");
@@ -157,7 +157,7 @@ public class ColumnPositionMapListHandlerTest {
 	}
 
 	@Test
-	public void testSaveFilter() throws Exception {
+	void testSaveFilter() throws Exception {
 		final List<Map<Integer, String>> list = new ArrayList<Map<Integer, String>>(3);
 		final Map<Integer, String> m0 = new HashMap<Integer, String>(5);
 		m0.put(0, "GCU09");

@@ -17,7 +17,7 @@
 package com.orangesignal.csv.handlers;
 
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 import java.io.IOException;
@@ -27,7 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.orangesignal.csv.CsvConfig;
 import com.orangesignal.csv.CsvReader;
@@ -40,10 +40,10 @@ import com.orangesignal.csv.filters.SimpleCsvValueFilter;
  * 
  * @author Koji Sugisawa
  */
-public class StringArrayListHandlerTest {
+class StringArrayListHandlerTest {
 
 	@Test
-	public void testLoad() throws IOException {
+	void testLoad() throws IOException {
 		final CsvConfig cfg = new CsvConfig(',', '"', '\\');
 		cfg.setNullString("NULL");
 		cfg.setBreakString("\n");
@@ -74,7 +74,7 @@ public class StringArrayListHandlerTest {
 	}
 
 	@Test
-	public void testLoadFilter() throws IOException {
+	void testLoadFilter() throws IOException {
 		final CsvConfig cfg = new CsvConfig(',', '"', '\\');
 		cfg.setNullString("NULL");
 		cfg.setBreakString("\n");
@@ -111,7 +111,7 @@ public class StringArrayListHandlerTest {
 	}
 
 	@Test
-	public void testLoadOffsetLimit() throws IOException {
+	void testLoadOffsetLimit() throws IOException {
 		final CsvConfig cfg = new CsvConfig(',', '"', '\\');
 		cfg.setNullString("NULL");
 		cfg.setBreakString("\n");
@@ -136,7 +136,7 @@ public class StringArrayListHandlerTest {
 	}
 
 	@Test
-	public void testLoadFilterOffsetLimit() throws IOException {
+	void testLoadFilterOffsetLimit() throws IOException {
 		final CsvConfig cfg = new CsvConfig(',', '"', '\\');
 		cfg.setNullString("NULL");
 		cfg.setBreakString("\n");
@@ -166,7 +166,7 @@ public class StringArrayListHandlerTest {
 	}
 
 	@Test
-	public void testSave() throws IOException {
+	void testSave() throws IOException {
 		final CsvConfig cfg = new CsvConfig(',', '"', '\\');
 		cfg.setNullString("NULL");
 		cfg.setLineSeparator("\r\n");
@@ -186,7 +186,7 @@ public class StringArrayListHandlerTest {
 	}
 
 	@Test
-	public void testSaveFilter() throws IOException {
+	void testSaveFilter() throws IOException {
 		final CsvConfig cfg = new CsvConfig(',', '"', '\\');
 		cfg.setNullString("NULL");
 		cfg.setLineSeparator("\r\n");

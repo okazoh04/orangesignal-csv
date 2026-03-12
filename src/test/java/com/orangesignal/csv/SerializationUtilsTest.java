@@ -19,7 +19,7 @@ package com.orangesignal.csv;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.orangesignal.csv.entryfilters.DirectoryEntryFilter;
 import com.orangesignal.csv.entryfilters.EntryNameFilter;
@@ -32,10 +32,10 @@ import com.orangesignal.csv.entryfilters.SuffixEntryNameFilter;
  * 
  * @author Koji Sugisawa
  */
-public class SerializationUtilsTest {
+class SerializationUtilsTest {
 
 	@Test
-	public void test() {
+	void test() {
 		assertThat(SerializationUtils.deserialize(SerializationUtils.serialize(new CsvConfig())), notNullValue());
 		assertThat(SerializationUtils.deserialize(SerializationUtils.serialize(new SimpleCsvToken("a\nb\nc", 1, 3, true))), notNullValue());
 		assertThat(SerializationUtils.deserialize(SerializationUtils.serialize(new DirectoryEntryFilter())), notNullValue());

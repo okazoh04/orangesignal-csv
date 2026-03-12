@@ -17,20 +17,20 @@
 package com.orangesignal.csv.manager;
 
 import static org.hamcrest.core.IsInstanceOf.instanceOf;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * {@link CsvManagerFactory} クラスの単体テストです。
  *
  * @author Koji Sugisawa
  */
-public class CsvManagerFactoryTest {
+class CsvManagerFactoryTest {
 
 	@Test
-	public void testNewCsvManager() {
+	void testNewCsvManager() {
 		final CsvManager csvManager = CsvManagerFactory.newCsvManager();
 		assertNotNull(csvManager);
 		assertThat(csvManager, instanceOf(CsvBeanManager.class));

@@ -17,7 +17,7 @@
 package com.orangesignal.csv.handlers;
 
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 import java.io.IOException;
@@ -29,8 +29,9 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import com.orangesignal.csv.Constants;
 import com.orangesignal.csv.CsvConfig;
@@ -46,12 +47,12 @@ import com.orangesignal.csv.model.SampleBean;
  *
  * @author Koji Sugisawa
  */
-public class BeanListHandlerTest {
+class BeanListHandlerTest {
 
 	private static CsvConfig cfg;
 
-	@BeforeClass
-	public static void setUpBeforeClass() throws Exception {
+	@BeforeAll
+	static void setUpBeforeClass() throws Exception {
 		cfg = new CsvConfig(',');
 		cfg.setEscapeDisabled(false);
 		cfg.setNullString("NULL");
@@ -61,52 +62,70 @@ public class BeanListHandlerTest {
 		cfg.setLineSeparator(Constants.CRLF);
 	}
 
-	@Test(expected = IllegalArgumentException.class)
-	public void testBeanListHandlerIllegalArgumentException() {
+	@Test
+	void testBeanListHandlerIllegalArgumentException() {
+		assertThrows(IllegalArgumentException.class, () -> {
+
 		new BeanListHandler<SampleBean>(null);
+		});
 	}
 
 
 
 	@Test
-	public void testGetType() {
+	void testGetType() {
 		assertThat(new BeanListHandler<SampleBean>(SampleBean.class).getType().getName(), is(SampleBean.class.getName()));
 	}
 
-	@Test(expected = IllegalArgumentException.class)
-	public void testValueParserMappingIllegalArgumentException() {
-		new BeanListHandler<SampleBean>(SampleBean.class).valueParserMapping(null);
-	}
+	@Test
+	void testValueParserMappingIllegalArgumentException() {
+		assertThrows(IllegalArgumentException.class, () -> {
 
-	@Test(expected = IllegalArgumentException.class)
-	public void testValueFormatterMappingIllegalArgumentException() {
-		new BeanListHandler<SampleBean>(SampleBean.class).valueFormatterMapping(null);
+		new BeanListHandler<SampleBean>(SampleBean.class).valueParserMapping(null);
+		});
 	}
 
 	@Test
-	public void testValueConverter() {
+	void testValueFormatterMappingIllegalArgumentException() {
+		assertThrows(IllegalArgumentException.class, () -> {
+
+		new BeanListHandler<SampleBean>(SampleBean.class).valueFormatterMapping(null);
+		});
+	}
+
+	@Test
+	void testValueConverter() {
 		new BeanListHandler<SampleBean>(SampleBean.class).valueConverter(new NullCsvValueConverter());
 	}
 
-	@Test(expected = IllegalArgumentException.class)
-	public void testValueConverterIllegalArgumentException() {
+	@Test
+	void testValueConverterIllegalArgumentException() {
+		assertThrows(IllegalArgumentException.class, () -> {
+
 		new BeanListHandler<SampleBean>(SampleBean.class).valueConverter(null);
+		});
 	}
 
 
 
-	@Test(expected = IllegalArgumentException.class)
-	public void testIncludesIllegalArgumentException() {
+	@Test
+	void testIncludesIllegalArgumentException() {
+		assertThrows(IllegalArgumentException.class, () -> {
+
 		new BeanListHandler<SampleBean>(SampleBean.class).excludes("aaa").includes("bbb");
-	}
-
-	@Test(expected = IllegalArgumentException.class)
-	public void testExcludesIllegalArgumentException() {
-		new BeanListHandler<SampleBean>(SampleBean.class).includes("aaa").excludes("bbb");
+		});
 	}
 
 	@Test
-	public void testLoad1() throws IOException {
+	void testExcludesIllegalArgumentException() {
+		assertThrows(IllegalArgumentException.class, () -> {
+
+		new BeanListHandler<SampleBean>(SampleBean.class).includes("aaa").excludes("bbb");
+		});
+	}
+
+	@Test
+	void testLoad1() throws IOException {
 		final CsvReader reader = new CsvReader(new StringReader("symbol,name,price,volume\r\nAAAA,aaa,10000,10\r\nBBBB,bbb,NULL,0"), cfg);
 		try {
 			final List<SampleBean> list = new BeanListHandler<SampleBean>(SampleBean.class).load(reader);
@@ -127,7 +146,7 @@ public class BeanListHandlerTest {
 	}
 
 	@Test
-	public void testLoad2() throws IOException {
+	void testLoad2() throws IOException {
 		final CsvReader reader = new CsvReader(new StringReader("symbol,name,price,volume\r\nAAAA,aaa,10000,10\r\nBBBB,bbb,NULL,0"), cfg);
 		try {
 			final List<SampleBean> list = new BeanListHandler<SampleBean>(SampleBean.class).includes("name").load(reader);
@@ -148,7 +167,7 @@ public class BeanListHandlerTest {
 	}
 
 	@Test
-	public void testLoad3() throws IOException {
+	void testLoad3() throws IOException {
 		final CsvReader reader = new CsvReader(new StringReader("symbol,name,price,volume\r\nAAAA,aaa,10000,10\r\nBBBB,bbb,NULL,0"), cfg);
 		try {
 			final List<SampleBean> list = new BeanListHandler<SampleBean>(SampleBean.class).excludes("name").load(reader);
@@ -169,7 +188,7 @@ public class BeanListHandlerTest {
 	}
 
 	@Test
-	public void testLoad4() throws Exception {
+	void testLoad4() throws Exception {
 		final CsvReader reader = new CsvReader(new StringReader("symbol,name,price,volume,date\r\nAAAA,aaa,10\\,000,10,2008/10/28\r\nBBBB,bbb,NULL,0,NULL"), cfg);
 		try {
 			final List<SampleBean> list = new BeanListHandler<SampleBean>(SampleBean.class)
@@ -197,7 +216,7 @@ public class BeanListHandlerTest {
 	}
 
 	@Test
-	public void testLoadOffsetLimit() throws Exception {
+	void testLoadOffsetLimit() throws Exception {
 		final CsvReader reader = new CsvReader(new StringReader("name\nA\nB\nC\nD\nE\nF\nG"), cfg);
 		try {
 			final List<SampleBean> list = new BeanListHandler<SampleBean>(SampleBean.class)
@@ -216,7 +235,7 @@ public class BeanListHandlerTest {
 	}
 
 	@Test
-	public void testLoadFilter() throws Exception {
+	void testLoadFilter() throws Exception {
 		final DateFormat df = new SimpleDateFormat("yyyy/MM/dd");
 		final CsvReader reader = new CsvReader(new StringReader(
 				"symbol,name,price,volume,date\r\n" +
@@ -247,7 +266,7 @@ public class BeanListHandlerTest {
 	}
 
 	@Test
-	public void testSort() throws Exception {
+	void testSort() throws Exception {
 		final DateFormat df = new SimpleDateFormat("yyyy/MM/dd");
 		final CsvReader reader = new CsvReader(new StringReader(
 				"symbol,name,price,volume,date\r\n" +
@@ -283,7 +302,7 @@ public class BeanListHandlerTest {
 	}
 
 	@Test
-	public void testSaveNoHeader() throws IOException {
+	void testSaveNoHeader() throws IOException {
 		final List<SampleBean> list = new ArrayList<SampleBean>();
 		list.add(new SampleBean("AAAA", "aaa", 10000, 10, null));
 		list.add(new SampleBean("BBBB", "bbb", null, 0, null));
@@ -299,7 +318,7 @@ public class BeanListHandlerTest {
 	}
 
 	@Test
-	public void testSave1() throws IOException {
+	void testSave1() throws IOException {
 		final List<SampleBean> list = new ArrayList<SampleBean>();
 		list.add(new SampleBean("AAAA", "aaa", 10000, 10, null));
 		list.add(new SampleBean("BBBB", "bbb", null, 0, null));
@@ -315,7 +334,7 @@ public class BeanListHandlerTest {
 	}
 
 	@Test
-	public void testSave2() throws IOException {
+	void testSave2() throws IOException {
 		final List<SampleBean> list = new ArrayList<SampleBean>();
 		list.add(new SampleBean("AAAA", "aaa", 10000, 10, null));
 		list.add(new SampleBean("BBBB", "bbb", null, 0, null));
@@ -331,7 +350,7 @@ public class BeanListHandlerTest {
 	}
 
 	@Test
-	public void testSave3() throws IOException {
+	void testSave3() throws IOException {
 		final List<SampleBean> list = new ArrayList<SampleBean>();
 		list.add(new SampleBean("AAAA", "aaa", 10000, 10, null));
 		list.add(new SampleBean("BBBB", "bbb", null, 0, null));
@@ -347,7 +366,7 @@ public class BeanListHandlerTest {
 	}
 
 	@Test
-	public void testSave4() throws Exception {
+	void testSave4() throws Exception {
 		final DateFormat df = new SimpleDateFormat("yyyy/MM/dd");
 
 		final List<SampleBean> list = new ArrayList<SampleBean>();
@@ -370,7 +389,7 @@ public class BeanListHandlerTest {
 	}
 
 	@Test
-	public void testSaveFilter() throws Exception {
+	void testSaveFilter() throws Exception {
 		final DateFormat df = new SimpleDateFormat("yyyy/MM/dd");
 
 		final List<SampleBean> list = new ArrayList<SampleBean>();

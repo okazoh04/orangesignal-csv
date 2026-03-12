@@ -17,18 +17,18 @@
 package com.orangesignal.csv.entryfilters;
 
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.zip.ZipEntry;
 
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import com.orangesignal.jlha.LhaHeader;
 
@@ -37,33 +37,36 @@ import com.orangesignal.jlha.LhaHeader;
  * 
  * @author Koji Sugisawa
  */
-public class PrefixEntryNameFilterTest {
+class PrefixEntryNameFilterTest {
 
-	@Rule
-	public ExpectedException exception = ExpectedException.none();
+	
 
 	@Test
-	public void testPrefixEntryNameFilterStringArrayBooleanIllegalArgumentException() {
+	void testPrefixEntryNameFilterStringArrayBooleanIllegalArgumentException() {
+		Throwable e = assertThrows(IllegalArgumentException.class, () -> {
+
 		// Arrange
-		exception.expect(IllegalArgumentException.class);
-		exception.expectMessage("Prefixes must not be null");
 		final String[] prefixes = null;
 		// Act
 		new PrefixEntryNameFilter(prefixes, false);
+		});
+		assertThat(e.getMessage(), is("Prefixes must not be null"));
 	}
 
 	@Test
-	public void testPrefixEntryNameFilterCollectionOfStringBooleanIllegalArgumentException() {
+	void testPrefixEntryNameFilterCollectionOfStringBooleanIllegalArgumentException() {
+		Throwable e = assertThrows(IllegalArgumentException.class, () -> {
+
 		// Arrange
-		exception.expect(IllegalArgumentException.class);
-		exception.expectMessage("Prefixes must not be null");
 		final Collection<String> prefixes = null;
 		// Act
 		new PrefixEntryNameFilter(prefixes, false);
+		});
+		assertThat(e.getMessage(), is("Prefixes must not be null"));
 	}
 
 	@Test
-	public void testAcceptZipEntry() {
+	void testAcceptZipEntry() {
 		final String s = "foo/bar/test";
 
 		final PrefixEntryNameFilter filter1 = new PrefixEntryNameFilter(s);
@@ -182,7 +185,7 @@ public class PrefixEntryNameFilterTest {
 	}
 
 	@Test
-	public void testAcceptLhaHeader() {
+	void testAcceptLhaHeader() {
 		final String s = "foo/bar/test";
 
 		final PrefixEntryNameFilter filter1 = new PrefixEntryNameFilter(s);
@@ -301,7 +304,7 @@ public class PrefixEntryNameFilterTest {
 	}
 
 	@Test
-	public void testToString() {
+	void testToString() {
 		// Act + Assert
 		assertThat(new PrefixEntryNameFilter(new String[]{ "foo", "bar" }).toString(), is("PrefixEntryNameFilter(foo,bar)"));
 	}

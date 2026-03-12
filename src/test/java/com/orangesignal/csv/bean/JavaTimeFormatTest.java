@@ -25,15 +25,15 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.orangesignal.csv.CsvConfig;
 import com.orangesignal.csv.manager.CsvEntityManager;
 
-public class JavaTimeFormatTest {
+class JavaTimeFormatTest {
 
 	@Test
-	public void testJavaTimeFormat() throws Exception {
+	void testJavaTimeFormat() throws Exception {
 		final List<SampleJavaTimeBean> list = List.of(
 				new SampleJavaTimeBean(LocalDate.of(2026, 3, 11), LocalDateTime.of(2026, 3, 11, 12, 34, 56))
 		);

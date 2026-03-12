@@ -17,29 +17,33 @@
 package com.orangesignal.csv.filters;
 
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
 import java.util.List;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * {@link ColumnNameNullExpression} クラスの単体テストです。
  * 
  * @author Koji Sugisawa
  */
-public class ColumnNameNullExpressionTest {
+class ColumnNameNullExpressionTest {
 
-	@Test(expected = IllegalArgumentException.class)
-	public void testColumnNameNullExpressionIllegalArgumentException() {
+	@Test
+	void testColumnNameNullExpressionIllegalArgumentException() {
+		assertThrows(IllegalArgumentException.class, () -> {
+
 		new ColumnNameNullExpression(null);
+		});
 	}
 
 	@Test
-	public void testAccep() {
+	void testAccep() {
 		final List<String> header = Arrays.asList(new String[]{ "col0", "col1", "col2", "col3", "col4" });
 		final List<String> values = Arrays.asList(new String[]{ null, "x001", "x002", "x003", "x004" });
 		assertTrue(new ColumnNameNullExpression("col0").accept(header, values));
@@ -47,13 +51,16 @@ public class ColumnNameNullExpressionTest {
 		assertFalse(new ColumnNameNullExpression("col2").accept(header, values));
 	}
 
-	@Test(expected = IllegalArgumentException.class)
-	public void testAcceptIllegalArgumentException() {
+	@Test
+	void testAcceptIllegalArgumentException() {
+		assertThrows(IllegalArgumentException.class, () -> {
+
 		new ColumnNameNullExpression("col").accept(Arrays.asList(new String[]{ "col0", "col1", "col2" }), null);
+		});
 	}
 
 	@Test
-	public void testToString() {
+	void testToString() {
 		assertThat(new ColumnNameNullExpression("col").toString(), is("ColumnNameNullExpression"));
 		
 	}

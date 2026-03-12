@@ -17,14 +17,15 @@
 package com.orangesignal.csv.filters;
 
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import com.orangesignal.csv.entity.Price;
 
@@ -33,20 +34,26 @@ import com.orangesignal.csv.entity.Price;
  * 
  * @author Koji Sugisawa
  */
-public class BeanNotEqualExpressionTest {
+class BeanNotEqualExpressionTest {
 
-	@Test(expected = IllegalArgumentException.class)
-	public void testBeanNotEqualExpressionIllegalArgumentException1() {
+	@Test
+	void testBeanNotEqualExpressionIllegalArgumentException1() {
+		assertThrows(IllegalArgumentException.class, () -> {
+
 		new BeanNotEqualExpression(null, "aaa");
-	}
-
-	@Test(expected = IllegalArgumentException.class)
-	public void testBeanNotEqualExpressionIllegalArgumentException2() {
-		new BeanNotEqualExpression("col", null);
+		});
 	}
 
 	@Test
-	public void testAccep() throws Exception {
+	void testBeanNotEqualExpressionIllegalArgumentException2() {
+		assertThrows(IllegalArgumentException.class, () -> {
+
+		new BeanNotEqualExpression("col", null);
+		});
+	}
+
+	@Test
+	void testAccep() throws Exception {
 		final Price price = new Price("GCX09", "COMEX 金 2009年11月限", 1088.70, 100, new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").parse("2009/11/06 19:14:46"));
 		assertTrue(new BeanNotEqualExpression("symbol", "SIX09").accept(price));
 		assertFalse(new BeanNotEqualExpression("symbol", "GCX09").accept(price));
@@ -63,7 +70,7 @@ public class BeanNotEqualExpressionTest {
 	}
 
 	@Test
-	public void testToString() {
+	void testToString() {
 		assertThat(new BeanNotEqualExpression("symbol", "GCX09").toString(), is("BeanNotEqualExpression"));
 		
 	}

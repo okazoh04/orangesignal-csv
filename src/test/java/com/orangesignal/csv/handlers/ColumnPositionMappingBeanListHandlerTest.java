@@ -17,7 +17,7 @@
 package com.orangesignal.csv.handlers;
 
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 import java.io.IOException;
@@ -31,8 +31,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import com.orangesignal.csv.Constants;
 import com.orangesignal.csv.CsvConfig;
@@ -47,12 +48,12 @@ import com.orangesignal.csv.model.SampleBean;
  *
  * @author Koji Sugisawa
  */
-public class ColumnPositionMappingBeanListHandlerTest {
+class ColumnPositionMappingBeanListHandlerTest {
 
 	private CsvConfig cfg;
 
-	@Before
-	public void setUp() throws Exception {
+	@BeforeEach
+	void setUp() throws Exception {
 		cfg = new CsvConfig(',');
 		cfg.setEscapeDisabled(false);
 		cfg.setNullString("NULL");
@@ -62,13 +63,16 @@ public class ColumnPositionMappingBeanListHandlerTest {
 		cfg.setLineSeparator(Constants.CRLF);
 	}
 
-	@Test(expected = IllegalArgumentException.class)
-	public void testColumnPositionMappingBeanListHandlerIllegalArgumentException() {
+	@Test
+	void testColumnPositionMappingBeanListHandlerIllegalArgumentException() {
+		assertThrows(IllegalArgumentException.class, () -> {
+
 		new ColumnPositionMappingBeanListHandler<SampleBean>(null);
+		});
 	}
 
 	@Test
-	public void testLoad1() throws IOException {
+	void testLoad1() throws IOException {
 		cfg.setSkipLines(0);	// 項目位置を指定しない場合はヘッダから判断して欲しいので読飛ばししない
 		final CsvReader reader = new CsvReader(new StringReader("symbol,name,price,volume\r\nAAAA,aaa,10000,10\r\nBBBB,bbb,NULL,0"), cfg);
 		try {
@@ -90,7 +94,7 @@ public class ColumnPositionMappingBeanListHandlerTest {
 	}
 
 	@Test
-	public void testLoad2() throws IOException {
+	void testLoad2() throws IOException {
 		cfg.setSkipLines(1);	// 項目位置指定時はヘッダは不要なので読飛ばす指定をする
 		final CsvReader reader = new CsvReader(new StringReader("symbol,name,price,volume\r\nAAAA,aaa,10000,10\r\nBBBB,bbb,NULL,0"), cfg);
 		try {
@@ -118,7 +122,7 @@ public class ColumnPositionMappingBeanListHandlerTest {
 	}
 
 	@Test
-	public void testLoad3() throws IOException {
+	void testLoad3() throws IOException {
 		cfg.setSkipLines(1);	// 項目位置指定時はヘッダは不要なので読飛ばす指定をする
 		final CsvReader reader = new CsvReader(new StringReader("symbol,name,price,volume\r\nAAAA,aaa,10000,10\r\nBBBB,bbb,NULL,0"), cfg);
 		try {
@@ -146,7 +150,7 @@ public class ColumnPositionMappingBeanListHandlerTest {
 	}
 
 	@Test
-	public void testLoad4() throws IOException {
+	void testLoad4() throws IOException {
 		cfg.setSkipLines(1);	// 項目位置指定時はヘッダは不要なので読飛ばす指定をする
 		final CsvReader reader = new CsvReader(new StringReader("symbol,name,price,volume\r\nAAAA,aaa,10000,10\r\nBBBB,bbb,NULL,0"), cfg);
 		try {
@@ -174,7 +178,7 @@ public class ColumnPositionMappingBeanListHandlerTest {
 	}
 
 	@Test
-	public void testLoad5() throws IOException {
+	void testLoad5() throws IOException {
 		cfg.setSkipLines(1);	// 項目位置指定時はヘッダは不要なので読飛ばす指定をする
 		final CsvReader reader = new CsvReader(new StringReader("symbol,name,price,volume\r\nAAAA,aaa,10000,10\r\nBBBB,bbb,NULL,0"), cfg);
 		try {
@@ -202,7 +206,7 @@ public class ColumnPositionMappingBeanListHandlerTest {
 	}
 
 	@Test
-	public void testLoad6() throws IOException {
+	void testLoad6() throws IOException {
 		cfg.setSkipLines(1);	// 項目位置指定時はヘッダは不要なので読飛ばす指定をする
 		final CsvReader reader = new CsvReader(new StringReader("symbol,name,price,volume\r\nAAAA,aaa,10000,10\r\nBBBB,bbb,NULL,0"), cfg);
 		try {
@@ -231,7 +235,7 @@ public class ColumnPositionMappingBeanListHandlerTest {
 	}
 
 	@Test
-	public void testLoad7() throws IOException {
+	void testLoad7() throws IOException {
 		cfg.setSkipLines(1);	// 項目位置指定時はヘッダは不要なので読飛ばす指定をする
 		final CsvReader reader = new CsvReader(new StringReader("symbol,name,price,volume\r\nAAAA,aaa,10000,10\r\nBBBB,bbb,NULL,0"), cfg);
 		try {
@@ -260,7 +264,7 @@ public class ColumnPositionMappingBeanListHandlerTest {
 	}
 
 	@Test
-	public void testLoad8() throws IOException {
+	void testLoad8() throws IOException {
 		cfg.setSkipLines(0);
 		final CsvReader reader = new CsvReader(new StringReader("AAAA,aaa,10\\,000,10,2008/10/28,10:24:00\r\nBBBB,bbb,NULL,0,NULL,NULL"), cfg);
 		try {
@@ -292,7 +296,7 @@ public class ColumnPositionMappingBeanListHandlerTest {
 	}
 
 	@Test
-	public void testLoadOffsetLimit() throws IOException {
+	void testLoadOffsetLimit() throws IOException {
 		cfg.setSkipLines(0);
 		final CsvReader reader = new CsvReader(new StringReader("AAAA,aaa,10\\,000,10,2008/10/28,10:24:00\r\nBBBB,bbb,NULL,0,NULL,NULL"), cfg);
 		try {
@@ -320,7 +324,7 @@ public class ColumnPositionMappingBeanListHandlerTest {
 	}
 
 	@Test
-	public void testLoadFilter() throws Exception {
+	void testLoadFilter() throws Exception {
 		final DateFormat df = new SimpleDateFormat("yyyy/MM/dd");
 		final CsvReader reader = new CsvReader(new StringReader(
 //				"symbol,name,price,volume,date\r\n" +
@@ -355,7 +359,7 @@ public class ColumnPositionMappingBeanListHandlerTest {
 	}
 
 	@Test
-	public void testSaveNoHeader() throws IOException {
+	void testSaveNoHeader() throws IOException {
 		final List<SampleBean> list = new ArrayList<SampleBean>();
 		list.add(new SampleBean("AAAA", "aaa", 10000, 10, null));
 		list.add(new SampleBean("BBBB", "bbb", null, 0, null));
@@ -371,7 +375,7 @@ public class ColumnPositionMappingBeanListHandlerTest {
 	}
 
 	@Test
-	public void testSave1() throws IOException {
+	void testSave1() throws IOException {
 		final List<SampleBean> list = new ArrayList<SampleBean>();
 		list.add(new SampleBean("AAAA", "aaa", 10000, 10, null));
 		list.add(new SampleBean("BBBB", "bbb", null, 0, null));
@@ -387,7 +391,7 @@ public class ColumnPositionMappingBeanListHandlerTest {
 	}
 
 	@Test
-	public void testSave2() throws IOException {
+	void testSave2() throws IOException {
 		final List<SampleBean> list = new ArrayList<SampleBean>();
 		list.add(new SampleBean("AAAA", "aaa", 10000, 10, null));
 		list.add(new SampleBean("BBBB", "bbb", null, 0, null));
@@ -408,7 +412,7 @@ public class ColumnPositionMappingBeanListHandlerTest {
 	}
 
 	@Test
-	public void testSave3() throws IOException {
+	void testSave3() throws IOException {
 		final List<SampleBean> list = new ArrayList<SampleBean>();
 		list.add(new SampleBean("AAAA", "aaa", 10000, 10, null));
 		list.add(new SampleBean("BBBB", "bbb", null, 0, null));
@@ -428,7 +432,7 @@ public class ColumnPositionMappingBeanListHandlerTest {
 	}
 
 	@Test
-	public void testSave4() throws Exception {
+	void testSave4() throws Exception {
 		final DateFormat df = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 
 		final List<SampleBean> list = new ArrayList<SampleBean>();
@@ -453,7 +457,7 @@ public class ColumnPositionMappingBeanListHandlerTest {
 	}
 
 	@Test
-	public void testSaveFilter() throws Exception {
+	void testSaveFilter() throws Exception {
 		final DateFormat df = new SimpleDateFormat("yyyy/MM/dd");
 
 		final List<SampleBean> list = new ArrayList<SampleBean>();

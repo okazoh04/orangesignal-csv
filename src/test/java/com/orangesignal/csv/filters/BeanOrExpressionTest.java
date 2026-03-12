@@ -16,36 +16,39 @@
 
 package com.orangesignal.csv.filters;
 
-import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertFalse;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.hamcrest.core.Is.is;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * {@link BeanOrExpression} クラスの単体テストです。
  * 
  * @author Koji Sugisawa
  */
-public class BeanOrExpressionTest {
+class BeanOrExpressionTest {
 
 	@Test
-	public void testBeanOrExpression() {
+	void testBeanOrExpression() {
 		new BeanOrExpression();
 		new BeanOrExpression(new BeanFilter() { @Override public boolean accept(final Object bean) { return true; } });
 	}
 
-	@Test(expected = IllegalArgumentException.class)
-	public void testBeanOrExpressionIllegalArgumentException() {
-		final BeanFilter[] filters = null;
-		new BeanOrExpression(filters);
+	@Test
+	void testBeanOrExpressionIllegalArgumentException() {
+		assertThrows(IllegalArgumentException.class, () -> {
+			final BeanFilter[] filters = null;
+			new BeanOrExpression(filters);
+		});
 	}
 
 	@Test
-	public void testAccept() throws IOException {
+	void testAccept() throws IOException {
 		assertFalse(new BeanOrExpression(
 				new BeanFilter() { @Override public boolean accept(final Object bean) { return false; } },
 				new BeanFilter() { @Override public boolean accept(final Object bean) { return false; } }
@@ -87,15 +90,16 @@ public class BeanOrExpressionTest {
 		assertTrue(expr4.accept(null));
 	}
 
-	@Test(expected = IllegalArgumentException.class)
-	public void testAcceptIllegalArgumentException() throws IOException {
-		new BeanOrExpression().accept(null);
+	@Test
+	void testAcceptIllegalArgumentException() {
+		assertThrows(IllegalArgumentException.class, () -> {
+			new BeanOrExpression().accept(null);
+		});
 	}
 
 	@Test
-	public void testToString() {
+	void testToString() {
 		assertThat(new BeanOrExpression().toString(), is("BeanOrExpression"));
-		
 	}
 
 }

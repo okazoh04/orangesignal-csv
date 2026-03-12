@@ -121,7 +121,6 @@ class MsdosDate extends Date implements Cloneable {
 	 * @exception IllegalArgumentException year が MS-DOS時間形式で扱えない範囲の時間を 示していた場合
 	 * @deprecated
 	 */
-	@SuppressWarnings("deprecation")
 	@Deprecated
 	@Override
 	public void setYear(final int year) {

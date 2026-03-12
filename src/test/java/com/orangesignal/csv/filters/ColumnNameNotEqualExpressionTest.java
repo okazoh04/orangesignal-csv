@@ -17,39 +17,46 @@
 package com.orangesignal.csv.filters;
 
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
 import java.util.List;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * {@link ColumnNameNotEqualExpression} クラスの単体テストです。
  * 
  * @author Koji Sugisawa
  */
-public class ColumnNameNotEqualExpressionTest {
+class ColumnNameNotEqualExpressionTest {
 
 	@Test
-	public void testColumnNameEqualExpression() {
+	void testColumnNameEqualExpression() {
 		new ColumnNameNotEqualExpression("col", "aaa");
 	}
 
-	@Test(expected = IllegalArgumentException.class)
-	public void testColumnNameNotEqualExpressionIllegalArgumentException1() {
-		new ColumnNameNotEqualExpression(null, "aaa");
-	}
+	@Test
+	void testColumnNameNotEqualExpressionIllegalArgumentException1() {
+		assertThrows(IllegalArgumentException.class, () -> {
 
-	@Test(expected = IllegalArgumentException.class)
-	public void testColumnNameNotEqualExpressionIllegalArgumentException2() {
-		new ColumnNameNotEqualExpression("col", null);
+		new ColumnNameNotEqualExpression(null, "aaa");
+		});
 	}
 
 	@Test
-	public void testAccep() {
+	void testColumnNameNotEqualExpressionIllegalArgumentException2() {
+		assertThrows(IllegalArgumentException.class, () -> {
+
+		new ColumnNameNotEqualExpression("col", null);
+		});
+	}
+
+	@Test
+	void testAccep() {
 		final List<String> header = Arrays.asList(new String[]{ "col0", "col1", "col2", "col3", "col4" });
 		final List<String> values = Arrays.asList(new String[]{ null, "x001", "x002", "x003", "x004" });
 		assertTrue(new ColumnNameNotEqualExpression("col0", "x001").accept(header, values));
@@ -63,13 +70,16 @@ public class ColumnNameNotEqualExpressionTest {
 		assertTrue(new ColumnNameNotEqualExpression("col2", "X001", true).accept(header, values));
 	}
 
-	@Test(expected = IllegalArgumentException.class)
-	public void testAcceptIllegalArgumentException() {
+	@Test
+	void testAcceptIllegalArgumentException() {
+		assertThrows(IllegalArgumentException.class, () -> {
+
 		new ColumnNameNotEqualExpression("col", "x001").accept(Arrays.asList(new String[]{ "col0", "col1", "col2" }), null);
+		});
 	}
 
 	@Test
-	public void testToString() {
+	void testToString() {
 		assertThat(new ColumnNameNotEqualExpression("col", "x001").toString(), is("ColumnNameNotEqualExpression"));
 		
 	}

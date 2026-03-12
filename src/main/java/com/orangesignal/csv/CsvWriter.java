@@ -248,6 +248,7 @@ public class CsvWriter implements Closeable, Flushable {
 	 * @param value 文字列
 	 * @return エスケープされた文字列
 	 */
+	@SuppressWarnings("unused")
 	private String escapeSeparator(final String value) {
 		if (value == null) {
 			return null;

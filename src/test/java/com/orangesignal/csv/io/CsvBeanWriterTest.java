@@ -27,8 +27,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import com.orangesignal.csv.Constants;
 import com.orangesignal.csv.CsvConfig;
@@ -37,7 +37,7 @@ import com.orangesignal.csv.bean.CsvBeanTemplate;
 import com.orangesignal.csv.filters.SimpleCsvNamedValueFilter;
 import com.orangesignal.csv.model.SampleBean;
 
-import static org.junit.Assert.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * {@link CsvBeanWriter} クラスの単体テストです。
@@ -45,12 +45,12 @@ import static org.junit.Assert.assertThrows;
  * @author Koji Sugisawa
  * @since 1.4.0
  */
-public class CsvBeanWriterTest {
+class CsvBeanWriterTest {
 
 	private static CsvConfig cfg;
 
-	@BeforeClass
-	public static void setUpBeforeClass() throws Exception {
+	@BeforeAll
+	static void setUpBeforeClass() throws Exception {
 		cfg = new CsvConfig(',');
 		cfg.setEscapeDisabled(false);
 		cfg.setNullString("NULL");
@@ -64,7 +64,7 @@ public class CsvBeanWriterTest {
 	// 利便性のための静的メソッド
 
 	@Test
-	public void testNewInstanceCsvWriterClass() throws IOException {
+	void testNewInstanceCsvWriterClass() throws IOException {
 		final CsvWriter w = new CsvWriter(new StringWriter(), cfg);
 		final Class<SampleBean> c = SampleBean.class;
 
@@ -73,7 +73,7 @@ public class CsvBeanWriterTest {
 	}
 
 	@Test
-	public void testNewInstanceCsvWriterClassIllegalArgumentException1() throws IOException {
+	void testNewInstanceCsvWriterClassIllegalArgumentException1() throws IOException {
 		final IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> {
 			final CsvWriter w = null;
 			final Class<SampleBean> c = SampleBean.class;
@@ -85,7 +85,7 @@ public class CsvBeanWriterTest {
 	}
 
 	@Test
-	public void testNewInstanceCsvWriterClassIllegalArgumentException2() throws IOException {
+	void testNewInstanceCsvWriterClassIllegalArgumentException2() throws IOException {
 		final IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> {
 			final CsvWriter w = new CsvWriter(new StringWriter(), cfg);
 			final Class<SampleBean> c = null;
@@ -97,7 +97,7 @@ public class CsvBeanWriterTest {
 	}
 
 	@Test
-	public void testNewInstanceCsvWriterCsvBeanTemplate() throws IOException {
+	void testNewInstanceCsvWriterCsvBeanTemplate() throws IOException {
 		final CsvWriter w = new CsvWriter(new StringWriter(), cfg);
 		final CsvBeanTemplate<SampleBean> template = CsvBeanTemplate.newInstance(SampleBean.class);
 
@@ -106,7 +106,7 @@ public class CsvBeanWriterTest {
 	}
 
 	@Test
-	public void testNewInstanceCsvWriterCsvBeanTemplateIllegalArgumentException1() throws IOException {
+	void testNewInstanceCsvWriterCsvBeanTemplateIllegalArgumentException1() throws IOException {
 		final IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> {
 			final CsvWriter w = null;
 			final CsvBeanTemplate<SampleBean> template = CsvBeanTemplate.newInstance(SampleBean.class);
@@ -118,7 +118,7 @@ public class CsvBeanWriterTest {
 	}
 
 	@Test
-	public void testNewInstanceCsvWriterCsvBeanTemplateIllegalArgumentException2() throws IOException {
+	void testNewInstanceCsvWriterCsvBeanTemplateIllegalArgumentException2() throws IOException {
 		final IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> {
 			final CsvWriter w = new CsvWriter(new StringWriter(), cfg);
 			final CsvBeanTemplate<SampleBean> template = null;
@@ -133,7 +133,7 @@ public class CsvBeanWriterTest {
 	// コンストラクタ
 
 	@Test
-	public void testConstructorCsvWriterClass() throws IOException {
+	void testConstructorCsvWriterClass() throws IOException {
 		final CsvWriter w = new CsvWriter(new StringWriter(), cfg);
 		final Class<SampleBean> c = SampleBean.class;
 
@@ -142,7 +142,7 @@ public class CsvBeanWriterTest {
 	}
 
 	@Test
-	public void testConstructorCsvWriterClassIllegalArgumentException1() throws IOException {
+	void testConstructorCsvWriterClassIllegalArgumentException1() throws IOException {
 		final IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> {
 			final CsvWriter w = null;
 			final Class<SampleBean> c = SampleBean.class;
@@ -154,7 +154,7 @@ public class CsvBeanWriterTest {
 	}
 
 	@Test
-	public void testConstructorCsvWriterClassIllegalArgumentException2() throws IOException {
+	void testConstructorCsvWriterClassIllegalArgumentException2() throws IOException {
 		final IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> {
 			final CsvWriter w = new CsvWriter(new StringWriter(), cfg);
 			final Class<SampleBean> c = null;
@@ -166,7 +166,7 @@ public class CsvBeanWriterTest {
 	}
 
 	@Test
-	public void testConstructorCsvWriterCsvBeanTemplate() throws IOException {
+	void testConstructorCsvWriterCsvBeanTemplate() throws IOException {
 		final CsvWriter w = new CsvWriter(new StringWriter(), cfg);
 		final CsvBeanTemplate<SampleBean> template = CsvBeanTemplate.newInstance(SampleBean.class);
 
@@ -175,7 +175,7 @@ public class CsvBeanWriterTest {
 	}
 
 	@Test
-	public void testConstructorCsvWriterCsvBeanTemplateIllegalArgumentException1() throws IOException {
+	void testConstructorCsvWriterCsvBeanTemplateIllegalArgumentException1() throws IOException {
 		final IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> {
 			final CsvWriter w = null;
 			final CsvBeanTemplate<SampleBean> template = CsvBeanTemplate.newInstance(SampleBean.class);
@@ -187,7 +187,7 @@ public class CsvBeanWriterTest {
 	}
 
 	@Test
-	public void testConstructorCsvWriterCsvBeanTemplateIllegalArgumentException2() throws IOException {
+	void testConstructorCsvWriterCsvBeanTemplateIllegalArgumentException2() throws IOException {
 		final IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> {
 			final CsvWriter w = new CsvWriter(new StringWriter(), cfg);
 			final CsvBeanTemplate<SampleBean> template = null;
@@ -202,7 +202,7 @@ public class CsvBeanWriterTest {
 	// オーバーライド メソッド
 
 	@Test
-	public void testFlush() throws IOException {
+	void testFlush() throws IOException {
 		final StringWriter sw = new StringWriter();
 		final CsvBeanWriter<SampleBean> writer = CsvBeanWriter.newInstance(new CsvWriter(sw, cfg), SampleBean.class);
 		try {
@@ -224,7 +224,7 @@ public class CsvBeanWriterTest {
 	}
 
 	@Test
-	public void testFlushIOException() throws IOException {
+	void testFlushIOException() throws IOException {
 		final IOException e = assertThrows(IOException.class, () -> {
 			final CsvBeanWriter<SampleBean> writer = CsvBeanWriter.newInstance(
 					new CsvWriter(new StringWriter(), cfg),
@@ -238,7 +238,7 @@ public class CsvBeanWriterTest {
 	}
 
 	@Test
-	public void testCloseIOException() throws IOException {
+	void testCloseIOException() throws IOException {
 		final IOException e = assertThrows(IOException.class, () -> {
 			final CsvBeanWriter<SampleBean> writer = CsvBeanWriter.newInstance(
 					new CsvWriter(new StringWriter(), cfg),
@@ -255,7 +255,7 @@ public class CsvBeanWriterTest {
 	// パブリック メソッド
 
 	@Test
-	public void testWriteNoHeader() throws IOException {
+	void testWriteNoHeader() throws IOException {
 		final StringWriter sw = new StringWriter();
 		final CsvBeanWriter<SampleBean> writer = CsvBeanWriter.newInstance(
 				new CsvWriter(sw, cfg),
@@ -285,7 +285,7 @@ public class CsvBeanWriterTest {
 	}
 
 	@Test
-	public void testWriteHeader() throws IOException {
+	void testWriteHeader() throws IOException {
 		final StringWriter sw = new StringWriter();
 		final CsvBeanWriter<SampleBean> writer = CsvBeanWriter.newInstance(
 				new CsvWriter(sw, cfg),
@@ -314,7 +314,7 @@ public class CsvBeanWriterTest {
 	}
 
 	@Test
-	public void testWrite1() throws IOException {
+	void testWrite1() throws IOException {
 		final StringWriter sw = new StringWriter();
 		final CsvBeanWriter<SampleBean> writer = CsvBeanWriter.newInstance(
 				new CsvWriter(sw, cfg),
@@ -330,7 +330,7 @@ public class CsvBeanWriterTest {
 	}
 
 	@Test
-	public void testWrite2() throws IOException {
+	void testWrite2() throws IOException {
 		final StringWriter sw = new StringWriter();
 		final CsvBeanWriter<SampleBean> writer = CsvBeanWriter.newInstance(
 				new CsvWriter(sw, cfg),
@@ -347,7 +347,7 @@ public class CsvBeanWriterTest {
 	}
 
 	@Test
-	public void testWrite3() throws IOException {
+	void testWrite3() throws IOException {
 		final List<SampleBean> list = new ArrayList<SampleBean>();
 		list.add(new SampleBean("AAAA", "aaa", 10000, 10, null));
 		list.add(new SampleBean("BBBB", "bbb", null, 0, null));
@@ -368,7 +368,7 @@ public class CsvBeanWriterTest {
 	}
 
 	@Test
-	public void testWrite4() throws Exception {
+	void testWrite4() throws Exception {
 		final DateFormat df = new SimpleDateFormat("yyyy/MM/dd");
 		final StringWriter sw = new StringWriter();
 		final CsvBeanWriter<SampleBean> writer = CsvBeanWriter.newInstance(
@@ -389,7 +389,7 @@ public class CsvBeanWriterTest {
 	}
 
 	@Test
-	public void testFilter() throws Exception {
+	void testFilter() throws Exception {
 		final StringWriter sw = new StringWriter();
 		final CsvBeanWriter<SampleBean> writer = CsvBeanWriter.newInstance(
 				new CsvWriter(sw, cfg),

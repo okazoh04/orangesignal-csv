@@ -19,211 +19,211 @@ package com.orangesignal.csv;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.nullValue;
-import static org.junit.Assert.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.regex.Pattern;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * {@link CsvConfig} クラスの単体テストです。
  * 
  * @author Koji Sugisawa
  */
-public final class CsvConfigTest {
+final class CsvConfigTest {
 
 	@Test
-	public void testCsvConfig() {
+	void testCsvConfig() {
 		new CsvConfig();
 	}
 
 	@Test
-	public void testCsvConfigChar() {
+	void testCsvConfigChar() {
 		new CsvConfig('\t');
 	}
 
 	@Test
-	public void testCsvConfigCharCharChar() {
+	void testCsvConfigCharCharChar() {
 		new CsvConfig('\t', '\'', '|');
 	}
 
 	@Test
-	public void testCsvConfigCharCharCharBooleanBoolean() {
+	void testCsvConfigCharCharCharBooleanBoolean() {
 		new CsvConfig('\t', '\'', '|', false, false);
 	}
 
 	@Test
-	public void testValidate1() {
+	void testValidate1() {
 		final Throwable e = assertThrows(IllegalArgumentException.class, () -> new CsvConfig('\r').validate());
 		assertThat(e.getMessage(), is("Invalid separator character"));
 	}
 
 	@Test
-	public void testValidate2() {
+	void testValidate2() {
 		final Throwable e = assertThrows(IllegalArgumentException.class, () -> new CsvConfig('\n').validate());
 		assertThat(e.getMessage(), is("Invalid separator character"));
 	}
 
 	@Test
-	public void testValidate3() {
+	void testValidate3() {
 		final Throwable e = assertThrows(IllegalArgumentException.class, () -> new CsvConfig(',', ',', '"').validate());
 		assertThat(e.getMessage(), is("Invalid quote character"));
 	}
 
 	@Test
-	public void testValidate4() {
+	void testValidate4() {
 		final Throwable e = assertThrows(IllegalArgumentException.class, () -> new CsvConfig(',', '\r', '"').validate());
 		assertThat(e.getMessage(), is("Invalid quote character"));
 	}
 
 	@Test
-	public void testValidate5() {
+	void testValidate5() {
 		final Throwable e = assertThrows(IllegalArgumentException.class, () -> new CsvConfig(',', '\n', '"').validate());
 		assertThat(e.getMessage(), is("Invalid quote character"));
 	}
 
 	@Test
-	public void testValidate6() {
+	void testValidate6() {
 		final Throwable e = assertThrows(IllegalArgumentException.class, () -> new CsvConfig(',', '"', ',').validate());
 		assertThat(e.getMessage(), is("Invalid escape character"));
 	}
 
 	@Test
-	public void testValidate7() {
+	void testValidate7() {
 		final Throwable e = assertThrows(IllegalArgumentException.class, () -> new CsvConfig(',', '"', '\r').validate());
 		assertThat(e.getMessage(), is("Invalid escape character"));
 	}
 
 	@Test
-	public void testValidate8() {
+	void testValidate8() {
 		final Throwable e = assertThrows(IllegalArgumentException.class, () -> new CsvConfig(',', '"', '\n').validate());
 		assertThat(e.getMessage(), is("Invalid escape character"));
 	}
 
 	@Test
-	public void testGetSeparator() {
+	void testGetSeparator() {
 		assertThat(new CsvConfig().getSeparator(), is(','));
 	}
 
 	@Test
-	public void testSetSeparator() {
+	void testSetSeparator() {
 		final CsvConfig cfg = new CsvConfig();
 		cfg.setSeparator('\t');
 		assertThat(cfg.getSeparator(), is('\t'));
 	}
 
 	@Test
-	public void testWithSeparator() {
+	void testWithSeparator() {
 		final CsvConfig cfg = new CsvConfig();
 		cfg.withSeparator('\t');
 		assertThat(cfg.getSeparator(), is('\t'));
 	}
 
 	@Test
-	public void testGetQuote() {
+	void testGetQuote() {
 		assertThat(new CsvConfig().getQuote(), is('"'));
 	}
 
 	@Test
-	public void testSetQuote() {
+	void testSetQuote() {
 		final CsvConfig cfg = new CsvConfig();
 		cfg.setQuote('\u0000');
 		assertThat(cfg.getQuote(), is('\u0000'));
 	}
 
 	@Test
-	public void testWithQuote() {
+	void testWithQuote() {
 		final CsvConfig cfg = new CsvConfig();
 		cfg.withQuote('\u0000');
 		assertThat(cfg.getQuote(), is('\u0000'));
 	}
 
 	@Test
-	public void testGetEscape() {
+	void testGetEscape() {
 		assertThat(new CsvConfig().getEscape(), is('\\'));
 	}
 
 	@Test
-	public void testSetEscape() {
+	void testSetEscape() {
 		final CsvConfig cfg = new CsvConfig();
 		cfg.setEscape('"');
 		assertThat(cfg.getEscape(), is('"'));
 	}
 
 	@Test
-	public void testWithEscape() {
+	void testWithEscape() {
 		final CsvConfig cfg = new CsvConfig();
 		cfg.withEscape('"');
 		assertThat(cfg.getEscape(), is('"'));
 	}
 
 	@Test
-	public void testIsQuoteDisabled() {
+	void testIsQuoteDisabled() {
 		assertThat(new CsvConfig().isQuoteDisabled(), is(true));
 	}
 
 	@Test
-	public void testSetQuoteDisabled() {
+	void testSetQuoteDisabled() {
 		final CsvConfig cfg = new CsvConfig();
 		cfg.setQuoteDisabled(false);
 		assertThat(cfg.isQuoteDisabled(), is(false));
 	}
 
 	@Test
-	public void testWithQuoteDisabled() {
+	void testWithQuoteDisabled() {
 		final CsvConfig cfg = new CsvConfig();
 		cfg.withQuoteDisabled(false);
 		assertThat(cfg.isQuoteDisabled(), is(false));
 	}
 
 	@Test
-	public void testIsEscapeDisabled() {
+	void testIsEscapeDisabled() {
 		assertThat(new CsvConfig().isEscapeDisabled(), is(true));
 	}
 
 	@Test
-	public void testSetEscapeDisabled() {
+	void testSetEscapeDisabled() {
 		final CsvConfig cfg = new CsvConfig();
 		cfg.setEscapeDisabled(false);
 		assertThat(cfg.isEscapeDisabled(), is(false));
 	}
 
 	@Test
-	public void testWithEscapeDisabled() {
+	void testWithEscapeDisabled() {
 		final CsvConfig cfg = new CsvConfig();
 		cfg.withEscapeDisabled(false);
 		assertThat(cfg.isEscapeDisabled(), is(false));
 	}
 
 	@Test
-	public void testGetBreakString() {
+	void testGetBreakString() {
 		final CsvConfig cfg = new CsvConfig();
 		assertThat(cfg.getBreakString(), nullValue());
 	}
 
 	@Test
-	public void testSetBreakString() {
+	void testSetBreakString() {
 		final CsvConfig cfg = new CsvConfig();
 		cfg.setBreakString("\n");
 		assertThat(cfg.getBreakString(), is("\n"));
 	}
 
 	@Test
-	public void testWithBreakString() {
+	void testWithBreakString() {
 		final CsvConfig cfg = new CsvConfig();
 		cfg.withBreakString("\n");
 		assertThat(cfg.getBreakString(), is("\n"));
 	}
 
 	@Test
-	public void testGetNullString() {
+	void testGetNullString() {
 		final CsvConfig cfg = new CsvConfig();
 		assertThat(cfg.getNullString(), nullValue());
 		assertThat(cfg.isIgnoreCaseNullString(), is(false));
 	}
 
 	@Test
-	public void testSetNullStringString() {
+	void testSetNullStringString() {
 		final CsvConfig cfg = new CsvConfig();
 		cfg.setNullString("null");
 		assertThat(cfg.getNullString(), is("null"));
@@ -231,7 +231,7 @@ public final class CsvConfigTest {
 	}
 
 	@Test
-	public void testWithNullStringString() {
+	void testWithNullStringString() {
 		final CsvConfig cfg = new CsvConfig();
 		cfg.withNullString("null");
 		assertThat(cfg.getNullString(), is("null"));
@@ -239,7 +239,7 @@ public final class CsvConfigTest {
 	}
 
 	@Test
-	public void testSetNullStringStringBoolean() {
+	void testSetNullStringStringBoolean() {
 		final CsvConfig cfg = new CsvConfig();
 		cfg.setNullString("null", true);
 		assertThat(cfg.getNullString(), is("null"));
@@ -247,7 +247,7 @@ public final class CsvConfigTest {
 	}
 
 	@Test
-	public void testWithNullStringStringBoolean() {
+	void testWithNullStringStringBoolean() {
 		final CsvConfig cfg = new CsvConfig();
 		cfg.withNullString("null", true);
 		assertThat(cfg.getNullString(), is("null"));
@@ -255,19 +255,19 @@ public final class CsvConfigTest {
 	}
 
 	@Test
-	public void testIsIgnoreLeadingWhitespaces() {
+	void testIsIgnoreLeadingWhitespaces() {
 		assertThat(new CsvConfig().isIgnoreLeadingWhitespaces(), is(false));
 	}
 
 	@Test
-	public void testSetIgnoreLeadingWhitespaces() {
+	void testSetIgnoreLeadingWhitespaces() {
 		final CsvConfig cfg = new CsvConfig();
 		cfg.setIgnoreLeadingWhitespaces(true);
 		assertThat(cfg.isIgnoreLeadingWhitespaces(), is(true));
 	}
 
 	@Test
-	public void testWithIgnoreLeadingWhitespaces() {
+	void testWithIgnoreLeadingWhitespaces() {
 		final CsvConfig cfg = new CsvConfig();
 		cfg.withIgnoreLeadingWhitespaces(true);
 		assertThat(cfg.isIgnoreLeadingWhitespaces(), is(true));
@@ -275,50 +275,50 @@ public final class CsvConfigTest {
 
 
 	@Test
-	public void testIsIgnoreTrailingWhitespaces() {
+	void testIsIgnoreTrailingWhitespaces() {
 		assertThat(new CsvConfig().isIgnoreTrailingWhitespaces(), is(false));
 	}
 
 	@Test
-	public void testSetIgnoreTrailingWhitespaces() {
+	void testSetIgnoreTrailingWhitespaces() {
 		final CsvConfig cfg = new CsvConfig();
 		cfg.setIgnoreTrailingWhitespaces(true);
 		assertThat(cfg.isIgnoreTrailingWhitespaces(), is(true));
 	}
 
 	@Test
-	public void testWithIgnoreTrailingWhitespaces() {
+	void testWithIgnoreTrailingWhitespaces() {
 		final CsvConfig cfg = new CsvConfig();
 		cfg.withIgnoreTrailingWhitespaces(true);
 		assertThat(cfg.isIgnoreTrailingWhitespaces(), is(true));
 	}
 
 	@Test
-	public void testIsIgnoreEmptyLines() {
+	void testIsIgnoreEmptyLines() {
 		assertThat(new CsvConfig().isIgnoreEmptyLines(), is(false));
 	}
 
 	@Test
-	public void testSetIgnoreEmptyLines() {
+	void testSetIgnoreEmptyLines() {
 		final CsvConfig cfg = new CsvConfig();
 		cfg.setIgnoreEmptyLines(true);
 		assertThat(cfg.isIgnoreEmptyLines(), is(true));
 	}
 
 	@Test
-	public void testWithIgnoreEmptyLines() {
+	void testWithIgnoreEmptyLines() {
 		final CsvConfig cfg = new CsvConfig();
 		cfg.withIgnoreEmptyLines(true);
 		assertThat(cfg.isIgnoreEmptyLines(), is(true));
 	}
 
 	@Test
-	public void testGetIgnoreLinePatterns() {
+	void testGetIgnoreLinePatterns() {
 		assertThat(new CsvConfig().getIgnoreLinePatterns(), nullValue());
 	}
 
 	@Test
-	public void testSetIgnoreLinePatterns() {
+	void testSetIgnoreLinePatterns() {
 		final Pattern pattern = Pattern.compile("^#[ ]*$");
 		final CsvConfig cfg = new CsvConfig();
 		cfg.setIgnoreLinePatterns(pattern);
@@ -327,7 +327,7 @@ public final class CsvConfigTest {
 	}
 
 	@Test
-	public void testWithIgnoreLinePatterns() {
+	void testWithIgnoreLinePatterns() {
 		final Pattern pattern = Pattern.compile("^#[ ]*$");
 		final CsvConfig cfg = new CsvConfig();
 		cfg.withIgnoreLinePatterns(pattern);
@@ -336,19 +336,19 @@ public final class CsvConfigTest {
 	}
 
 	@Test
-	public void testGetSkipLines() {
+	void testGetSkipLines() {
 		assertThat(new CsvConfig().getSkipLines(), is(0));
 	}
 
 	@Test
-	public void testSetSkipLines() {
+	void testSetSkipLines() {
 		final CsvConfig cfg = new CsvConfig();
 		cfg.setSkipLines(2);
 		assertThat(cfg.getSkipLines(), is(2));
 	}
 
 	@Test
-	public void testWithSkipLines() {
+	void testWithSkipLines() {
 		final CsvConfig cfg = new CsvConfig();
 		cfg.withSkipLines(2);
 		assertThat(cfg.getSkipLines(), is(2));
@@ -356,94 +356,94 @@ public final class CsvConfigTest {
 
 
 	@Test
-	public void testGetLineSeparator() {
+	void testGetLineSeparator() {
 		assertThat(new CsvConfig().getLineSeparator(), is(System.getProperty("line.separator")));
 	}
 
 	@Test
-	public void testSetLineSeparator() {
+	void testSetLineSeparator() {
 		final CsvConfig cfg = new CsvConfig();
 		cfg.setLineSeparator("\n");
 		assertThat(cfg.getLineSeparator(), is("\n"));
 	}
 
 	@Test
-	public void testWithLineSeparator() {
+	void testWithLineSeparator() {
 		final CsvConfig cfg = new CsvConfig();
 		cfg.withLineSeparator("\n");
 		assertThat(cfg.getLineSeparator(), is("\n"));
 	}
 
 	@Test
-	public void testGetQuotePolicy() {
+	void testGetQuotePolicy() {
 		assertThat(new CsvConfig().getQuotePolicy(), is(QuotePolicy.ALL));
 	}
 
 	@Test
-	public void testSetQuotePolicy() {
+	void testSetQuotePolicy() {
 		final CsvConfig cfg = new CsvConfig();
 		cfg.setQuotePolicy(QuotePolicy.MINIMAL);
 		assertThat(cfg.getQuotePolicy(), is(QuotePolicy.MINIMAL));
 	}
 
 	@Test
-	public void testWithQuotePolicy() {
+	void testWithQuotePolicy() {
 		final CsvConfig cfg = new CsvConfig();
 		cfg.withQuotePolicy(QuotePolicy.MINIMAL);
 		assertThat(cfg.getQuotePolicy(), is(QuotePolicy.MINIMAL));
 	}
 
 	@Test
-	public void testSetQuotePolicyIllegalArgumentException() {
+	void testSetQuotePolicyIllegalArgumentException() {
 		final Throwable e = assertThrows(IllegalArgumentException.class, () -> new CsvConfig().setQuotePolicy(null));
 		assertThat(e.getMessage(), is("QuotePolicy must not be null"));
 	}
 
 	@Test
-	public void testWithQuotePolicyIllegalArgumentException() {
+	void testWithQuotePolicyIllegalArgumentException() {
 		final Throwable e = assertThrows(IllegalArgumentException.class, () -> new CsvConfig().withQuotePolicy(null));
 		assertThat(e.getMessage(), is("QuotePolicy must not be null"));
 	}
 
 	@Test
-	public void testIsUtf8bomPolicy() {
+	void testIsUtf8bomPolicy() {
 		assertThat(new CsvConfig().isUtf8bomPolicy(), is(false));
 	}
 
 	@Test
-	public void testSetUtf8bomPolicy() {
+	void testSetUtf8bomPolicy() {
 		final CsvConfig cfg = new CsvConfig();
 		cfg.setUtf8bomPolicy(true);
 		assertThat(cfg.isUtf8bomPolicy(), is(true));
 	}
 
 	@Test
-	public void testWithUtf8bomPolicy() {
+	void testWithUtf8bomPolicy() {
 		final CsvConfig cfg = new CsvConfig();
 		cfg.withUtf8bomPolicy(true);
 		assertThat(cfg.isUtf8bomPolicy(), is(true));
 	}
 
 	@Test
-	public void testIsVariableColumns() {
+	void testIsVariableColumns() {
 		assertThat(new CsvConfig().isVariableColumns(), is(true));
 	}
 	@Test
-	public void testSetVariableColumns() {
+	void testSetVariableColumns() {
 		final CsvConfig cfg = new CsvConfig();
 		cfg.setVariableColumns(false);
 		assertThat(cfg.isVariableColumns(), is(false));
 	}
 
 	@Test
-	public void testWithVariableColumns() {
+	void testWithVariableColumns() {
 		final CsvConfig cfg = new CsvConfig();
 		cfg.withVariableColumns(false);
 		assertThat(cfg.isVariableColumns(), is(false));
 	}
 
 	@Test
-	public void testWithAllMethods() {
+	void testWithAllMethods() {
 		final Pattern pattern = Pattern.compile("^#[ ]*$");
 		final CsvConfig cfg = new CsvConfig();
 		cfg.withSeparator('\t')
@@ -483,7 +483,7 @@ public final class CsvConfigTest {
 	}
 
 	@Test
-	public void testClone() {
+	void testClone() {
 		final CsvConfig cfg = new CsvConfig('\t', '^', '|').clone();
 		assertThat(cfg.getSeparator(), is('\t'));
 		assertThat(cfg.getQuote(), is('^'));

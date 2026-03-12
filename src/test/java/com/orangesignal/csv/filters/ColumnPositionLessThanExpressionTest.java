@@ -17,33 +17,37 @@
 package com.orangesignal.csv.filters;
 
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * {@link ColumnPositionLessThanExpression} クラスの単体テストです。
  * 
  * @author Koji Sugisawa
  */
-public class ColumnPositionLessThanExpressionTest {
+class ColumnPositionLessThanExpressionTest {
 
 	@Test
-	public void testColumnPositionLessThanExpression() {
+	void testColumnPositionLessThanExpression() {
 		new ColumnPositionLessThanExpression(0, "100");
 	}
 
-	@Test(expected = IllegalArgumentException.class)
-	public void testColumnPositionLessThanExpressionIllegalArgumentException() {
+	@Test
+	void testColumnPositionLessThanExpressionIllegalArgumentException() {
+		assertThrows(IllegalArgumentException.class, () -> {
+
 		new ColumnPositionLessThanExpression(0, null);
+		});
 	}
 
 	@Test
-	public void testAcceptListOfString() {
+	void testAcceptListOfString() {
 		assertFalse(new ColumnPositionLessThanExpression(0, "100").accept(Arrays.asList(new String[]{ null, "099", "100", "101" })));
 		assertTrue(new ColumnPositionLessThanExpression(1, "100").accept(Arrays.asList(new String[]{ null, "099", "100", "101" })));
 		assertFalse(new ColumnPositionLessThanExpression(2, "100").accept(Arrays.asList(new String[]{ null, "099", "100", "101" })));
@@ -51,7 +55,7 @@ public class ColumnPositionLessThanExpressionTest {
 	}
 
 	@Test
-	public void testAcceptListOfStringListOfString() {
+	void testAcceptListOfStringListOfString() {
 		assertFalse(new ColumnPositionLessThanExpression(0, "100").accept(null, Arrays.asList(new String[]{ null, "099", "100", "101" })));
 		assertTrue(new ColumnPositionLessThanExpression(1, "100").accept(null, Arrays.asList(new String[]{ null, "099", "100", "101" })));
 		assertFalse(new ColumnPositionLessThanExpression(2, "100").accept(null, Arrays.asList(new String[]{ null, "099", "100", "101" })));
@@ -59,7 +63,7 @@ public class ColumnPositionLessThanExpressionTest {
 	}
 
 	@Test
-	public void testToString() {
+	void testToString() {
 		assertThat(new ColumnPositionLessThanExpression(0, "100").toString(), is("ColumnPositionLessThanExpression"));
 		
 	}

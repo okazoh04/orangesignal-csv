@@ -16,53 +16,63 @@
 
 package com.orangesignal.csv.filters;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * {@link CsvExpressionUtils} クラスの単体テストです。
  * 
  * @author Koji Sugisawa
  */
-public class CsvExpressionUtilsTest {
+class CsvExpressionUtilsTest {
 
-	@Test(expected = IllegalArgumentException.class)
-	public void testIsNullIllegalArgumentException1() {
+	@Test
+	void testIsNullIllegalArgumentException1() {
+		assertThrows(IllegalArgumentException.class, () -> {
+
 		CsvExpressionUtils.isNull(null, 0);
-	}
-
-	@Test(expected = IllegalArgumentException.class)
-	public void testIsNullIllegalArgumentException2() {
-		CsvExpressionUtils.isNull(Arrays.asList(new String[]{ null, "", "" }), -1);
-	}
-
-	@Test(expected = IllegalArgumentException.class)
-	public void testIsNullIllegalArgumentException3() {
-		CsvExpressionUtils.isNull(Arrays.asList(new String[]{ null, "", "" }), 3);
+		});
 	}
 
 	@Test
-	public void testIsNull() {
+	void testIsNullIllegalArgumentException2() {
+		assertThrows(IllegalArgumentException.class, () -> {
+
+		CsvExpressionUtils.isNull(Arrays.asList(new String[]{ null, "", "" }), -1);
+		});
+	}
+
+	@Test
+	void testIsNullIllegalArgumentException3() {
+		assertThrows(IllegalArgumentException.class, () -> {
+
+		CsvExpressionUtils.isNull(Arrays.asList(new String[]{ null, "", "" }), 3);
+		});
+	}
+
+	@Test
+	void testIsNull() {
 		final List<String> values = Arrays.asList(new String[]{ null, "aaa", "bbb" });
 		assertTrue(CsvExpressionUtils.isNull(values, 0));
 		assertFalse(CsvExpressionUtils.isNull(values, 1));
 	}
 
 	@Test
-	public void testIsNotNull() {
+	void testIsNotNull() {
 		final List<String> values = Arrays.asList(new String[]{ null, "aaa", "bbb" });
 		assertTrue(CsvExpressionUtils.isNotNull(values, 1));
 		assertFalse(CsvExpressionUtils.isNotNull(values, 0));
 	}
 
 	@Test
-	public void testIsEmpty() {
+	void testIsEmpty() {
 		final List<String> values = Arrays.asList(new String[]{ null, "aaa", "" });
 		assertTrue(CsvExpressionUtils.isEmpty(values, 0));
 		assertFalse(CsvExpressionUtils.isEmpty(values, 1));
@@ -70,21 +80,24 @@ public class CsvExpressionUtilsTest {
 	}
 
 	@Test
-	public void testIsNotEmpty() {
+	void testIsNotEmpty() {
 		final List<String> values = Arrays.asList(new String[]{ null, "aaa", "" });
 		assertFalse(CsvExpressionUtils.isNotEmpty(values, 0));
 		assertTrue(CsvExpressionUtils.isNotEmpty(values, 1));
 		assertFalse(CsvExpressionUtils.isNotEmpty(values, 2));
 	}
 
-	@Test(expected = IllegalArgumentException.class)
-	public void testEqIllegalArgumentException() {
+	@Test
+	void testEqIllegalArgumentException() {
+		assertThrows(IllegalArgumentException.class, () -> {
+
 		final List<String> values = Arrays.asList(new String[]{ null, "aaa", "bbb" });
 		CsvExpressionUtils.eq(values, 0, null, false);
+		});
 	}
 
 	@Test
-	public void testEq() {
+	void testEq() {
 		final List<String> values = Arrays.asList(new String[]{ null, "aaa", "bbb" });
 		assertFalse(CsvExpressionUtils.eq(values, 0, "aaa", false));
 		assertTrue(CsvExpressionUtils.eq(values, 1, "aaa", false));
@@ -94,14 +107,17 @@ public class CsvExpressionUtilsTest {
 		assertFalse(CsvExpressionUtils.eq(values, 2, "AAA", true));
 	}
 
-	@Test(expected = IllegalArgumentException.class)
-	public void testNeIllegalArgumentException() {
+	@Test
+	void testNeIllegalArgumentException() {
+		assertThrows(IllegalArgumentException.class, () -> {
+
 		final List<String> values = Arrays.asList(new String[]{ null, "aaa", "bbb" });
 		CsvExpressionUtils.ne(values, 0, null, false);
+		});
 	}
 
 	@Test
-	public void testNe() {
+	void testNe() {
 		final List<String> values = Arrays.asList(new String[]{ null, "aaa", "bbb" });
 		assertTrue(CsvExpressionUtils.ne(values, 0, "aaa", false));
 		assertFalse(CsvExpressionUtils.ne(values, 1, "aaa", false));
@@ -111,22 +127,28 @@ public class CsvExpressionUtilsTest {
 		assertTrue(CsvExpressionUtils.ne(values, 2, "AAA", true));
 	}
 
-	@Test(expected = IllegalArgumentException.class)
-	public void testInIllegalArgumentException1() {
+	@Test
+	void testInIllegalArgumentException1() {
+		assertThrows(IllegalArgumentException.class, () -> {
+
 		final List<String> values = Arrays.asList(new String[]{ null, "aaa", "bbb" });
 		final String[] criterias = null;
 		CsvExpressionUtils.in(values, 0, criterias, false);
-	}
-
-	@Test(expected = IllegalArgumentException.class)
-	public void testInIllegalArgumentException2() {
-		final List<String> values = Arrays.asList(new String[]{ null, "aaa", "bbb" });
-		final String[] criterias = new String[]{ null };
-		CsvExpressionUtils.in(values, 0, criterias, false);
+		});
 	}
 
 	@Test
-	public void testIn() {
+	void testInIllegalArgumentException2() {
+		assertThrows(IllegalArgumentException.class, () -> {
+
+		final List<String> values = Arrays.asList(new String[]{ null, "aaa", "bbb" });
+		final String[] criterias = new String[]{ null };
+		CsvExpressionUtils.in(values, 0, criterias, false);
+		});
+	}
+
+	@Test
+	void testIn() {
 		final List<String> values = Arrays.asList(new String[]{ null, "aaa", "bbb" });
 		assertFalse(CsvExpressionUtils.in(values, 0, new String[]{ "a", "aa", "aaa" }, false));
 		assertTrue(CsvExpressionUtils.in(values, 1, new String[]{ "a", "aa", "aaa" }, false));
@@ -136,22 +158,28 @@ public class CsvExpressionUtilsTest {
 		assertFalse(CsvExpressionUtils.in(values, 2, new String[]{ "A", "AA", "AAA" }, true));
 	}
 
-	@Test(expected = IllegalArgumentException.class)
-	public void testNotInIllegalArgumentException1() {
+	@Test
+	void testNotInIllegalArgumentException1() {
+		assertThrows(IllegalArgumentException.class, () -> {
+
 		final List<String> values = Arrays.asList(new String[]{ null, "aaa", "bbb" });
 		final String[] criterias = null;
 		CsvExpressionUtils.notIn(values, 0, criterias, false);
-	}
-
-	@Test(expected = IllegalArgumentException.class)
-	public void testNotInIllegalArgumentException2() {
-		final List<String> values = Arrays.asList(new String[]{ null, "aaa", "bbb" });
-		final String[] criterias = new String[]{ null };
-		CsvExpressionUtils.notIn(values, 0, criterias, false);
+		});
 	}
 
 	@Test
-	public void testNotIn() {
+	void testNotInIllegalArgumentException2() {
+		assertThrows(IllegalArgumentException.class, () -> {
+
+		final List<String> values = Arrays.asList(new String[]{ null, "aaa", "bbb" });
+		final String[] criterias = new String[]{ null };
+		CsvExpressionUtils.notIn(values, 0, criterias, false);
+		});
+	}
+
+	@Test
+	void testNotIn() {
 		final List<String> values = Arrays.asList(new String[]{ null, "aaa", "bbb" });
 		assertTrue(CsvExpressionUtils.notIn(values, 0, new String[]{ "a", "aa", "aaa" }, false));
 		assertFalse(CsvExpressionUtils.notIn(values, 1, new String[]{ "a", "aa", "aaa" }, false));
@@ -162,7 +190,7 @@ public class CsvExpressionUtilsTest {
 	}
 
 	@Test
-	public void testRegex() {
+	void testRegex() {
 		final List<String> values = Arrays.asList(new String[]{ null, "aaa", "bbb" });
 		assertFalse(CsvExpressionUtils.regex(values, 0, Pattern.compile("^[a]+$")));
 		assertTrue(CsvExpressionUtils.regex(values, 1, Pattern.compile("^[a]+$")));
@@ -170,7 +198,7 @@ public class CsvExpressionUtilsTest {
 	}
 
 	@Test
-	public void testGt() {
+	void testGt() {
 		final List<String> values = Arrays.asList(new String[]{ null, "aaa", "bbb" });
 		assertFalse(CsvExpressionUtils.gt(values, 0, "aaa"));
 		assertFalse(CsvExpressionUtils.gt(values, 1, "aaa"));
@@ -178,7 +206,7 @@ public class CsvExpressionUtilsTest {
 	}
 
 	@Test
-	public void testLt() {
+	void testLt() {
 		final List<String> values = Arrays.asList(new String[]{ null, "aaa", "bbb" });
 		assertFalse(CsvExpressionUtils.lt(values, 0, "bbb"));
 		assertTrue(CsvExpressionUtils.lt(values, 1, "bbb"));
@@ -186,7 +214,7 @@ public class CsvExpressionUtilsTest {
 	}
 
 	@Test
-	public void testGe() {
+	void testGe() {
 		final List<String> values = Arrays.asList(new String[]{ null, "aaa", "bbb" });
 		assertFalse(CsvExpressionUtils.ge(values, 0, "aaa"));
 		assertTrue(CsvExpressionUtils.ge(values, 1, "aaa"));
@@ -194,7 +222,7 @@ public class CsvExpressionUtilsTest {
 	}
 
 	@Test
-	public void testLe() {
+	void testLe() {
 		final List<String> values = Arrays.asList(new String[]{ null, "aaa", "bbb" });
 		assertFalse(CsvExpressionUtils.le(values, 0, "bbb"));
 		assertTrue(CsvExpressionUtils.le(values, 1, "bbb"));
@@ -202,26 +230,35 @@ public class CsvExpressionUtilsTest {
 	}
 
 	@Test
-	public void testBetween() {
+	void testBetween() {
 		final List<String> values = Arrays.asList(new String[]{ null, "100", "10000" });
 		assertFalse(CsvExpressionUtils.between(values, 0, "10", "1000"));
 		assertTrue(CsvExpressionUtils.between(values, 1, "10", "1000"));
 		assertFalse(CsvExpressionUtils.between(values, 2, "10", "1000"));
 	}
 
-	@Test(expected = IllegalArgumentException.class)
-	public void testValidate1() {
+	@Test
+	void testValidate1() {
+		assertThrows(IllegalArgumentException.class, () -> {
+
 		CsvExpressionUtils.validate(null, 0);
+		});
 	}
 
-	@Test(expected = IllegalArgumentException.class)
-	public void testValidate2() {
+	@Test
+	void testValidate2() {
+		assertThrows(IllegalArgumentException.class, () -> {
+
 		CsvExpressionUtils.validate(Arrays.asList(new String[]{ "", "", "" }), -1);
+		});
 	}
 
-	@Test(expected = IllegalArgumentException.class)
-	public void testValidateListOfStringInt3() {
+	@Test
+	void testValidateListOfStringInt3() {
+		assertThrows(IllegalArgumentException.class, () -> {
+
 		CsvExpressionUtils.validate(Arrays.asList(new String[]{ "", "", "" }), 3);
+		});
 	}
 
 }

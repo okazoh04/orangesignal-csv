@@ -17,30 +17,34 @@
 package com.orangesignal.csv.filters;
 
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
 import java.util.List;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * {@link ColumnPositionNotInExpression} クラスの単体テストです。
  * 
  * @author Koji Sugisawa
  */
-public class ColumnPositionNotInExpressionTest {
+class ColumnPositionNotInExpressionTest {
 
-	@Test(expected = IllegalArgumentException.class)
-	public void testColumnPositionNotInExpressionIllegalArgumentException() {
+	@Test
+	void testColumnPositionNotInExpressionIllegalArgumentException() {
+		assertThrows(IllegalArgumentException.class, () -> {
+
 		final String[] criterias = null;
 		new ColumnPositionNotInExpression(0, criterias);
+		});
 	}
 
 	@Test
-	public void testAcceptListOfString() {
+	void testAcceptListOfString() {
 		final List<String> values = Arrays.asList(new String[]{ null, "aaa", "bbb" });
 		assertTrue(new ColumnPositionNotInExpression(0, "a", "aa", "aaa").accept(values));
 		assertFalse(new ColumnPositionNotInExpression(1, "a", "aa", "aaa").accept(values));
@@ -54,7 +58,7 @@ public class ColumnPositionNotInExpressionTest {
 	}
 
 	@Test
-	public void testAcceptListOfStringListOfString() {
+	void testAcceptListOfStringListOfString() {
 		final List<String> values = Arrays.asList(new String[]{ null, "aaa", "bbb" });
 		assertTrue(new ColumnPositionNotInExpression(0, "a", "aa", "aaa").accept(null, values));
 		assertFalse(new ColumnPositionNotInExpression(1, "a", "aa", "aaa").accept(null, values));
@@ -68,7 +72,7 @@ public class ColumnPositionNotInExpressionTest {
 	}
 
 	@Test
-	public void testToString() {
+	void testToString() {
 		assertThat(new ColumnPositionNotInExpression(0, "a", "aa", "aaa").toString(), is("ColumnPositionNotInExpression"));
 		
 	}

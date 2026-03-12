@@ -19,8 +19,8 @@ package com.orangesignal.csv;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.nullValue;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
@@ -31,23 +31,23 @@ import java.io.StringReader;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * {@link CsvReader} クラスの単体テストです。
  *
  * @author Koji Sugisawa
  */
-public final class CsvReaderTest {
+final class CsvReaderTest {
 
 	@Test
-	public void testCsvReaderReaderIntCsvConfig() throws IOException {
+	void testCsvReaderReaderIntCsvConfig() throws IOException {
 		final CsvReader reader = new CsvReader(new StringReader(""), 8192, new CsvConfig());
 		reader.close();
 	}
 
 	@Test
-	public void testCsvReaderReaderIntCsvConfigIllegalArgumentException1() {
+	void testCsvReaderReaderIntCsvConfigIllegalArgumentException1() {
 		final Reader reader = new StringReader("");
 		try {
 			assertThrows(IllegalArgumentException.class, () -> new CsvReader(reader, 0, new CsvConfig()));
@@ -57,7 +57,7 @@ public final class CsvReaderTest {
 	}
 
 	@Test
-	public void testCsvReaderReaderIntCsvConfigIllegalArgumentException2() {
+	void testCsvReaderReaderIntCsvConfigIllegalArgumentException2() {
 		final Reader reader = new StringReader("");
 		try {
 			assertThrows(IllegalArgumentException.class, () -> new CsvReader(reader, -8192, new CsvConfig()));
@@ -67,7 +67,7 @@ public final class CsvReaderTest {
 	}
 
 	@Test
-	public void testCsvReaderReaderIntCsvConfigIllegalArgumentException3() {
+	void testCsvReaderReaderIntCsvConfigIllegalArgumentException3() {
 		final Reader reader = new StringReader("");
 		try {
 			final Throwable e = assertThrows(IllegalArgumentException.class, () -> new CsvReader(reader, 8192, null));
@@ -78,13 +78,13 @@ public final class CsvReaderTest {
 	}
 
 	@Test
-	public void testCsvReaderReaderCsvConfig() throws IOException {
+	void testCsvReaderReaderCsvConfig() throws IOException {
 		final CsvReader reader = new CsvReader(new StringReader(""), new CsvConfig());
 		reader.close();
 	}
 
 	@Test
-	public void testCsvReaderReaderCsvConfigIllegalArgumentException() {
+	void testCsvReaderReaderCsvConfigIllegalArgumentException() {
 		final Reader reader = new StringReader("");
 		try {
 			final Throwable e = assertThrows(IllegalArgumentException.class, () -> new CsvReader(reader, null));
@@ -95,13 +95,13 @@ public final class CsvReaderTest {
 	}
 
 	@Test
-	public void testCsvReaderReaderInt() throws IOException {
+	void testCsvReaderReaderInt() throws IOException {
 		final CsvReader reader = new CsvReader(new StringReader(""), 8192);
 		reader.close();
 	}
 
 	@Test
-	public void testCsvReaderReaderIntIllegalArgumentException1() {
+	void testCsvReaderReaderIntIllegalArgumentException1() {
 		final Reader reader = new StringReader("");
 		try {
 			assertThrows(IllegalArgumentException.class, () -> new CsvReader(reader, 0));
@@ -111,7 +111,7 @@ public final class CsvReaderTest {
 	}
 
 	@Test
-	public void testCsvReaderReaderIntIllegalArgumentException2() {
+	void testCsvReaderReaderIntIllegalArgumentException2() {
 		final Reader reader = new StringReader("");
 		try {
 			assertThrows(IllegalArgumentException.class, () -> new CsvReader(reader, -8192));
@@ -121,13 +121,13 @@ public final class CsvReaderTest {
 	}
 
 	@Test
-	public void testCsvReaderReader() throws IOException {
+	void testCsvReaderReader() throws IOException {
 		final CsvReader reader = new CsvReader(new StringReader(""));
 		reader.close();
 	}
 
 	@Test
-	public void testReadTokens() throws IOException {
+	void testReadTokens() throws IOException {
 		final CsvConfig cfg = new CsvConfig(',', '"', '\\');
 		cfg.setNullString("NULL");
 		cfg.setBreakString("\n");
@@ -185,7 +185,7 @@ public final class CsvReaderTest {
 	}
 
 	@Test
-	public void Issue32a() throws IOException {
+	void Issue32a() throws IOException {
 		final CsvConfig cfg = new CsvConfig();
 		cfg.setIgnoreEmptyLines(true);
 
@@ -212,7 +212,7 @@ public final class CsvReaderTest {
 	}
 
 	@Test
-	public void Issue32b() throws IOException {
+	void Issue32b() throws IOException {
 		final CsvConfig cfg = new CsvConfig();
 		cfg.setIgnoreEmptyLines(true);
 
@@ -241,7 +241,7 @@ public final class CsvReaderTest {
 	}
 
 	@Test
-	public void testReadTokensIssue30() throws IOException {
+	void testReadTokensIssue30() throws IOException {
 		final CsvConfig cfg = new CsvConfig();
 		cfg.setIgnoreEmptyLines(true);
 
@@ -268,7 +268,7 @@ public final class CsvReaderTest {
 	}
 
 	@Test
-	public void testReadValuesIssue30() throws IOException {
+	void testReadValuesIssue30() throws IOException {
 		final CsvConfig cfg = new CsvConfig();
 		cfg.setIgnoreEmptyLines(true);
 
@@ -295,7 +295,7 @@ public final class CsvReaderTest {
 	}
 
 	@Test
-	public void testReadValues() throws IOException {
+	void testReadValues() throws IOException {
 		final CsvConfig cfg = new CsvConfig(',', '"', '\\');
 		cfg.setNullString("NULL");
 		cfg.setBreakString("\n");
@@ -328,7 +328,7 @@ public final class CsvReaderTest {
 	}
 
 	@Test
-	public void testReadValues2() throws IOException {
+	void testReadValues2() throws IOException {
 		final CsvConfig cfg = new CsvConfig(',', '"', '\\');
 		cfg.setQuoteDisabled(true);
 		cfg.setNullString("NULL");
@@ -356,7 +356,7 @@ public final class CsvReaderTest {
 	}
 
 	@Test
-	public void testReadTSV() throws IOException {
+	void testReadTSV() throws IOException {
 		final CsvConfig cfg = new CsvConfig('\t', '"', '\\');
 		cfg.setNullString("NULL");
 		cfg.setBreakString("\n");
@@ -387,7 +387,7 @@ public final class CsvReaderTest {
 	}
 
 	@Test
-	public void testReadRFC4180_2_1() throws IOException {
+	void testReadRFC4180_2_1() throws IOException {
 		final CsvConfig cfg = new CsvConfig(',', '"', '"');
 		cfg.setIgnoreEmptyLines(true);
 
@@ -413,7 +413,7 @@ public final class CsvReaderTest {
 	}
 
 	@Test
-	public void testReadRFC4180_2_2() throws IOException {
+	void testReadRFC4180_2_2() throws IOException {
 		final CsvConfig cfg = new CsvConfig(',', '"', '"');
 		cfg.setIgnoreEmptyLines(true);
 
@@ -439,7 +439,7 @@ public final class CsvReaderTest {
 	}
 
 	@Test
-	public void testReadRFC4180_2_3() throws IOException {
+	void testReadRFC4180_2_3() throws IOException {
 		final CsvConfig cfg = new CsvConfig(',', '"', '"');
 		cfg.setIgnoreEmptyLines(true);
 
@@ -471,7 +471,7 @@ public final class CsvReaderTest {
 	}
 
 	@Test
-	public void testReadRFC4180_5() throws IOException {
+	void testReadRFC4180_5() throws IOException {
 		final CsvConfig cfg = new CsvConfig(',', '"', '"');
 		cfg.setIgnoreEmptyLines(true);
 
@@ -497,7 +497,7 @@ public final class CsvReaderTest {
 	}
 
 	@Test
-	public void testReadRFC4180_6() throws IOException {
+	void testReadRFC4180_6() throws IOException {
 		final CsvConfig cfg = new CsvConfig(',', '"', '"');
 		cfg.setIgnoreEmptyLines(true);
 
@@ -523,7 +523,7 @@ public final class CsvReaderTest {
 	}
 
 	@Test
-	public void testReadRFC4180_7() throws IOException {
+	void testReadRFC4180_7() throws IOException {
 		final CsvConfig cfg = new CsvConfig(',', '"', '"');
 		cfg.setIgnoreEmptyLines(true);
 
@@ -543,7 +543,7 @@ public final class CsvReaderTest {
 	}
 
 	@Test
-	public void testReadEscapedDoubleQuoteWithLineBreak() throws IOException {
+	void testReadEscapedDoubleQuoteWithLineBreak() throws IOException {
 		final CsvConfig cfg = new CsvConfig(',', '"', '"');
 		cfg.setIgnoreEmptyLines(true);
 		final CsvReader reader = new CsvReader(new StringReader("\"a\",\"b\",\"c\"\r\n\"1,000\",\"2,000\",\"3,000\"\r\n\"a\",\"\"\"b\"\"b\r\nb\",\"c\"\r\n"), cfg);
@@ -571,7 +571,7 @@ public final class CsvReaderTest {
 	}
 
 	@Test
-	public void testReadEscapedDoubleQuoteWithLineBreak2() throws IOException {
+	void testReadEscapedDoubleQuoteWithLineBreak2() throws IOException {
 		final CsvConfig cfg = new CsvConfig(',', '"', '"');
 		cfg.setIgnoreEmptyLines(true);
 		final CsvReader reader = new CsvReader(new StringReader("\"a\",\"b\",\"c\"\r\n\"1,000\",\"2,000\",\"3,000\"\r\n\"a\",\"\"\"b\"\"b\"\"\r\nb\",\"c\"\r\n"), cfg);
@@ -599,7 +599,7 @@ public final class CsvReaderTest {
 	}
 
 	@Test
-	public void testReadEscapedDoubleQuote() throws IOException {
+	void testReadEscapedDoubleQuote() throws IOException {
 		final CsvConfig cfg = new CsvConfig(',', '"', '"');
 		cfg.setIgnoreEmptyLines(true);
 		final CsvReader reader = new CsvReader(new StringReader("\"\"\"\"\"x\"\"\"\"\",\"y\"\"y\"\"y\",\"z\"\"\"\"z\""), cfg);
@@ -615,7 +615,7 @@ public final class CsvReaderTest {
 	}
 
 	@Test
-	public void testReadUtf8bomFromInputStreamReader() throws IOException {
+	void testReadUtf8bomFromInputStreamReader() throws IOException {
 		final byte[] bytes = "\uFEFF佐藤,鈴木".getBytes("UTF8");
 //		System.out.println(new HexDumpEncoder().encodeBuffer(bytes));
 
@@ -634,7 +634,7 @@ public final class CsvReaderTest {
 
 /*
 	@Test
-	public void testReadUtf8bomFromStringReader() throws IOException {
+	void testReadUtf8bomFromStringReader() throws IOException {
 		final CsvConfig cfg = new CsvConfig();
 		cfg.setIgnoreEmptyLines(true);
 		final CsvReader reader = new CsvReader(new StringReader(new String("\uFEFF佐藤,鈴木")));
@@ -650,7 +650,7 @@ public final class CsvReaderTest {
 */
 
 	@Test
-	public void testReadUtf8bomFromFileInputStream() throws IOException {
+	void testReadUtf8bomFromFileInputStream() throws IOException {
 		final CsvConfig cfg = new CsvConfig();
 		cfg.setIgnoreEmptyLines(true);
 		final CsvReader reader = new CsvReader(new InputStreamReader(new FileInputStream("src/test/resources/utf8bom.csv"), "UTF-8"), cfg);
@@ -665,7 +665,7 @@ public final class CsvReaderTest {
 	}
 
 	@Test
-	public void testReadTokensCsvTokenException() throws IOException {
+	void testReadTokensCsvTokenException() throws IOException {
 		final CsvConfig cfg = new CsvConfig();
 		cfg.setVariableColumns(false);
 
@@ -692,7 +692,7 @@ public final class CsvReaderTest {
 	}
 
 	@Test
-	public void testReadValuesCsvTokenException() throws IOException {
+	void testReadValuesCsvTokenException() throws IOException {
 		final CsvConfig cfg = new CsvConfig();
 		cfg.setVariableColumns(false);
 
@@ -719,7 +719,7 @@ public final class CsvReaderTest {
 	}
 
 	@Test
-	public void testClosed() throws IOException {
+	void testClosed() throws IOException {
 		// Arrange
 		final CsvReader reader = new CsvReader(new StringReader(""), new CsvConfig());
 		reader.close();

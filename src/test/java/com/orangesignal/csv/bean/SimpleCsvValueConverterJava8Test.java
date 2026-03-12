@@ -30,15 +30,15 @@ import java.time.YearMonth;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * {@link SimpleCsvValueConverter} クラスの Java 8 (java.time) に関する単体テストです。
  */
-public class SimpleCsvValueConverterJava8Test {
+class SimpleCsvValueConverterJava8Test {
 
 	@Test
-	public void testConvertJavaTime() {
+	void testConvertJavaTime() {
 		final SimpleCsvValueConverter c = new SimpleCsvValueConverter();
 
 		// LocalDate
@@ -75,7 +75,7 @@ public class SimpleCsvValueConverterJava8Test {
 	}
 
 	@Test
-	public void testConvertJavaTimeWithFormatter() {
+	void testConvertJavaTimeWithFormatter() {
 		final SimpleCsvValueConverter c = new SimpleCsvValueConverter();
 		c.setDateTimeFormatter(DateTimeFormatter.ofPattern("yyyy/MM/dd"));
 

@@ -17,35 +17,39 @@
 package com.orangesignal.csv.filters;
 
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * {@link CsvNamedValueOrExpression} クラスの単体テストです。
  * 
  * @author Koji Sugisawa
  */
-public class CsvNamedValueOrExpressionTest {
+class CsvNamedValueOrExpressionTest {
 
 	@Test
-	public void testCsvNamedValueOrExpression() {
+	void testCsvNamedValueOrExpression() {
 		new CsvNamedValueOrExpression();
 		new CsvNamedValueOrExpression(new CsvNamedValueFilter() { @Override public boolean accept(final List<String> header, final List<String> values) { return true; } });
 	}
 
-	@Test(expected = IllegalArgumentException.class)
-	public void testCsvNameOrExpressionCsvNameFilterArrayIllegalArgumentException() {
+	@Test
+	void testCsvNameOrExpressionCsvNameFilterArrayIllegalArgumentException() {
+		assertThrows(IllegalArgumentException.class, () -> {
+
 		final CsvNamedValueFilter[] filters = null;
 		new CsvNamedValueOrExpression(filters);
+		});
 	}
 
 	@Test
-	public void testAccept() {
+	void testAccept() {
 		assertFalse(new CsvNamedValueOrExpression(
 				new CsvNamedValueFilter() { @Override public boolean accept(final List<String> header, final List<String> values) { return false; } },
 				new CsvNamedValueFilter() { @Override public boolean accept(final List<String> header, final List<String> values) { return false; } }
@@ -87,13 +91,16 @@ public class CsvNamedValueOrExpressionTest {
 		assertTrue(expr4.accept(null, null));
 	}
 
-	@Test(expected = IllegalArgumentException.class)
-	public void testAcceptIllegalArgumentException() {
+	@Test
+	void testAcceptIllegalArgumentException() {
+		assertThrows(IllegalArgumentException.class, () -> {
+
 		new CsvNamedValueOrExpression().accept(null, null);
+		});
 	}
 
 	@Test
-	public void testToString() {
+	void testToString() {
 		assertThat(new CsvNamedValueOrExpression().toString(), is("CsvNamedValueOrExpression"));
 		
 	}

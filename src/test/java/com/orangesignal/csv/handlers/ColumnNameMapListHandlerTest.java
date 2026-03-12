@@ -17,9 +17,9 @@
 package com.orangesignal.csv.handlers;
 
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -29,8 +29,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.orangesignal.csv.Constants;
 import com.orangesignal.csv.CsvConfig;
@@ -43,12 +43,12 @@ import com.orangesignal.csv.filters.SimpleCsvNamedValueFilter;
  *
  * @author Koji Sugisawa
  */
-public class ColumnNameMapListHandlerTest {
+class ColumnNameMapListHandlerTest {
 
 	private CsvConfig cfg;
 
-	@Before
-	public void setUp() throws Exception {
+	@BeforeEach
+	void setUp() throws Exception {
 		cfg = new CsvConfig(',');
 		cfg.setNullString("NULL");
 		cfg.setIgnoreTrailingWhitespaces(true);
@@ -58,7 +58,7 @@ public class ColumnNameMapListHandlerTest {
 	}
 
 	@Test
-	public void testLoad1() throws IOException {
+	void testLoad1() throws IOException {
 		final CsvReader reader = new CsvReader(new StringReader("symbol,name,price,volume\r\nAAAA,aaa,10000,10\r\nBBBB,bbb,NULL,0"), cfg);
 		try {
 			final List<Map<String, String>> list = new ColumnNameMapListHandler().load(reader);
@@ -80,7 +80,7 @@ public class ColumnNameMapListHandlerTest {
 	}
 
 	@Test
-	public void testLoadOffsetLimit() throws IOException {
+	void testLoadOffsetLimit() throws IOException {
 		final CsvReader reader = new CsvReader(new StringReader("symbol,name,price,volume\r\nAAAA,aaa,10000,10\r\nBBBB,bbb,NULL,0"), cfg);
 		try {
 			final List<Map<String, String>> list = new ColumnNameMapListHandler().offset(1).limit(1).load(reader);
@@ -98,7 +98,7 @@ public class ColumnNameMapListHandlerTest {
 	}
 
 	@Test
-	public void testLoad2() throws IOException {
+	void testLoad2() throws IOException {
 		cfg.setSkipLines(1);
 		final CsvReader reader = new CsvReader(new StringReader("symbol,name,price,volume\r\nAAAA,aaa,10000,10\r\nBBBB,bbb,NULL,0"), cfg);
 		try {
@@ -127,7 +127,7 @@ public class ColumnNameMapListHandlerTest {
 	}
 
 	@Test
-	public void testLoadFilter() throws IOException {
+	void testLoadFilter() throws IOException {
 		final CsvReader reader = new CsvReader(new StringReader(
 				"symbol,name,price,volume,date\r\n" +
 				"GCU09,COMEX 金 2009年09月限,1068.70,10,2008/09/06\r\n" +
@@ -153,7 +153,7 @@ public class ColumnNameMapListHandlerTest {
 	}
 
 	@Test
-	public void testSaveNoHeader() throws IOException {
+	void testSaveNoHeader() throws IOException {
 		final List<Map<String, String>> list = new ArrayList<Map<String, String>>(3);
 		final Map<String, String> m1 = new LinkedHashMap<String, String>(4);
 		m1.put("symbol", "AAAA");
@@ -179,7 +179,7 @@ public class ColumnNameMapListHandlerTest {
 	}
 
 	@Test
-	public void testSave1() throws IOException {
+	void testSave1() throws IOException {
 		final List<Map<String, String>> list = new ArrayList<Map<String, String>>(3);
 		final Map<String, String> m1 = new LinkedHashMap<String, String>(4);
 		m1.put("symbol", "AAAA");
@@ -205,7 +205,7 @@ public class ColumnNameMapListHandlerTest {
 	}
 
 	@Test
-	public void testSave2() throws IOException {
+	void testSave2() throws IOException {
 		final List<Map<String, String>> list = new ArrayList<Map<String, String>>(3);
 		final Map<String, String> m1 = new LinkedHashMap<String, String>(4);
 		m1.put("symbol", "AAAA");
@@ -236,7 +236,7 @@ public class ColumnNameMapListHandlerTest {
 	}
 
 	@Test
-	public void testSaveFilter() throws Exception {
+	void testSaveFilter() throws Exception {
 		final List<Map<String, String>> list = new ArrayList<Map<String, String>>(3);
 		final Map<String, String> m0 = new LinkedHashMap<String, String>(5);
 		m0.put("symbol", "GCU09");

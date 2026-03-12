@@ -16,19 +16,19 @@
 
 package com.orangesignal.csv;
 
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.fail;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * {@link QuotePolicy} クラスの単体テストです。
  * 
  * @author Koji Sugisawa
  */
-public class QuotePolicyTest {
+class QuotePolicyTest {
 
 	@Test
-	public void testValues() {
+	void testValues() {
 		final QuotePolicy[] values = QuotePolicy.values();
 		for (final QuotePolicy value : values) {
 			switch (value) {

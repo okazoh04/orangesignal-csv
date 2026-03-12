@@ -17,11 +17,12 @@
 package com.orangesignal.csv.io;
 
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -29,10 +30,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.orangesignal.csv.Constants;
 import com.orangesignal.csv.CsvConfig;
@@ -45,15 +44,12 @@ import com.orangesignal.csv.filters.SimpleCsvNamedValueFilter;
  * @author Koji Sugisawa
  * @since 1.4.0
  */
-public class CsvColumnNameMapReaderTest {
-
-	@Rule
-	public ExpectedException exception = ExpectedException.none();
+class CsvColumnNameMapReaderTest {
 
 	private CsvConfig cfg;
 
-	@Before
-	public void setUp() throws Exception {
+	@BeforeEach
+	void setUp() throws Exception {
 		cfg = new CsvConfig(',');
 		cfg.setNullString("NULL");
 		cfg.setIgnoreTrailingWhitespaces(true);
@@ -66,39 +62,34 @@ public class CsvColumnNameMapReaderTest {
 	// コンストラクタ
 
 	@Test
-	public void testConstructorCsvReaderIllegalArgumentException() throws IOException {
-		exception.expect(IllegalArgumentException.class);
-		exception.expectMessage("CsvReader must not be null");
-		final CsvColumnNameMapReader reader = new CsvColumnNameMapReader(null);
-		reader.close();
+	void testConstructorCsvReaderIllegalArgumentException() throws IOException {
+		final Throwable e = assertThrows(IllegalArgumentException.class, () -> new CsvColumnNameMapReader(null));
+		assertThat(e.getMessage(), is("CsvReader must not be null"));
 	}
 
 	@Test
-	public void testConstructorCsvReaderListIllegalArgumentException() throws IOException {
-		exception.expect(IllegalArgumentException.class);
-		exception.expectMessage("CsvReader must not be null");
-		final CsvColumnNameMapReader reader = new CsvColumnNameMapReader(null, Arrays.asList("symbol", "name", "price", "volume"));
-		reader.close();
+	void testConstructorCsvReaderListIllegalArgumentException() throws IOException {
+		final Throwable e = assertThrows(IllegalArgumentException.class, () -> new CsvColumnNameMapReader(null, Arrays.asList("symbol", "name", "price", "volume")));
+		assertThat(e.getMessage(), is("CsvReader must not be null"));
 	}
 
 	// ------------------------------------------------------------------------
 	// オーバーライド メソッド
 
 	@Test
-	public void testClosed() throws IOException {
-		exception.expect(IOException.class);
-		exception.expectMessage("CsvReader closed");
+	void testClosed() throws IOException {
 		final CsvColumnNameMapReader reader = new CsvColumnNameMapReader(new CsvReader(new StringReader("symbol,name,price,volume\r\nAAAA,aaa,10000,10\r\nBBBB,bbb,NULL,0"), cfg));
 		reader.close();
 		// Act
-		reader.close();
+		final Throwable e = assertThrows(IOException.class, () -> reader.close());
+		assertThat(e.getMessage(), is("CsvReader closed"));
 	}
 
 	// ------------------------------------------------------------------------
 	// パブリック メソッド
 
 	@Test
-	public void testGetHeader() throws IOException {
+	void testGetHeader() throws IOException {
 		final CsvColumnNameMapReader reader = new CsvColumnNameMapReader(new CsvReader(new StringReader("symbol,name,price,volume\r\nAAAA,aaa,10000,10\r\nBBBB,bbb,NULL,0"), cfg));
 		try {
 			final List<String> h1 = reader.getHeader();
@@ -143,7 +134,7 @@ public class CsvColumnNameMapReaderTest {
 	}
 
 	@Test
-	public void testRead1() throws IOException {
+	void testRead1() throws IOException {
 		final CsvColumnNameMapReader reader = new CsvColumnNameMapReader(new CsvReader(new StringReader("symbol,name,price,volume\r\nAAAA,aaa,10000,10\r\nBBBB,bbb,NULL,0"), cfg));
 		try {
 			final Map<String, String> m1 = reader.read();
@@ -165,7 +156,7 @@ public class CsvColumnNameMapReaderTest {
 	}
 
 	@Test
-	public void testRead2() throws IOException {
+	void testRead2() throws IOException {
 		cfg.setSkipLines(1);
 		final CsvColumnNameMapReader reader = new CsvColumnNameMapReader(
 				new CsvReader(new StringReader("symbol,name,price,volume\r\nAAAA,aaa,10000,10\r\nBBBB,bbb,NULL,0"), cfg),
@@ -191,7 +182,7 @@ public class CsvColumnNameMapReaderTest {
 	}
 
 	@Test
-	public void testReadFilter() throws IOException {
+	void testReadFilter() throws IOException {
 		final CsvColumnNameMapReader reader = new CsvColumnNameMapReader(new CsvReader(new StringReader(
 				"symbol,name,price,volume,date\r\n" +
 				"GCU09,COMEX 金 2009年09月限,1068.70,10,2008/09/06\r\n" +
@@ -224,7 +215,7 @@ public class CsvColumnNameMapReaderTest {
 	// セッター / ゲッター
 
 	@Test
-	public void testFilter() throws IOException {
+	void testFilter() throws IOException {
 		final SimpleCsvNamedValueFilter filter = new SimpleCsvNamedValueFilter().ne(0, "gcu09", true);
 		assertNotNull(filter);
 

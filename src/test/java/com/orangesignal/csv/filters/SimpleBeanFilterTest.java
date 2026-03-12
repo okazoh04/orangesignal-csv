@@ -17,9 +17,9 @@
 package com.orangesignal.csv.filters;
 
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.text.DateFormat;
@@ -27,7 +27,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.regex.Pattern;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import com.orangesignal.csv.entity.Price;
 
@@ -36,10 +37,10 @@ import com.orangesignal.csv.entity.Price;
  * 
  * @author Koji Sugisawa
  */
-public class SimpleBeanFilterTest {
+class SimpleBeanFilterTest {
 
 	@Test
-	public void testSimpleBeanFilter() throws IOException {
+	void testSimpleBeanFilter() throws IOException {
 		assertFalse(new SimpleBeanFilter()
 				.add(new BeanFilter() { @Override public boolean accept(final Object bean) { return false; } })
 				.add(new BeanFilter() { @Override public boolean accept(final Object bean) { return false; } })
@@ -104,13 +105,16 @@ public class SimpleBeanFilterTest {
 			);
 	}
 
-	@Test(expected = IllegalArgumentException.class)
-	public void testSimpleBeanFilterIllegalArgumentException() {
+	@Test
+	void testSimpleBeanFilterIllegalArgumentException() {
+		assertThrows(IllegalArgumentException.class, () -> {
+
 		new SimpleBeanFilter(null);
+		});
 	}
 
 	@Test
-	public void testIsNull() throws IOException {
+	void testIsNull() throws IOException {
 		assertTrue(new SimpleBeanFilter().isNull("symbol").accept(new Price(null, "COMEX 金 2009年11月限", 1088.70, 100, new Date())));
 		assertFalse(new SimpleBeanFilter().isNull("symbol").accept(new Price("GCX09", "COMEX 金 2009年11月限", 1088.70, 100, new Date())));
 		assertTrue(new SimpleBeanFilter().isNull("name").accept(new Price("GCX09", null, 1088.70, 100, new Date())));
@@ -122,7 +126,7 @@ public class SimpleBeanFilterTest {
 	}
 
 	@Test
-	public void testIsNotNull() throws IOException {
+	void testIsNotNull() throws IOException {
 		assertFalse(new SimpleBeanFilter().isNotNull("symbol").accept(new Price(null, "COMEX 金 2009年11月限", 1088.70, 100, new Date())));
 		assertTrue(new SimpleBeanFilter().isNotNull("symbol").accept(new Price("GCX09", "COMEX 金 2009年11月限", 1088.70, 100, new Date())));
 		assertFalse(new SimpleBeanFilter().isNotNull("name").accept(new Price("GCX09", null, 1088.70, 100, new Date())));
@@ -134,7 +138,7 @@ public class SimpleBeanFilterTest {
 	}
 
 	@Test
-	public void testIsEmpty() throws IOException {
+	void testIsEmpty() throws IOException {
 		assertTrue(new SimpleBeanFilter().isEmpty("symbol").accept(new Price(null, "COMEX 金 2009年11月限", 1088.70, 100, new Date())));
 		assertTrue(new SimpleBeanFilter().isEmpty("symbol").accept(new Price("", "COMEX 金 2009年11月限", 1088.70, 100, new Date())));
 		assertFalse(new SimpleBeanFilter().isEmpty("symbol").accept(new Price("GCX09", "COMEX 金 2009年11月限", 1088.70, 100, new Date())));
@@ -148,7 +152,7 @@ public class SimpleBeanFilterTest {
 	}
 
 	@Test
-	public void testIsNotEmpty() throws IOException {
+	void testIsNotEmpty() throws IOException {
 		assertFalse(new SimpleBeanFilter().isNotEmpty("symbol").accept(new Price(null, "COMEX 金 2009年11月限", 1088.70, 100, new Date())));
 		assertFalse(new SimpleBeanFilter().isNotEmpty("symbol").accept(new Price("", "COMEX 金 2009年11月限", 1088.70, 100, new Date())));
 		assertTrue(new SimpleBeanFilter().isNotEmpty("symbol").accept(new Price("GCX09", "COMEX 金 2009年11月限", 1088.70, 100, new Date())));
@@ -162,7 +166,7 @@ public class SimpleBeanFilterTest {
 	}
 
 	@Test
-	public void testEq() throws Exception {
+	void testEq() throws Exception {
 		final Price price = new Price("GCX09", "COMEX 金 2009年11月限", 1088.70, 100, new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").parse("2009/11/06 19:14:46"));
 		assertFalse(new SimpleBeanFilter().eq("symbol", "SIX09").accept(price));
 		assertTrue(new SimpleBeanFilter().eq("symbol", "GCX09").accept(price));
@@ -179,7 +183,7 @@ public class SimpleBeanFilterTest {
 	}
 
 	@Test
-	public void testNe() throws Exception {
+	void testNe() throws Exception {
 		final Price price = new Price("GCX09", "COMEX 金 2009年11月限", 1088.70, 100, new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").parse("2009/11/06 19:14:46"));
 		assertTrue(new SimpleBeanFilter().ne("symbol", "SIX09").accept(price));
 		assertFalse(new SimpleBeanFilter().ne("symbol", "GCX09").accept(price));
@@ -196,7 +200,7 @@ public class SimpleBeanFilterTest {
 	}
 
 	@Test
-	public void testIn() throws Exception {
+	void testIn() throws Exception {
 		final DateFormat df = new SimpleDateFormat("yyyy/MM/dd");
 		final Price price = new Price("GCX09", "COMEX 金 2009年11月限", 1088.70, 100, df.parse("2009/11/06"));
 		assertFalse(new SimpleBeanFilter().in("symbol", "SIU09", "SIV09", "SIX09").accept(price));
@@ -214,7 +218,7 @@ public class SimpleBeanFilterTest {
 	}
 
 	@Test
-	public void testNotIn() throws Exception {
+	void testNotIn() throws Exception {
 		final DateFormat df = new SimpleDateFormat("yyyy/MM/dd");
 		final Price price = new Price("GCX09", "COMEX 金 2009年11月限", 1088.70, 100, df.parse("2009/11/06"));
 		assertTrue(new SimpleBeanFilter().notIn("symbol", new String[]{ "SIU09", "SIV09", "SIX09" }).accept(price));
@@ -232,7 +236,7 @@ public class SimpleBeanFilterTest {
 	}
 
 	@Test
-	public void testRegex() throws Exception {
+	void testRegex() throws Exception {
 		final DateFormat df = new SimpleDateFormat("yyyy/MM/dd");
 		final Price price = new Price("GCX09", "COMEX 金 2009年11月限", 1088.70, 100, df.parse("2009/11/06"));
 		assertTrue(new SimpleBeanFilter().regex("symbol", "^GCX[0-9]{1,2}$").accept(price));
@@ -248,7 +252,7 @@ public class SimpleBeanFilterTest {
 	}
 
 	@Test
-	public void testGt() throws Exception {
+	void testGt() throws Exception {
 		final DateFormat df = new SimpleDateFormat("yyyy/MM/dd");
 		final Price price = new Price("GCX09", "COMEX 金 2009年11月限", 1088.70, 100, df.parse("2009/11/06"));
 		assertFalse(new SimpleBeanFilter().gt("price", 1098.00).accept(price));
@@ -266,7 +270,7 @@ public class SimpleBeanFilterTest {
 	}
 
 	@Test
-	public void testLt() throws Exception {
+	void testLt() throws Exception {
 		final DateFormat df = new SimpleDateFormat("yyyy/MM/dd");
 		final Price price = new Price("GCX09", "COMEX 金 2009年11月限", 1088.70, 100, df.parse("2009/11/06"));
 		assertTrue(new SimpleBeanFilter().lt("price", 1098.00).accept(price));
@@ -284,7 +288,7 @@ public class SimpleBeanFilterTest {
 	}
 
 	@Test
-	public void testGe() throws Exception {
+	void testGe() throws Exception {
 		final DateFormat df = new SimpleDateFormat("yyyy/MM/dd");
 		final Price price = new Price("GCX09", "COMEX 金 2009年11月限", 1088.70, 100, df.parse("2009/11/06"));
 		assertFalse(new SimpleBeanFilter().ge("price", 1098.00).accept(price));
@@ -302,7 +306,7 @@ public class SimpleBeanFilterTest {
 	}
 
 	@Test
-	public void testLe() throws Exception {
+	void testLe() throws Exception {
 		final DateFormat df = new SimpleDateFormat("yyyy/MM/dd");
 		final Price price = new Price("GCX09", "COMEX 金 2009年11月限", 1088.70, 100, df.parse("2009/11/06"));
 		assertTrue(new SimpleBeanFilter().le("price", 1098.00).accept(price));
@@ -320,7 +324,7 @@ public class SimpleBeanFilterTest {
 	}
 
 	@Test
-	public void testBetween() throws Exception {
+	void testBetween() throws Exception {
 		final DateFormat df = new SimpleDateFormat("yyyy/MM/dd");
 		final Price price = new Price("GCX09", "COMEX 金 2009年11月限", 1088.70, 100, df.parse("2009/11/06"));
 		assertTrue(new SimpleBeanFilter().between("price", 1000.00, 1098.00).accept(price));
@@ -338,13 +342,13 @@ public class SimpleBeanFilterTest {
 	}
 
 	@Test
-	public void testNot() throws IOException {
+	void testNot() throws IOException {
 		assertTrue(new SimpleBeanFilter().not(new BeanFilter() { @Override public boolean accept(final Object bean) { return false; } }).accept(null));
 		assertFalse(new SimpleBeanFilter().not(new BeanFilter() { @Override public boolean accept(final Object bean) { return true; } }).accept(null));
 	}
 
 	@Test
-	public void testToString() {
+	void testToString() {
 		assertThat(new SimpleBeanFilter().toString(), is("SimpleBeanFilter"));
 		
 	}

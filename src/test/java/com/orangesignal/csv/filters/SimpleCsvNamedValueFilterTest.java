@@ -17,25 +17,26 @@
 package com.orangesignal.csv.filters;
 
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * {@link SimpleCsvNamedValueFilter} クラスの単体テストです。
  * 
  * @author Koji Sugisawa
  */
-public class SimpleCsvNamedValueFilterTest {
+class SimpleCsvNamedValueFilterTest {
 
 	@Test
-	public void testSimpleCsvNamedValueFilter() {
+	void testSimpleCsvNamedValueFilter() {
 		assertFalse(new SimpleCsvNamedValueFilter()
 				.add(new CsvNamedValueFilter() { @Override public boolean accept(final List<String> header, final List<String> values) { return false; } })
 				.add(new CsvNamedValueFilter() { @Override public boolean accept(final List<String> header, final List<String> values) { return false; } })
@@ -100,13 +101,16 @@ public class SimpleCsvNamedValueFilterTest {
 			);
 	}
 
-	@Test(expected = IllegalArgumentException.class)
-	public void testSimpleCsvNamedValueFilterIllegalArgumentException() {
+	@Test
+	void testSimpleCsvNamedValueFilterIllegalArgumentException() {
+		assertThrows(IllegalArgumentException.class, () -> {
+
 		new SimpleCsvNamedValueFilter(null);
+		});
 	}
 
 	@Test
-	public void testIsNull() {
+	void testIsNull() {
 		assertTrue(new SimpleCsvNamedValueFilter().isNull(0).accept(null, Arrays.asList(new String[]{ null, "aaa", "bbb" })));
 		assertFalse(new SimpleCsvNamedValueFilter().isNull(1).accept(null, Arrays.asList(new String[]{ null, "aaa", "bbb" })));
 		assertFalse(new SimpleCsvNamedValueFilter().isNull(2).accept(null, Arrays.asList(new String[]{ null, "aaa", "bbb" })));
@@ -119,7 +123,7 @@ public class SimpleCsvNamedValueFilterTest {
 	}
 
 	@Test
-	public void testNotNull() {
+	void testNotNull() {
 		assertFalse(new SimpleCsvNamedValueFilter().isNotNull(0).accept(null, Arrays.asList(new String[]{ null, "aaa", "bbb" })));
 		assertTrue(new SimpleCsvNamedValueFilter().isNotNull(1).accept(null, Arrays.asList(new String[]{ null, "aaa", "bbb" })));
 		assertTrue(new SimpleCsvNamedValueFilter().isNotNull(2).accept(null, Arrays.asList(new String[]{ null, "aaa", "bbb" })));
@@ -132,7 +136,7 @@ public class SimpleCsvNamedValueFilterTest {
 	}
 
 	@Test
-	public void testIsEmpty() {
+	void testIsEmpty() {
 		assertTrue(new SimpleCsvNamedValueFilter().isEmpty(0).accept(null, Arrays.asList(new String[]{ null, "aaa", "bbb" })));
 		assertFalse(new SimpleCsvNamedValueFilter().isEmpty(1).accept(null, Arrays.asList(new String[]{ null, "aaa", "bbb" })));
 		assertFalse(new SimpleCsvNamedValueFilter().isEmpty(2).accept(null, Arrays.asList(new String[]{ null, "aaa", "bbb" })));
@@ -150,7 +154,7 @@ public class SimpleCsvNamedValueFilterTest {
 	}
 
 	@Test
-	public void testIsNotEmpty() {
+	void testIsNotEmpty() {
 		assertFalse(new SimpleCsvNamedValueFilter().isNotEmpty(0).accept(null, Arrays.asList(new String[]{ null, "aaa", "bbb" })));
 		assertTrue(new SimpleCsvNamedValueFilter().isNotEmpty(1).accept(null, Arrays.asList(new String[]{ null, "aaa", "bbb" })));
 		assertTrue(new SimpleCsvNamedValueFilter().isNotEmpty(2).accept(null, Arrays.asList(new String[]{ null, "aaa", "bbb" })));
@@ -168,7 +172,7 @@ public class SimpleCsvNamedValueFilterTest {
 	}
 
 	@Test
-	public void testEq() {
+	void testEq() {
 		assertFalse(new SimpleCsvNamedValueFilter().eq(0, "aaa").accept(null, Arrays.asList(new String[]{ null, "aaa", "bbb" })));
 		assertTrue(new SimpleCsvNamedValueFilter().eq(1, "aaa").accept(null, Arrays.asList(new String[]{ null, "aaa", "bbb" })));
 		assertFalse(new SimpleCsvNamedValueFilter().eq(2, "aaa").accept(null, Arrays.asList(new String[]{ null, "aaa", "bbb" })));
@@ -193,7 +197,7 @@ public class SimpleCsvNamedValueFilterTest {
 	}
 
 	@Test
-	public void testNe() {
+	void testNe() {
 		assertTrue(new SimpleCsvNamedValueFilter().ne(0, "aaa").accept(null, Arrays.asList(new String[]{ null, "aaa", "bbb" })));
 		assertFalse(new SimpleCsvNamedValueFilter().ne(1, "aaa").accept(null, Arrays.asList(new String[]{ null, "aaa", "bbb" })));
 		assertTrue(new SimpleCsvNamedValueFilter().ne(2, "aaa").accept(null, Arrays.asList(new String[]{ null, "aaa", "bbb" })));
@@ -218,7 +222,7 @@ public class SimpleCsvNamedValueFilterTest {
 	}
 
 	@Test
-	public void testIn() {
+	void testIn() {
 		assertFalse(new SimpleCsvNamedValueFilter().in(0, "a", "aa", "aaa").accept(null, Arrays.asList(new String[]{ null, "aaa", "bbb" })));
 		assertTrue(new SimpleCsvNamedValueFilter().in(1, "a", "aa", "aaa").accept(null, Arrays.asList(new String[]{ null, "aaa", "bbb" })));
 		assertFalse(new SimpleCsvNamedValueFilter().in(2, "a", "aa", "aaa").accept(null, Arrays.asList(new String[]{ null, "aaa", "bbb" })));
@@ -243,7 +247,7 @@ public class SimpleCsvNamedValueFilterTest {
 	}
 
 	@Test
-	public void testNotIn() {
+	void testNotIn() {
 		assertTrue(new SimpleCsvNamedValueFilter().notIn(0, "a", "aa", "aaa").accept(null, Arrays.asList(new String[]{ null, "aaa", "bbb" })));
 		assertFalse(new SimpleCsvNamedValueFilter().notIn(1, "a", "aa", "aaa").accept(null, Arrays.asList(new String[]{ null, "aaa", "bbb" })));
 		assertTrue(new SimpleCsvNamedValueFilter().notIn(2, "a", "aa", "aaa").accept(null, Arrays.asList(new String[]{ null, "aaa", "bbb" })));
@@ -268,7 +272,7 @@ public class SimpleCsvNamedValueFilterTest {
 	}
 
 	@Test
-	public void testRegex() {
+	void testRegex() {
 		final List<String> header = Arrays.asList(new String[]{ "col0", "col1", "col2" });
 		final List<String> values = Arrays.asList(new String[]{ null, "aaa", "bbb" });
 
@@ -306,7 +310,7 @@ public class SimpleCsvNamedValueFilterTest {
 	}
 
 	@Test
-	public void testGt() {
+	void testGt() {
 		assertFalse(new SimpleCsvNamedValueFilter().gt(0, "100").accept(null, Arrays.asList(new String[]{ null, "099", "100", "101" })));
 		assertFalse(new SimpleCsvNamedValueFilter().gt(1, "100").accept(null, Arrays.asList(new String[]{ null, "099", "100", "101" })));
 		assertFalse(new SimpleCsvNamedValueFilter().gt(2, "100").accept(null, Arrays.asList(new String[]{ null, "099", "100", "101" })));
@@ -322,7 +326,7 @@ public class SimpleCsvNamedValueFilterTest {
 	}
 
 	@Test
-	public void testLt() {
+	void testLt() {
 		assertFalse(new SimpleCsvNamedValueFilter().lt(0, "100").accept(null, Arrays.asList(new String[]{ null, "099", "100", "101" })));
 		assertTrue(new SimpleCsvNamedValueFilter().lt(1, "100").accept(null, Arrays.asList(new String[]{ null, "099", "100", "101" })));
 		assertFalse(new SimpleCsvNamedValueFilter().lt(2, "100").accept(null, Arrays.asList(new String[]{ null, "099", "100", "101" })));
@@ -338,7 +342,7 @@ public class SimpleCsvNamedValueFilterTest {
 	}
 
 	@Test
-	public void testGe() {
+	void testGe() {
 		assertFalse(new SimpleCsvNamedValueFilter().ge(0, "100").accept(null, Arrays.asList(new String[]{ null, "099", "100", "101" })));
 		assertFalse(new SimpleCsvNamedValueFilter().ge(1, "100").accept(null, Arrays.asList(new String[]{ null, "099", "100", "101" })));
 		assertTrue(new SimpleCsvNamedValueFilter().ge(2, "100").accept(null, Arrays.asList(new String[]{ null, "099", "100", "101" })));
@@ -354,7 +358,7 @@ public class SimpleCsvNamedValueFilterTest {
 	}
 
 	@Test
-	public void testLe() {
+	void testLe() {
 		assertFalse(new SimpleCsvNamedValueFilter().le(0, "100").accept(null, Arrays.asList(new String[]{ null, "099", "100", "101" })));
 		assertTrue(new SimpleCsvNamedValueFilter().le(1, "100").accept(null, Arrays.asList(new String[]{ null, "099", "100", "101" })));
 		assertTrue(new SimpleCsvNamedValueFilter().le(2, "100").accept(null, Arrays.asList(new String[]{ null, "099", "100", "101" })));
@@ -370,7 +374,7 @@ public class SimpleCsvNamedValueFilterTest {
 	}
 
 	@Test
-	public void testBetween() {
+	void testBetween() {
 		assertFalse(new SimpleCsvNamedValueFilter().between(0, "x002", "x003").accept(null, Arrays.asList(new String[]{ null, "x001", "x002", "x003", "x004" })));
 		assertFalse(new SimpleCsvNamedValueFilter().between(1, "x002", "x003").accept(null, Arrays.asList(new String[]{ null, "x001", "x002", "x003", "x004" })));
 		assertTrue(new SimpleCsvNamedValueFilter().between(2, "x002", "x003").accept(null, Arrays.asList(new String[]{ null, "x001", "x002", "x003", "x004" })));
@@ -387,7 +391,7 @@ public class SimpleCsvNamedValueFilterTest {
 	}
 
 	@Test
-	public void testNot() {
+	void testNot() {
 		assertTrue(new SimpleCsvNamedValueFilter().not(
 				new CsvNamedValueFilter() { @Override public boolean accept(final List<String> header, final List<String> values) { return false; } }
 			).accept(null, null));
@@ -397,7 +401,7 @@ public class SimpleCsvNamedValueFilterTest {
 	}
 
 	@Test
-	public void testToString() {
+	void testToString() {
 		assertThat(new SimpleCsvNamedValueFilter().toString(), is("SimpleCsvNamedValueFilter"));
 		
 	}
